@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第三周 - CSS基础知识练习</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+      }
+      h2 {
+        font-family: "楷体", serif;
+        text-decoration: underline;
+        color: #e74c3c;
+        margin-top: 30px;
+      }
+      .highlight {
+        background-color: #fff3cd;
+        padding: 15px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+      .css-demo {
+        border: 2px solid #3498db;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 5px;
+      }
+      .external-style {
+        /* 这个样式来自外部CSS文件 */
+      }
+      .internal-style {
+        color: #27ae60;
+        font-weight: bold;
+        background-color: #ecf0f1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        background: #ecf0f1;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #3498db;
+        transition: all 0.3s ease;
+      }
+      li:hover {
+        background: #d5dbdb;
+        transform: translateX(10px);
+      }
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第三周 - CSS基础知识练习</h1>
+      
+      <div class="highlight">
+        <strong>学习目标：</strong>掌握CSS的基础语法、选择器和三种样式表的使用方式
+      </div>
+
+      <h2>CSS样式表的三种使用方式</h2>
+      <ul>
+        <li class="external-style">外部样式表 - 通过&lt;link&gt;标签引入外部CSS文件</li>
+        <li class="internal-style">内部样式表 - 在&lt;style&gt;标签中定义样式</li>
+        <li style="color: #8e44ad; font-weight: bold; background-color: #f8f9fa; padding: 10px; border-radius: 5px;">内联样式表 - 直接在HTML元素的style属性中定义</li>
+      </ul>
+
+      <div class="css-demo">
+        <h3>CSS基础语法示例</h3>
+        <div class="code-example">
+/* CSS语法结构 */
+选择器 {
+  属性名: 属性值;
+  属性名: 属性值;
+}
+
+/* 示例 */
+h1 {
+  color: blue;
+  font-size: 24px;
+  text-align: center;
+}
+        </div>
+      </div>
+
+      <h2>常用CSS属性练习</h2>
+      <div class="css-demo">
+        <p style="color: #e74c3c; font-size: 18px;">颜色和字体大小</p>
+        <p style="font-family: '楷体'; font-weight: bold;">字体族和字体粗细</p>
+        <p style="text-align: center; text-decoration: underline;">文本对齐和装饰</p>
+        <p style="background-color: #f39c12; padding: 10px; margin: 15px 0;">背景色、内边距和外边距</p>
+      </div>
+
+      <h2>CSS选择器类型</h2>
+      <div class="css-demo">
+        <div class="code-example">
+/* 元素选择器 */
+p { color: black; }
+
+/* 类选择器 */
+.highlight { background-color: yellow; }
+
+/* ID选择器 */
+#header { font-size: 24px; }
+
+/* 后代选择器 */
+div p { margin: 10px; }
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>练习总结：</strong>本周学习了CSS的基础语法、三种样式表的使用方式以及常用的CSS属性。下周将学习CSS的进阶知识，包括盒模型、布局和定位。
+      </div>
+    </div>
+  </body>
+</html>
