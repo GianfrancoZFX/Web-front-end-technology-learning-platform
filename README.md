@@ -1,4 +1,4 @@
-# Web前端技术课程 - 学习平台
+<img width="1802" height="1372" alt="屏幕截图 2025-07-12 152353" src="https://github.com/user-attachments/assets/469f2f72-b07c-4e48-8103-1952022ae150" /><img width="1802" height="1372" alt="屏幕截图 2025-07-12 152353" src="https://github.com/user-attachments/assets/ef04b1c7-f693-4705-8ece-0cbf20c5b1e8" /># Web前端技术课程 - 学习平台
 
 **注意**：如果GITHUB的文件存在问题们还可以通过百度网盘链接访问项目文件： https://pan.baidu.com/s/1ZSmZyFBq82BcDAoXQtv-8A?pwd=7sgg（提取码: 7sgg） 
 
@@ -10,16 +10,16 @@
 本项目是一个综合性的Web前端学习平台，整合了以下核心功能：
 
 - **📚 课程练习展示**：将本学期所有HTML/CSS/JavaScript课程练习整合到Next.js应用中
--<img width="1864" height="1263" alt="image" src="https://github.com/user-attachments/assets/9e368d2a-3f58-418e-b878-dcf6e50fc48b" />
+<img width="1864" height="1263" alt="image" src="https://github.com/user-attachments/assets/9e368d2a-3f58-418e-b878-dcf6e50fc48b" />
 
 - **⏱️ WakaTime编码统计**：实时展示个人编码时长和编程语言分布
-- <img width="1956" height="1370" alt="image" src="https://github.com/user-attachments/assets/b1470c62-36a4-4a45-b555-1e479b9edfb5" />
+<img width="1956" height="1370" alt="image" src="https://github.com/user-attachments/assets/b1470c62-36a4-4a45-b555-1e479b9edfb5" />
 
 - **🤖 QAnything智能问答**：集成大语言模型，提供智能问答服务
-- ![Uploading image.png…]()
+![Uploading image.png…]()
 
 - **🎨 现代化UI设计**：使用Tailwind CSS构建响应式界面
-- <img width="864" height="1094" alt="image" src="https://github.com/user-attachments/assets/36d1a222-fd50-4677-8521-9de9b18ed6e4" />
+<img width="864" height="1094" alt="image" src="https://github.com/user-attachments/assets/36d1a222-fd50-4677-8521-9de9b18ed6e4" />
 
 ## 🛠️ 技术栈
 
