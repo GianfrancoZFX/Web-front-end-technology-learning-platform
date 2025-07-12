@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第五周 - 相对定位与绝对定位详解</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      h2 {
+        color: #e74c3c;
+        margin-top: 40px;
+        padding-left: 15px;
+        border-left: 5px solid #e74c3c;
+        background: linear-gradient(90deg, #fff5f5 0%, transparent 100%);
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .highlight {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 25px 0;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+      .demo-container {
+        border: 3px solid #3498db;
+        padding: 30px;
+        margin: 25px 0;
+        border-radius: 15px;
+        position: relative;
+        height: 400px;
+        background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+        overflow: hidden;
+      }
+      .flow-explanation {
+        background: #f8f9fa;
+        border: 2px dashed #6c757d;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+        position: relative;
+      }
+      .flow-explanation::before {
+        content: "📍 文档流示意";
+        position: absolute;
+        top: -15px;
+        left: 20px;
+        background: #f8f9fa;
+        padding: 0 10px;
+        color: #6c757d;
+        font-weight: bold;
+      }
+      .static-box {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        padding: 20px;
+        margin: 15px;
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        transition: all 0.3s ease;
+      }
+      .static-box:hover {
+        transform: scale(1.02);
+      }
+      .relative-box {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        padding: 20px;
+        margin: 15px;
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        position: relative;
+        top: 30px;
+        left: 50px;
+        box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+        transition: all 0.3s ease;
+      }
+      .relative-box:hover {
+        transform: scale(1.02) translateY(-5px);
+      }
+      .relative-box::after {
+        content: "原始位置";
+        position: absolute;
+        top: -30px;
+        left: -50px;
+        background: rgba(243, 156, 18, 0.3);
+        border: 2px dashed #f39c12;
+        padding: 20px;
+        border-radius: 10px;
+        color: #f39c12;
+        font-weight: bold;
+        z-index: -1;
+      }
+      .absolute-box {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        padding: 20px;
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        position: absolute;
+        top: 80px;
+        right: 30px;
+        width: 200px;
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+      .absolute-box:hover {
+        transform: scale(1.05) rotate(2deg);
+      }
+      .fixed-box {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        padding: 15px 20px;
+        color: white;
+        border-radius: 25px;
+        font-weight: bold;
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        z-index: 1000;
+        box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .fixed-box:hover {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      }
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 18px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      .comparison-table th {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .comparison-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .comparison-table tr:hover {
+        background: linear-gradient(135deg, #ecf0f1, #d5dbdb);
+        transform: scale(1.01);
+        transition: all 0.3s ease;
+      }
+      .comparison-table td:first-child {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .interactive-demo {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .demo-controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .demo-button {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+      }
+      .demo-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+      }
+      .demo-button.active {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+      }
+      .positioning-playground {
+        background: white;
+        border: 2px solid #bdc3c7;
+        border-radius: 10px;
+        height: 300px;
+        position: relative;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+      .moveable-element {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        cursor: move;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+      }
+      .moveable-element:hover {
+        transform: scale(1.05);
+      }
+      .concept-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #3498db;
+        transition: all 0.3s ease;
+      }
+      .concept-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+      .concept-card h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .concept-icon {
+        font-size: 1.5em;
+      }
+      .code-snippet {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+        position: relative;
+      }
+      .code-snippet::before {
+        content: "CSS";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: #3498db;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.8em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第五周 - 相对定位与绝对定位详解</h1>
+
+      <div class="highlight">
+        <strong>🎯 学习目标：</strong>深入理解CSS定位机制的核心概念，掌握相对定位、绝对定位与文档流的关系，学会在实际项目中灵活运用各种定位技术
+      </div>
+
+      <div class="concept-card">
+        <h3><span class="concept-icon">🌊</span>文档流 (Normal Document Flow)</h3>
+        <p>文档流是HTML元素在页面上的默认排列方式，是CSS布局的基础。理解文档流是掌握定位技术的前提。</p>
+        <div class="flow-explanation">
+          <strong>文档流特点：</strong>
+          <ul>
+            <li>块级元素：从上到下垂直排列，每个元素独占一行</li>
+            <li>内联元素：从左到右水平排列，在同一行内显示</li>
+            <li>元素按照HTML结构的顺序依次排列</li>
+            <li>后面的元素会受到前面元素的影响</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>📍 定位类型详细演示</h2>
+      <div class="demo-container">
+        <div class="static-box">Static定位 - 默认定位方式，遵循正常文档流</div>
+        <div class="relative-box">
+          Relative定位 - 相对于原始位置偏移<br>
+          (top: 30px, left: 50px)
+        </div>
+        <div class="absolute-box">
+          Absolute定位<br>
+          脱离文档流<br>
+          (top: 80px, right: 30px)
+        </div>
+      </div>
+
+      <div class="fixed-box">Fixed定位 - 固定在视口</div>
+
+      <div class="concept-card">
+        <h3><span class="concept-icon">🔄</span>相对定位 (Relative Positioning)</h3>
+        <p>相对定位是相对于元素在正常文档流中的原始位置进行偏移。</p>
+        <div class="code-snippet">
+.relative-element {
+  position: relative;
+  top: 20px;    /* 向下偏移20px */
+  left: 30px;   /* 向右偏移30px */
+}
+        </div>
+        <strong>关键特点：</strong>
+        <ul>
+          <li>✅ 元素仍然占据原来在文档流中的空间</li>
+          <li>✅ 其他元素不会填补其原始位置</li>
+          <li>✅ 可以作为绝对定位元素的定位上下文</li>
+          <li>✅ 支持z-index属性</li>
+        </ul>
+      </div>
+
+      <div class="concept-card">
+        <h3><span class="concept-icon">🎯</span>绝对定位 (Absolute Positioning)</h3>
+        <p>绝对定位使元素完全脱离文档流，相对于最近的已定位祖先元素进行定位。</p>
+        <div class="code-snippet">
+.absolute-element {
+  position: absolute;
+  top: 50px;     /* 距离定位上下文顶部50px */
+  right: 20px;   /* 距离定位上下文右边20px */
+}
+        </div>
+        <strong>关键特点：</strong>
+        <ul>
+          <li>🚀 完全脱离文档流，不占据原始空间</li>
+          <li>🚀 其他元素会忽略其存在</li>
+          <li>🚀 相对于最近的非static定位祖先元素定位</li>
+          <li>🚀 如果没有定位祖先，则相对于初始包含块(通常是html元素)</li>
+        </ul>
+      </div>
+
+      <h2>📊 定位属性全面对比</h2>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>定位类型</th>
+            <th>定位特点</th>
+            <th>定位参考点</th>
+            <th>文档流影响</th>
+            <th>空间占用</th>
+            <th>z-index支持</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>static</td>
+            <td>默认定位，无法使用偏移属性</td>
+            <td>无特定参考点</td>
+            <td>遵循文档流</td>
+            <td>占据空间</td>
+            <td>❌</td>
+          </tr>
+          <tr>
+            <td>relative</td>
+            <td>相对原位置偏移，保持文档流</td>
+            <td>元素原始位置</td>
+            <td>保持在文档流中</td>
+            <td>占据原始空间</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>absolute</td>
+            <td>绝对定位，完全脱离文档流</td>
+            <td>最近的定位祖先</td>
+            <td>脱离文档流</td>
+            <td>不占据空间</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>fixed</td>
+            <td>相对视口固定定位</td>
+            <td>浏览器视口</td>
+            <td>脱离文档流</td>
+            <td>不占据空间</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>sticky</td>
+            <td>粘性定位，滚动时切换状态</td>
+            <td>滚动容器</td>
+            <td>条件性脱离</td>
+            <td>条件性占据</td>
+            <td>✅</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="concept-card">
+        <h3><span class="concept-icon">🏗️</span>定位上下文 (Positioning Context)</h3>
+        <p>定位上下文是绝对定位元素的重要概念，决定了绝对定位元素的参考坐标系。</p>
+        <div class="code-snippet">
+/* 创建定位上下文 */
+.parent {
+  position: relative; /* 任何非static值都可以 */
+}
+
+/* 子元素相对于.parent定位 */
+.child {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+        </div>
+        <strong>定位上下文规则：</strong>
+        <ul>
+          <li>🔍 绝对定位元素会向上查找最近的非static定位祖先</li>
+          <li>🔍 如果找到，就以该祖先为定位参考</li>
+          <li>🔍 如果没找到，就以初始包含块为参考</li>
+          <li>🔍 通常使用 position: relative 创建定位上下文</li>
+        </ul>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>🎮 交互式定位演示</h3>
+        <div class="demo-controls">
+          <button class="demo-button active" onclick="changePosition('static')">Static</button>
+          <button class="demo-button" onclick="changePosition('relative')">Relative</button>
+          <button class="demo-button" onclick="changePosition('absolute')">Absolute</button>
+          <button class="demo-button" onclick="changePosition('fixed')">Fixed</button>
+        </div>
+        <div class="positioning-playground">
+          <div class="moveable-element" id="demoElement">
+            点击上方按钮查看不同定位效果
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3><span class="concept-icon">💡</span>实际应用场景</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
+          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+            <strong>相对定位适用于：</strong>
+            <ul style="margin: 10px 0;">
+              <li>微调元素位置</li>
+              <li>创建定位上下文</li>
+              <li>制作悬停效果</li>
+            </ul>
+          </div>
+          <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+            <strong>绝对定位适用于：</strong>
+            <ul style="margin: 10px 0;">
+              <li>弹出层和模态框</li>
+              <li>图标和徽章</li>
+              <li>复杂布局组件</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🎉 学习总结：</strong>本周深入学习了CSS定位系统的核心概念。相对定位保持元素在文档流中的位置，只是视觉上发生偏移；绝对定位则完全脱离文档流，为创建复杂布局提供了强大工具。理解定位上下文的概念对于精确控制元素位置至关重要。下周我们将开始学习JavaScript基础语法。
+      </div>
+    </div>
+
+    <script>
+      function changePosition(positionType) {
+        const element = document.getElementById('demoElement');
+        const buttons = document.querySelectorAll('.demo-button');
+        
+        // 重置所有按钮状态
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        // 激活当前按钮
+        event.target.classList.add('active');
+        
+        // 重置样式
+        element.style.position = positionType;
+        element.style.top = '';
+        element.style.left = '';
+        element.style.right = '';
+        element.style.bottom = '';
+        
+        // 根据定位类型设置样式和文本
+        switch(positionType) {
+          case 'static':
+            element.textContent = 'Static定位 - 默认文档流位置';
+            break;
+          case 'relative':
+            element.style.top = '20px';
+            element.style.left = '30px';
+            element.textContent = 'Relative定位 - 相对原位置偏移';
+            break;
+          case 'absolute':
+            element.style.top = '10px';
+            element.style.right = '10px';
+            element.textContent = 'Absolute定位 - 相对容器定位';
+            break;
+          case 'fixed':
+            element.style.top = '100px';
+            element.style.right = '50px';
+            element.textContent = 'Fixed定位 - 相对视口固定';
+            break;
+        }
+      }
+    </script>
+  </body>
+</html>

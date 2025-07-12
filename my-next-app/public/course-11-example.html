@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next.js框架入门 - 古代驿站管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .concept-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .concept-card p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .feature-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .tab-button:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: #764ba2;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .routing-demo {
+            background: #fff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #5a6fd8;
+        }
+
+        .nav-button.active {
+            background: #764ba2;
+        }
+
+        .page-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .station-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .station-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-closed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .api-demo {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .api-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .api-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .api-button:hover {
+            background: #218838;
+        }
+
+        .api-response {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .middleware-demo {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .middleware-demo h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .optimization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .optimization-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .optimization-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .performance-meter {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .performance-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3);
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .concept-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-tabs {
+                flex-direction: column;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .api-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Next.js框架入门</h1>
+            <p>通过古代驿站管理系统学习Next.js核心概念</p>
+        </div>
+
+        <div class="concept-grid">
+            <div class="concept-card">
+                <h3>🚀 Next.js简介</h3>
+                <p>Next.js是基于React的全栈框架，提供了服务端渲染(SSR)、静态站点生成(SSG)、API路由等功能。</p>
+                <div class="code-block">// 创建Next.js项目
+                    npx create-next-app@latest my-app
+                    cd my-app
+                    npm run dev
+
+                    // 项目结构
+                    my-app/
+                    ├── pages/ # 页面路由
+                    ├── public/ # 静态资源
+                    ├── styles/ # 样式文件
+                    ├── components/ # 组件
+                    └── api/ # API路由</div>
+            </div>
+
+            <div class="concept-card">
+                <h3>📁 文件系统路由</h3>
+                <p>Next.js使用基于文件系统的路由，pages目录下的文件自动成为路由。</p>
+                <div class="code-block">// pages/index.js → /
+                    // pages/about.js → /about
+                    // pages/stations/[id].js → /stations/123
+                    // pages/api/stations.js → /api/stations
+
+                    // 动态路由示例
+                    export default function Station({ station }) {
+                    return (
+                    <div>
+                        <h1>{station.name}</h1>
+                        <p>位置: {station.location}</p>
+                    </div>
+                    );
+                    }
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h3>🔄 数据获取方法</h3>
+                <p>Next.js提供多种数据获取方法：getStaticProps、getServerSideProps、getStaticPaths等。</p>
+                <div class="code-block">// 静态生成 (SSG)
+                    export async function getStaticProps() {
+                    const stations = await fetchStations();
+                    return {
+                    props: { stations },
+                    revalidate: 60 // ISR
+                    };
+                    }
+
+                    // 服务端渲染 (SSR)
+                    export async function getServerSideProps(context) {
+                    const { id } = context.params;
+                    const station = await fetchStation(id);
+                    return { props: { station } };
+                    }</div>
+            </div>
+
+            <div class="concept-card">
+                <h3>🛠️ API路由</h3>
+                <p>在pages/api目录下创建API端点，支持RESTful API和中间件。</p>
+                <div class="code-block">// pages/api/stations.js
+                    export default function handler(req, res) {
+                    if (req.method === 'GET') {
+                    res.status(200).json(stations);
+                    } else if (req.method === 'POST') {
+                    const newStation = req.body;
+                    stations.push(newStation);
+                    res.status(201).json(newStation);
+                    }
+                    }</div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>🏛️ 古代驿站管理系统演示</h2>
+
+            <div class="feature-tabs">
+                <button class="tab-button active" onclick="showTab('routing')">路由系统</button>
+                <button class="tab-button" onclick="showTab('ssr')">服务端渲染</button>
+                <button class="tab-button" onclick="showTab('api')">API路由</button>
+                <button class="tab-button" onclick="showTab('optimization')">性能优化</button>
+            </div>
+
+            <div id="routing" class="tab-content active">
+                <h3>📍 驿站路由系统</h3>
+                <p>模拟Next.js的文件系统路由，展示不同页面间的导航。</p>
+
+                <div class="routing-demo">
+                    <div class="nav-buttons">
+                        <button class="nav-button active" onclick="navigateTo('home')">首页 (/)</button>
+                        <button class="nav-button" onclick="navigateTo('stations')">驿站列表 (/stations)</button>
+                        <button class="nav-button" onclick="navigateTo('station-detail')">驿站详情 (/stations/[id])</button>
+                        <button class="nav-button" onclick="navigateTo('about')">关于 (/about)</button>
+                    </div>
+
+                    <div class="page-content" id="page-content">
+                        <h3>🏠 驿站管理系统首页</h3>
+                        <p>欢迎来到古代驿站管理系统！这里管理着丝绸之路上的各个驿站。</p>
+                        <div class="station-card">
+                            <h4>系统概览</h4>
+                            <p>• 总驿站数: 15个</p>
+                            <p>• 活跃驿站: 12个</p>
+                            <p>• 维护中: 2个</p>
+                            <p>• 关闭: 1个</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">// pages/index.js - 首页
+                    export default function Home({ stats }) {
+                    return (
+                    <div>
+                        <h1>驿站管理系统</h1>
+                        <StationStats stats={stats} />
+                    </div>
+                    );
+                    }
+
+                    // pages/stations/index.js - 驿站列表
+                    export default function Stations({ stations }) {
+                    return (
+                    <div>
+                        <h1>驿站列表</h1>
+                        {stations.map(station => (
+                        <StationCard key={station.id} station={station} />
+                        ))}
+                    </div>
+                    );
+                    }
+
+                    // pages/stations/[id].js - 动态路由
+                    export default function StationDetail({ station }) {
+                    return (
+                    <div>
+                        <h1>{station.name}</h1>
+                        <p>位置: {station.location}</p>
+                        <p>状态: {station.status}</p>
+                    </div>
+                    );
+                    }
+                </div>
+            </div>
+
+            <div id="ssr" class="tab-content">
+                <h3>🔄 服务端渲染演示</h3>
+                <p>展示SSG、SSR和ISR的区别和应用场景。</p>
+
+                <div class="middleware-demo">
+                    <h4>静态生成 (SSG)</h4>
+                    <p>构建时预渲染页面，适合内容相对固定的页面。</p>
+                    <div class="code-block">// 驿站列表页面 - 使用SSG
+                        export async function getStaticProps() {
+                        const stations = await fetchStationsFromDB();
+
+                        return {
+                        props: {
+                        stations,
+                        buildTime: new Date().toISOString()
+                        },
+                        revalidate: 3600 // 1小时后重新生成
+                        };
+                        }</div>
+                </div>
+
+                <div class="middleware-demo">
+                    <h4>服务端渲染 (SSR)</h4>
+                    <p>每次请求时在服务器渲染，适合需要实时数据的页面。</p>
+                    <div class="code-block">// 驿站详情页面 - 使用SSR
+                        export async function getServerSideProps(context) {
+                        const { id } = context.params;
+                        const station = await fetchStationById(id);
+                        const weather = await fetchCurrentWeather(station.location);
+
+                        return {
+                        props: {
+                        station,
+                        weather,
+                        timestamp: Date.now()
+                        }
+                        };
+                        }</div>
+                </div>
+
+                <div class="middleware-demo">
+                    <h4>增量静态再生 (ISR)</h4>
+                    <p>结合SSG和SSR的优势，按需更新静态页面。</p>
+                    <div class="code-block">// 使用ISR的驿站页面
+                        export async function getStaticProps() {
+                        const stations = await fetchStations();
+
+                        return {
+                        props: { stations },
+                        revalidate: 60 // 60秒后重新验证
+                        };
+                        }
+
+                        export async function getStaticPaths() {
+                        const stations = await fetchStations();
+                        const paths = stations.map(station => ({
+                        params: { id: station.id.toString() }
+                        }));
+
+                        return {
+                        paths,
+                        fallback: 'blocking' // 新页面按需生成
+                        };
+                        }</div>
+                </div>
+
+                <button class="api-button" onclick="demonstrateSSR()">演示渲染方式</button>
+                <div class="api-response" id="ssr-demo">点击按钮查看不同渲染方式的效果...</div>
+            </div>
+
+            <div id="api" class="tab-content">
+                <h3>🛠️ API路由演示</h3>
+                <p>展示Next.js API路由的使用，模拟驿站数据的CRUD操作。</p>
+
+                <div class="api-demo">
+                    <h4>驿站API端点</h4>
+                    <div class="api-controls">
+                        <button class="api-button" onclick="callAPI('GET', '/api/stations')">GET 获取驿站列表</button>
+                        <button class="api-button" onclick="callAPI('POST', '/api/stations')">POST 创建新驿站</button>
+                        <button class="api-button" onclick="callAPI('PUT', '/api/stations/1')">PUT 更新驿站</button>
+                        <button class="api-button" onclick="callAPI('DELETE', '/api/stations/1')">DELETE 删除驿站</button>
+                    </div>
+                    <div class="api-response" id="api-response">API响应将显示在这里...</div>
+                </div>
+
+                <div class="code-block">// pages/api/stations/index.js
+                    export default function handler(req, res) {
+                    switch (req.method) {
+                    case 'GET':
+                    return getStations(req, res);
+                    case 'POST':
+                    return createStation(req, res);
+                    default:
+                    res.setHeader('Allow', ['GET', 'POST']);
+                    res.status(405).end(`Method ${req.method} Not Allowed`);
+                    }
+                    }
+
+                    async function getStations(req, res) {
+                    try {
+                    const stations = await db.stations.findMany();
+                    res.status(200).json(stations);
+                    } catch (error) {
+                    res.status(500).json({ error: '获取驿站列表失败' });
+                    }
+                    }
+
+                    // pages/api/stations/[id].js - 动态API路由
+                    export default function handler(req, res) {
+                    const { id } = req.query;
+
+                    switch (req.method) {
+                    case 'GET':
+                    return getStation(id, res);
+                    case 'PUT':
+                    return updateStation(id, req.body, res);
+                    case 'DELETE':
+                    return deleteStation(id, res);
+                    }
+                    }</div>
+
+                <div class="middleware-demo">
+                    <h4>中间件使用</h4>
+                    <p>API路由支持中间件，可以处理认证、日志、CORS等。</p>
+                    <div class="code-block">// middleware/auth.js
+                        export function authMiddleware(req, res, next) {
+                        const token = req.headers.authorization;
+
+                        if (!token) {
+                        return res.status(401).json({ error: '未授权访问' });
+                        }
+
+                        try {
+                        const user = verifyToken(token);
+                        req.user = user;
+                        next();
+                        } catch (error) {
+                        res.status(401).json({ error: '无效令牌' });
+                        }
+                        }
+
+                        // 在API路由中使用
+                        import { authMiddleware } from '../../middleware/auth';
+
+                        export default function handler(req, res) {
+                        authMiddleware(req, res, () => {
+                        // 已认证的用户才能访问
+                        handleRequest(req, res);
+                        });
+                        }</div>
+                </div>
+            </div>
+
+            <div id="optimization" class="tab-content">
+                <h3>⚡ 性能优化演示</h3>
+                <p>展示Next.js的各种性能优化特性。</p>
+
+                <div class="optimization-grid">
+                    <div class="optimization-card">
+                        <h4>🖼️ 图片优化</h4>
+                        <p>自动优化图片大小和格式</p>
+                        <div class="performance-meter">
+                            <div class="performance-bar" style="width: 85%"></div>
+                        </div>
+                        <p>性能提升: 85%</p>
+                    </div>
+
+                    <div class="optimization-card">
+                        <h4>📦 代码分割</h4>
+                        <p>自动分割代码，按需加载</p>
+                        <div class="performance-meter">
+                            <div class="performance-bar" style="width: 70%"></div>
+                        </div>
+                        <p>包大小减少: 70%</p>
+                    </div>
+
+                    <div class="optimization-card">
+                        <h4>🔄 预加载</h4>
+                        <p>智能预加载关键资源</p>
+                        <div class="performance-meter">
+                            <div class="performance-bar" style="width: 60%"></div>
+                        </div>
+                        <p>加载速度提升: 60%</p>
+                    </div>
+
+                    <div class="optimization-card">
+                        <h4>💾 缓存策略</h4>
+                        <p>智能缓存静态资源</p>
+                        <div class="performance-meter">
+                            <div class="performance-bar" style="width: 90%"></div>
+                        </div>
+                        <p>缓存命中率: 90%</p>
+                    </div>
+                </div>
+
+                <div class="code-block">// 图片优化
+                    import Image from 'next/image';
+
+                    function StationImage({ station }) {
+                    return (
+                    <Image src={station.imageUrl} alt={station.name} width={500} height={300}
+                        priority={station.featured} // 优先加载 placeholder="blur" // 模糊占位符
+                        blurDataURL="data:image/jpeg;base64,..." />
+                    );
+                    }
+
+                    // 动态导入和代码分割
+                    import dynamic from 'next/dynamic';
+
+                    const StationMap = dynamic(() => import('../components/StationMap'), {
+                    loading: () => <p>加载地图中...</p>,
+                    ssr: false // 禁用服务端渲染
+                    });
+
+                    // 预加载关键页面
+                    import Link from 'next/link';
+
+                    function StationCard({ station }) {
+                    return (
+                    <Link href={`/stations/${station.id}`} prefetch={true}>
+                    <a>{station.name}</a>
+                    </Link>
+                    );
+                    }
+                </div>
+
+                <button class="api-button" onclick="demonstrateOptimization()">演示性能优化</button>
+                <div class="api-response" id="optimization-demo">点击按钮查看优化效果...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟驿站数据
+        const stations = [
+            { id: 1, name: '长安驿站', location: '长安城东门', status: 'active', description: '丝绸之路起点驿站' },
+            { id: 2, name: '敦煌驿站', location: '敦煌莫高窟附近', status: 'active', description: '西域文化交汇点' },
+            { id: 3, name: '玉门关驿站', location: '玉门关要塞', status: 'maintenance', description: '边关重要驿站' },
+            { id: 4, name: '楼兰驿站', location: '楼兰古城', status: 'closed', description: '神秘的沙漠驿站' },
+            { id: 5, name: '高昌驿站', location: '高昌故城', status: 'active', description: '西域重镇驿站' }
+        ];
+
+        function showTab(tabName) {
+            // 隐藏所有标签内容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // 移除所有按钮的活跃状态
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 显示选中的标签内容
+            document.getElementById(tabName).classList.add('active');
+
+            // 激活对应按钮
+            event.target.classList.add('active');
+        }
+
+        function navigateTo(page) {
+            const content = document.getElementById('page-content');
+            const buttons = document.querySelectorAll('.nav-button');
+
+            // 更新按钮状态
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 根据页面显示不同内容
+            switch (page) {
+                case 'home':
+                    content.innerHTML = `
+                        <h3>🏠 驿站管理系统首页</h3>
+                        <p>欢迎来到古代驿站管理系统！这里管理着丝绸之路上的各个驿站。</p>
+                        <div class="station-card">
+                            <h4>系统概览</h4>
+                            <p>• 总驿站数: 15个</p>
+                            <p>• 活跃驿站: 12个</p>
+                            <p>• 维护中: 2个</p>
+                            <p>• 关闭: 1个</p>
+                        </div>
+                    `;
+                    break;
+
+                case 'stations':
+                    content.innerHTML = `
+                        <h3>📍 驿站列表</h3>
+                        <p>丝绸之路上的重要驿站信息</p>
+                        ${stations.map(station => `
+                            <div class="station-card">
+                                <h4>${station.name}</h4>
+                                <p>位置: ${station.location}</p>
+                                <p>描述: ${station.description}</p>
+                                <span class="status-badge status-${station.status}">
+                                    ${getStatusText(station.status)}
+                                </span>
+                            </div>
+                        `).join('')}
+                    `;
+                    break;
+
+                case 'station-detail':
+                    const station = stations[0];
+                    content.innerHTML = `
+                        <h3>🏛️ ${station.name} 详情</h3>
+                        <div class="station-card">
+                            <h4>基本信息</h4>
+                            <p><strong>位置:</strong> ${station.location}</p>
+                            <p><strong>状态:</strong> <span class="status-badge status-${station.status}">${getStatusText(station.status)}</span></p>
+                            <p><strong>描述:</strong> ${station.description}</p>
+                            <p><strong>建立时间:</strong> 唐贞观三年</p>
+                            <p><strong>管理员:</strong> 李明德</p>
+                            <p><strong>容纳人数:</strong> 200人</p>
+                            <p><strong>马匹数量:</strong> 150匹</p>
+                        </div>
+                        <div class="station-card">
+                            <h4>最近活动</h4>
+                            <p>• 商队"西域行"于昨日抵达</p>
+                            <p>• 补充粮草和饮水</p>
+                            <p>• 维修马厩设施</p>
+                        </div>
+                    `;
+                    break;
+
+                case 'about':
+                    content.innerHTML = `
+                        <h3>ℹ️ 关于系统</h3>
+                        <div class="station-card">
+                            <h4>系统介绍</h4>
+                            <p>本系统使用Next.js框架构建，展示了现代Web开发的最佳实践。</p>
+                            <p><strong>技术栈:</strong></p>
+                            <ul>
+                                <li>Next.js - React全栈框架</li>
+                                <li>React - 用户界面库</li>
+                                <li>Node.js - 服务端运行时</li>
+                                <li>MongoDB - 数据库</li>
+                            </ul>
+                            <p><strong>特性:</strong></p>
+                            <ul>
+                                <li>服务端渲染 (SSR)</li>
+                                <li>静态站点生成 (SSG)</li>
+                                <li>API路由</li>
+                                <li>自动代码分割</li>
+                                <li>图片优化</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'active': '运营中',
+                'maintenance': '维护中',
+                'closed': '已关闭'
+            };
+            return statusMap[status] || status;
+        }
+
+        function callAPI(method, endpoint) {
+            const response = document.getElementById('api-response');
+
+            // 模拟API调用
+            setTimeout(() => {
+                let result;
+
+                switch (method) {
+                    case 'GET':
+                        if (endpoint === '/api/stations') {
+                            result = {
+                                success: true,
+                                data: stations,
+                                count: stations.length
+                            };
+                        }
+                        break;
+
+                    case 'POST':
+                        result = {
+                            success: true,
+                            message: '新驿站创建成功',
+                            data: {
+                                id: 6,
+                                name: '新建驿站',
+                                location: '待定位置',
+                                status: 'active'
+                            }
+                        };
+                        break;
+
+                    case 'PUT':
+                        result = {
+                            success: true,
+                            message: '驿站信息更新成功',
+                            data: {
+                                id: 1,
+                                name: '长安驿站（已更新）',
+                                location: '长安城东门',
+                                status: 'active'
+                            }
+                        };
+                        break;
+
+                    case 'DELETE':
+                        result = {
+                            success: true,
+                            message: '驿站删除成功',
+                            deletedId: 1
+                        };
+                        break;
+                }
+
+                response.textContent = `${method} ${endpoint}\n\n` + JSON.stringify(result, null, 2);
+            }, 500);
+
+            response.textContent = `正在调用 ${method} ${endpoint}...`;
+        }
+
+        function demonstrateSSR() {
+            const demo = document.getElementById('ssr-demo');
+
+            demo.innerHTML = `
+渲染方式对比演示:
+
+1. 静态生成 (SSG)
+   ✅ 构建时间: 2023-12-01 10:00:00
+   ✅ 页面加载速度: 极快
+   ✅ SEO友好: 是
+   ⚠️  数据实时性: 低
+   
+2. 服务端渲染 (SSR)
+   ✅ 请求时间: ${new Date().toLocaleString()}
+   ✅ 数据实时性: 高
+   ✅ SEO友好: 是
+   ⚠️  页面加载速度: 中等
+   
+3. 客户端渲染 (CSR)
+   ✅ 交互性: 强
+   ✅ 用户体验: 好
+   ⚠️  首屏加载: 慢
+   ⚠️  SEO友好: 差
+   
+4. 增量静态再生 (ISR)
+   ✅ 结合SSG和SSR优势
+   ✅ 按需更新静态页面
+   ✅ 性能和实时性平衡
+            `;
+        }
+
+        function demonstrateOptimization() {
+            const demo = document.getElementById('optimization-demo');
+
+            demo.innerHTML = `
+性能优化效果演示:
+
+📊 优化前后对比:
+
+图片优化:
+  • 原始大小: 2.5MB
+  • 优化后: 380KB
+  • 压缩率: 85%
+  • 格式转换: JPEG → WebP
+  
+代码分割:
+  • 原始包大小: 1.2MB
+  • 分割后主包: 350KB
+  • 按需加载: 70%减少
+  • 首屏加载时间: 3.2s → 1.1s
+  
+预加载策略:
+  • 关键资源预加载: 启用
+  • 路由预取: 启用
+  • 字体预加载: 启用
+  • 用户体验提升: 60%
+  
+缓存优化:
+  • 静态资源缓存: 1年
+  • API响应缓存: 5分钟
+  • 页面缓存: ISR
+  • 缓存命中率: 90%
+  
+🚀 总体性能提升:
+  • Lighthouse分数: 65 → 95
+  • 首屏渲染: 3.2s → 1.1s
+  • 可交互时间: 4.5s → 1.8s
+  • 累积布局偏移: 0.25 → 0.05
+            `;
+        }
+    </script>
+</body>
+
+</html>

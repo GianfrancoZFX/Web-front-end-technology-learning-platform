@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十二周 - Next.js 进阶开发与组件集成</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            background: #ffd700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .output {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            border: 2px solid #4a5568;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: scale(1.05);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 2s ease;
+        }
+
+        .interactive-demo {
+            background: #f0f4f8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .trail-demo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .trail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .trail-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .animation-demo {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .animated-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            margin: 20px auto;
+            border-radius: 10px;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .animated-box:hover {
+            transform: rotate(360deg) scale(1.2);
+            border-radius: 50%;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .week-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .integration-showcase {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .integration-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #e2e8f0;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .deployment-status {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background: #38a169;
+        }
+
+        .status-warning {
+            background: #d69e2e;
+        }
+
+        .status-error {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="week-badge">第 12 周课程</div>
+            <h1>🚀 Next.js 进阶开发与组件集成</h1>
+            <p>深入学习Next.js高级特性，掌握Trail组件与第三方集成</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Trail 组件开发 -->
+            <div class="card animate-in">
+                <h2>🎯 Trail 组件开发</h2>
+                <div class="demo-section">
+                    <h3>🌟 什么是 Trail 组件？</h3>
+                    <p><span class="highlight">Trail 组件</span> 是一种动画组件，用于创建连续的、有序的动画效果，常用于列表项的依次出现、页面元素的渐进式加载等场景。</p>
+                    
+                    <div class="trail-demo">
+                        <h4>Trail 动画演示</h4>
+                        <div class="trail-item" style="animation-delay: 0.1s;">项目 1</div>
+                        <div class="trail-item" style="animation-delay: 0.2s;">项目 2</div>
+                        <div class="trail-item" style="animation-delay: 0.3s;">项目 3</div>
+                        <div class="trail-item" style="animation-delay: 0.4s;">项目 4</div>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔧 Trail 组件实现</h3>
+                    <div class="code-block">// components/Trail.js
+import { useState, useEffect } from 'react'
+import styles from './Trail.module.css'
+
+export default function Trail({ items, delay = 100 }) {
+  const [visibleItems, setVisibleItems] = useState([])
+
+  useEffect(() => {
+    items.forEach((item, index) => {
+      setTimeout(() => {
+        setVisibleItems(prev => [...prev, item])
+      }, index * delay)
+    })
+
+    return () => setVisibleItems([])
+  }, [items, delay])
+
+  return (
+    <div className={styles.trailContainer}>
+      {visibleItems.map((item, index) => (
+        <div 
+          key={item.id || index}
+          className={styles.trailItem}
+          style={{
+            animationDelay: `${index * delay}ms`
+          }}
+        >
+          {item.content || item}
+        </div>
+      ))}
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🎨 Trail 样式定义</h3>
+                    <div class="code-block">/* styles/Trail.module.css */
+.trailContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.trailItem {
+  opacity: 0;
+  transform: translateX(-50px);
+  animation: slideInTrail 0.6s ease-out forwards;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes slideInTrail {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.trailItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📱 使用 Trail 组件</h3>
+                    <div class="code-block">// pages/trail-demo.js
+import Trail from '../components/Trail'
+
+export default function TrailDemo() {
+  const items = [
+    { id: 1, content: '第一个项目' },
+    { id: 2, content: '第二个项目' },
+    { id: 3, content: '第三个项目' },
+    { id: 4, content: '第四个项目' },
+  ]
+
+  return (
+    <div>
+      <h1>Trail 动画演示</h1>
+      <Trail items={items} delay={150} />
+    </div>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateTrail()">🎯 演示Trail组件</button>
+                <div id="trailOutput" class="output"></div>
+            </div>
+
+            <!-- 高级动画与交互 -->
+            <div class="card animate-in">
+                <h2>✨ 高级动画与交互</h2>
+                <div class="demo-section">
+                    <h3>🎭 Framer Motion 集成</h3>
+                    <div class="code-block"># 安装 Framer Motion
+npm install framer-motion
+
+# 基础动画组件
+import { motion } from 'framer-motion'
+
+export default function AnimatedCard({ children }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {children}
+    </motion.div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🌊 页面过渡动画</h3>
+                    <div class="code-block">// components/PageTransition.js
+import { motion, AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    x: '-100vw',
+    scale: 0.8
+  },
+  in: {
+    opacity: 1,
+    x: 0,
+    scale: 1
+  },
+  out: {
+    opacity: 0,
+    x: '100vw',
+    scale: 1.2
+  }
+}
+
+const pageTransition = {
+  type: 'tween',
+  ease: 'anticipate',
+  duration: 0.5
+}
+
+export default function PageTransition({ children }) {
+  const router = useRouter()
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={router.route}
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🎪 交互式动画演示</h3>
+                    <div class="animation-demo">
+                        <h4>点击下方盒子查看动画效果</h4>
+                        <div class="animated-box" onclick="animateBox(this)"></div>
+                        <p>悬停和点击都有不同的动画效果</p>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📊 列表动画</h3>
+                    <div class="code-block">// 列表项动画
+const listVariants = {
+  hidden: {
+    opacity: 0
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+}
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 20
+  },
+  visible: {
+    opacity: 1,
+    y: 0
+  }
+}
+
+export default function AnimatedList({ items }) {
+  return (
+    <motion.ul
+      variants={listVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {items.map((item, index) => (
+        <motion.li
+          key={index}
+          variants={itemVariants}
+          whileHover={{ scale: 1.02 }}
+        >
+          {item}
+        </motion.li>
+      ))}
+    </motion.ul>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateAnimations()">✨ 演示高级动画</button>
+                <div id="animationOutput" class="output"></div>
+            </div>
+
+            <!-- 第三方库集成 -->
+            <div class="card animate-in">
+                <h2>🔗 第三方库集成</h2>
+                <div class="demo-section">
+                    <h3>📊 Chart.js 图表集成</h3>
+                    <div class="code-block"># 安装 Chart.js
+npm install chart.js react-chartjs-2
+
+// components/Chart.js
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+import { Bar } from 'react-chartjs-2'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+)
+
+export default function BarChart({ data }) {
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: '数据统计图表',
+      },
+    },
+  }
+
+  return <Bar data={data} options={options} />
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🗓️ 日期选择器集成</h3>
+                    <div class="code-block"># 安装日期选择器
+npm install react-datepicker
+
+// components/DatePicker.js
+import { useState } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+
+export default function CustomDatePicker() {
+  const [startDate, setStartDate] = useState(new Date())
+
+  return (
+    <div>
+      <label>选择日期:</label>
+      <DatePicker
+        selected={startDate}
+        onChange={(date) => setStartDate(date)}
+        dateFormat="yyyy/MM/dd"
+        showYearDropdown
+        showMonthDropdown
+        dropdownMode="select"
+      />
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🎨 UI 组件库集成</h3>
+                    <div class="code-block"># 安装 Ant Design
+npm install antd
+
+// pages/_app.js
+import 'antd/dist/antd.css'
+
+// 使用 Ant Design 组件
+import { Button, Card, Row, Col } from 'antd'
+
+export default function HomePage() {
+  return (
+    <div style={{ padding: '20px' }}>
+      <Row gutter={16}>
+        <Col span={8}>
+          <Card title="卡片1" bordered={false}>
+            <p>卡片内容</p>
+            <Button type="primary">主要按钮</Button>
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card title="卡片2" bordered={false}>
+            <p>卡片内容</p>
+            <Button>默认按钮</Button>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔍 搜索功能集成</h3>
+                    <div class="code-block"># 安装搜索库
+npm install fuse.js
+
+// hooks/useSearch.js
+import { useState, useMemo } from 'react'
+import Fuse from 'fuse.js'
+
+export function useSearch(data, options) {
+  const [query, setQuery] = useState('')
+  
+  const fuse = useMemo(() => {
+    return new Fuse(data, {
+      keys: options.keys || ['title', 'content'],
+      threshold: options.threshold || 0.3
+    })
+  }, [data, options])
+  
+  const results = useMemo(() => {
+    if (!query) return data
+    return fuse.search(query).map(result => result.item)
+  }, [fuse, query, data])
+  
+  return { query, setQuery, results }
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateIntegrations()">🔗 演示第三方集成</button>
+                <div id="integrationOutput" class="output"></div>
+            </div>
+
+            <!-- 性能优化 -->
+            <div class="card animate-in">
+                <h2>⚡ 性能优化技巧</h2>
+                <div class="demo-section">
+                    <h3>🚀 代码分割与懒加载</h3>
+                    <div class="code-block">// 动态导入组件
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+
+// 懒加载组件
+const DynamicChart = dynamic(
+  () => import('../components/Chart'),
+  { 
+    loading: () => <p>图表加载中...</p>,
+    ssr: false // 禁用服务端渲染
+  }
+)
+
+// 使用 Suspense
+const LazyComponent = dynamic(() => import('../components/Heavy'))
+
+export default function OptimizedPage() {
+  return (
+    <div>
+      <h1>性能优化页面</h1>
+      
+      {/* 懒加载图表 */}
+      <DynamicChart />
+      
+      {/* 使用 Suspense */}
+      <Suspense fallback={<div>加载中...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🖼️ 图片优化</h3>
+                    <div class="code-block">// 使用 Next.js Image 组件
+import Image from 'next/image'
+
+export default function OptimizedImages() {
+  return (
+    <div>
+      {/* 自动优化的图片 */}
+      <Image
+        src="/hero-image.jpg"
+        alt="英雄图片"
+        width={800}
+        height={400}
+        priority // 优先加载
+        placeholder="blur" // 模糊占位符
+        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+      />
+      
+      {/* 响应式图片 */}
+      <Image
+        src="/responsive-image.jpg"
+        alt="响应式图片"
+        fill
+        style={{
+          objectFit: 'cover'
+        }}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📦 Bundle 分析</h3>
+                    <div class="code-block"># 安装 bundle 分析器
+npm install @next/bundle-analyzer
+
+// next.config.js
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+module.exports = withBundleAnalyzer({
+  // 其他配置
+})
+
+# 运行分析
+ANALYZE=true npm run build</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔄 缓存策略</h3>
+                    <div class="code-block">// 使用 SWR 进行数据缓存
+import useSWR from 'swr'
+
+const fetcher = (url) => fetch(url).then((res) => res.json())
+
+export default function CachedData() {
+  const { data, error, isLoading } = useSWR('/api/data', fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 60000, // 60秒刷新一次
+  })
+
+  if (error) return <div>加载失败</div>
+  if (isLoading) return <div>加载中...</div>
+
+  return (
+    <div>
+      <h2>缓存数据</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateOptimization()">⚡ 演示性能优化</button>
+                <div id="optimizationOutput" class="output"></div>
+            </div>
+
+            <!-- 部署与监控 -->
+            <div class="card animate-in">
+                <h2>🚀 部署与监控</h2>
+                <div class="demo-section">
+                    <h3>☁️ Vercel 部署</h3>
+                    <div class="step-indicator">
+                        <div class="step active">1. 推送代码</div>
+                        <div class="step active">2. 连接Vercel</div>
+                        <div class="step active">3. 自动部署</div>
+                        <div class="step">4. 域名配置</div>
+                    </div>
+                    
+                    <div class="code-block"># 使用 Vercel CLI 部署
+npm install -g vercel
+
+# 登录 Vercel
+vercel login
+
+# 部署项目
+vercel
+
+# 生产环境部署
+vercel --prod</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📊 性能监控</h3>
+                    <div class="deployment-status">
+                        <h4>部署状态监控</h4>
+                        <p><span class="status-indicator status-success"></span>构建成功</p>
+                        <p><span class="status-indicator status-success"></span>部署完成</p>
+                        <p><span class="status-indicator status-warning"></span>性能警告</p>
+                        <p><span class="status-indicator status-success"></span>健康检查通过</p>
+                    </div>
+                    
+                    <div class="code-block">// 添加性能监控
+// pages/_app.js
+import { Analytics } from '@vercel/analytics/react'
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <Component {...pageProps} />
+      <Analytics />
+    </>
+  )
+}
+
+// 自定义性能指标
+export function reportWebVitals(metric) {
+  console.log(metric)
+  
+  // 发送到分析服务
+  if (metric.label === 'web-vital') {
+    gtag('event', metric.name, {
+      value: Math.round(metric.value),
+      event_label: metric.id,
+      non_interaction: true,
+    })
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔧 环境配置</h3>
+                    <div class="code-block"># .env.local
+NEXT_PUBLIC_API_URL=https://api.example.com
+DATABASE_URL=postgresql://...
+SECRET_KEY=your-secret-key
+
+# .env.production
+NEXT_PUBLIC_API_URL=https://prod-api.example.com
+
+# next.config.js
+module.exports = {
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+  publicRuntimeConfig: {
+    // 客户端可访问
+    staticFolder: '/static',
+  },
+  serverRuntimeConfig: {
+    // 仅服务端可访问
+    PROJECT_ROOT: __dirname,
+  },
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateDeployment()">🚀 演示部署流程</button>
+                <div id="deploymentOutput" class="output"></div>
+            </div>
+        </div>
+
+        <!-- 学习进度 -->
+        <div class="card">
+            <h2>📈 本周学习进度</h2>
+            <div class="demo-section">
+                <div style="margin: 10px 0;">
+                    <span>Trail组件开发</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>高级动画技巧</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>第三方库集成</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>性能优化</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>部署与监控</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 本周作业 -->
+        <div class="card">
+            <h2>📝 本周作业</h2>
+            <div class="demo-section">
+                <h3>🎯 作业要求</h3>
+                <ol style="line-height: 2;">
+                    <li>开发一个Trail动画组件，支持自定义延迟和动画效果</li>
+                    <li>集成至少一个第三方UI库（如Ant Design或Material-UI）</li>
+                    <li>实现页面过渡动画</li>
+                    <li>添加图表展示功能</li>
+                    <li>优化应用性能（图片优化、代码分割）</li>
+                    <li>部署到Vercel并配置自定义域名</li>
+                </ol>
+                
+                <h3>💡 加分项</h3>
+                <ul style="line-height: 2;">
+                    <li>实现复杂的交互动画</li>
+                    <li>添加性能监控和分析</li>
+                    <li>实现PWA功能</li>
+                    <li>集成搜索功能</li>
+                    <li>添加国际化支持</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Trail组件演示
+        function demonstrateTrail() {
+            const output = document.getElementById('trailOutput');
+            output.textContent = '🎯 Trail 组件演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '✅ Trail 动画原理\n';
+                output.textContent += '   - 依次显示列表项\n';
+                output.textContent += '   - 自定义延迟时间\n';
+                output.textContent += '   - 流畅的过渡效果\n\n';
+                
+                output.textContent += '🎨 动画效果\n';
+                output.textContent += '   - 淡入效果\n';
+                output.textContent += '   - 滑动效果\n';
+                output.textContent += '   - 缩放效果\n\n';
+                
+                output.textContent += '🔧 自定义配置\n';
+                output.textContent += '   - delay: 动画延迟\n';
+                output.textContent += '   - duration: 动画时长\n';
+                output.textContent += '   - easing: 缓动函数\n';
+            }, 500);
+        }
+
+        function demonstrateAnimations() {
+            const output = document.getElementById('animationOutput');
+            output.textContent = '✨ 高级动画演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '🎭 Framer Motion 特性\n';
+                output.textContent += '   - 声明式动画\n';
+                output.textContent += '   - 手势支持\n';
+                output.textContent += '   - 布局动画\n\n';
+                
+                output.textContent += '🌊 页面过渡\n';
+                output.textContent += '   - 路由切换动画\n';
+                output.textContent += '   - 共享元素过渡\n';
+                output.textContent += '   - 自定义过渡效果\n\n';
+                
+                output.textContent += '📊 列表动画\n';
+                output.textContent += '   - 交错动画\n';
+                output.textContent += '   - 拖拽排序\n';
+                output.textContent += '   - 添加/删除动画\n';
+            }, 500);
+        }
+
+        function demonstrateIntegrations() {
+            const output = document.getElementById('integrationOutput');
+            output.textContent = '🔗 第三方库集成演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '📊 Chart.js 集成\n';
+                output.textContent += '   - 柱状图、折线图\n';
+                output.textContent += '   - 响应式图表\n';
+                output.textContent += '   - 实时数据更新\n\n';
+                
+                output.textContent += '🎨 UI 组件库\n';
+                output.textContent += '   - Ant Design\n';
+                output.textContent += '   - Material-UI\n';
+                output.textContent += '   - Chakra UI\n\n';
+                
+                output.textContent += '🔍 功能增强\n';
+                output.textContent += '   - 搜索功能\n';
+                output.textContent += '   - 日期选择器\n';
+                output.textContent += '   - 表单验证\n';
+            }, 500);
+        }
+
+        function demonstrateOptimization() {
+            const output = document.getElementById('optimizationOutput');
+            output.textContent = '⚡ 性能优化演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '🚀 代码分割\n';
+                output.textContent += '   - 动态导入\n';
+                output.textContent += '   - 懒加载组件\n';
+                output.textContent += '   - 路由级分割\n\n';
+                
+                output.textContent += '🖼️ 图片优化\n';
+                output.textContent += '   - Next.js Image\n';
+                output.textContent += '   - 自动格式转换\n';
+                output.textContent += '   - 响应式图片\n\n';
+                
+                output.textContent += '📦 Bundle 优化\n';
+                output.textContent += '   - Tree Shaking\n';
+                output.textContent += '   - 压缩优化\n';
+                output.textContent += '   - 缓存策略\n';
+            }, 500);
+        }
+
+        function demonstrateDeployment() {
+            const output = document.getElementById('deploymentOutput');
+            output.textContent = '🚀 部署流程演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '☁️ Vercel 部署\n';
+                output.textContent += '   - Git 集成\n';
+                output.textContent += '   - 自动部署\n';
+                output.textContent += '   - 预览部署\n\n';
+                
+                output.textContent += '📊 性能监控\n';
+                output.textContent += '   - Web Vitals\n';
+                output.textContent += '   - 错误追踪\n';
+                output.textContent += '   - 用户分析\n\n';
+                
+                output.textContent += '🔧 环境管理\n';
+                output.textContent += '   - 环境变量\n';
+                output.textContent += '   - 多环境部署\n';
+                output.textContent += '   - 域名配置\n';
+            }, 500);
+        }
+
+        function animateBox(element) {
+            element.style.transform = 'rotate(180deg) scale(1.1)';
+            element.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+            
+            setTimeout(() => {
+                element.style.transform = '';
+                element.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            }, 500);
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+
+            // Trail 演示动画
+            const trailItems = document.querySelectorAll('.trail-item');
+            trailItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>古韵手机桌面 - Tailwind CSS 实现</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ancient-gold': '#D4AF37',
+                        'ancient-red': '#DC143C',
+                        'ancient-blue': '#4169E1',
+                        'ancient-green': '#228B22',
+                        'ancient-purple': '#8A2BE2',
+                        'ancient-brown': '#8B4513'
+                    },
+                    fontFamily: {
+                        'chinese': ['Microsoft YaHei', 'SimSun', 'serif']
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'shake': 'shake 0.5s ease-in-out',
+                        'bounce-slow': 'bounce 2s infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(212, 175, 55, 0.5)' },
+                            '100%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.8)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-5px)' },
+                            '75%': { transform: 'translateX(5px)' }
+                        }
+                    },
+                    backdropBlur: {
+                        'xs': '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+
+        .font-chinese {
+            font-family: 'Noto Serif SC', 'Microsoft YaHei', serif;
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .app-icon {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-icon:hover {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        .app-icon:active {
+            transform: scale(0.95);
+        }
+
+        .wallpaper {
+            background: linear-gradient(135deg,
+                    #1a1a2e 0%,
+                    #16213e 25%,
+                    #0f3460 50%,
+                    #533483 75%,
+                    #7209b7 100%);
+        }
+
+        .ancient-pattern {
+            background-image:
+                radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(220, 20, 60, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(65, 105, 225, 0.1) 0%, transparent 50%);
+        }
+
+        .dock {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notification {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .time-display {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(220, 20, 60, 0.2));
+        }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden font-chinese select-none">
+    <!-- 主屏幕容器 -->
+    <div class="relative h-full wallpaper ancient-pattern">
+        <!-- 状态栏 -->
+        <div
+            class="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-2 text-white text-sm glass-effect">
+            <div class="flex items-center space-x-2">
+                <span id="current-time" class="font-semibold">12:34</span>
+                <span class="text-xs opacity-75">农历甲辰年</span>
+            </div>
+            <div class="flex items-center space-x-1">
+                <div class="w-4 h-2 bg-white rounded-sm opacity-75"></div>
+                <div class="w-1 h-1 bg-white rounded-full"></div>
+                <div class="w-1 h-1 bg-white rounded-full"></div>
+                <div class="w-1 h-1 bg-white rounded-full"></div>
+                <span class="text-xs ml-2">100%</span>
+            </div>
+        </div>
+
+        <!-- 时间和日期显示 -->
+        <div class="absolute top-20 left-6 right-6 z-40">
+            <div class="time-display rounded-2xl p-6 text-center text-white">
+                <div id="main-time" class="text-6xl font-bold mb-2 text-shadow">12:34</div>
+                <div id="main-date" class="text-lg opacity-90">2024年1月15日 星期一</div>
+                <div class="text-sm opacity-75 mt-1">农历甲辰年腊月初六</div>
+            </div>
+        </div>
+
+        <!-- 天气小组件 -->
+        <div class="absolute top-48 right-6 z-40">
+            <div class="widget rounded-xl p-4 text-white w-32">
+                <div class="text-center">
+                    <div class="text-2xl mb-1">☀️</div>
+                    <div class="text-sm">晴朗</div>
+                    <div class="text-lg font-semibold">22°C</div>
+                    <div class="text-xs opacity-75">北京</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 应用图标网格 -->
+        <div class="absolute inset-x-6 top-80 bottom-32 z-30 overflow-y-auto">
+            <div class="grid grid-cols-4 gap-6 p-4">
+                <!-- 第一行应用 -->
+                <div class="app-icon flex flex-col items-center" onclick="openApp('poetry')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-gold to-yellow-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg animate-glow">
+                        📜
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">诗词雅集</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('calligraphy')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-gray-800 to-gray-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🖌️
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">书法练习</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('music')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-red to-red-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🎵
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">古典音乐</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('chess')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-brown to-yellow-800 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        ♟️
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">象棋对弈</span>
+                </div>
+
+                <!-- 第二行应用 -->
+                <div class="app-icon flex flex-col items-center" onclick="openApp('tea')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-green to-green-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🍵
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">茶艺学堂</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('garden')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-700 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🏮
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">园林设计</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('medicine')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-purple to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🌿
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">中医养生</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('astronomy')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-ancient-blue to-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🌙
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">观星历法</span>
+                </div>
+
+                <!-- 第三行应用 -->
+                <div class="app-icon flex flex-col items-center" onclick="openApp('painting')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🎨
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">国画创作</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('architecture')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🏯
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">古建筑学</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('cooking')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        🥢
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">宫廷料理</span>
+                </div>
+
+                <div class="app-icon flex flex-col items-center" onclick="openApp('library')">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                        📚
+                    </div>
+                    <span class="text-white text-xs mt-2 text-center text-shadow">典籍藏书</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部Dock栏 -->
+        <div class="absolute bottom-6 left-6 right-6 z-50">
+            <div class="dock rounded-2xl p-4 flex justify-center items-center space-x-6">
+                <div class="app-icon" onclick="openApp('messages')">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-xl shadow-lg relative">
+                        💬
+                        <div
+                            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                            3</div>
+                    </div>
+                </div>
+
+                <div class="app-icon" onclick="openApp('contacts')">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center text-xl shadow-lg">
+                        👥
+                    </div>
+                </div>
+
+                <div class="app-icon" onclick="openApp('camera')">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center text-xl shadow-lg">
+                        📷
+                    </div>
+                </div>
+
+                <div class="app-icon" onclick="openApp('settings')">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-700 rounded-xl flex items-center justify-center text-xl shadow-lg">
+                        ⚙️
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通知面板 -->
+        <div id="notification-panel" class="absolute top-16 right-6 z-60 w-80 max-h-96 overflow-y-auto hidden">
+            <div class="glass-effect rounded-xl p-4 text-white">
+                <h3 class="text-lg font-semibold mb-3 text-ancient-gold">通知中心</h3>
+                <div class="space-y-3">
+                    <div class="notification bg-white bg-opacity-10 rounded-lg p-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-xl">📜</div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">诗词雅集</div>
+                                <div class="text-xs opacity-75">今日推荐：《春江花月夜》</div>
+                                <div class="text-xs opacity-50 mt-1">2分钟前</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification bg-white bg-opacity-10 rounded-lg p-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-xl">🍵</div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">茶艺学堂</div>
+                                <div class="text-xs opacity-75">新课程：龙井茶的冲泡技巧</div>
+                                <div class="text-xs opacity-50 mt-1">1小时前</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification bg-white bg-opacity-10 rounded-lg p-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-xl">🌙</div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">观星历法</div>
+                                <div class="text-xs opacity-75">今晚月圆，适宜观星</div>
+                                <div class="text-xs opacity-50 mt-1">3小时前</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 应用详情模态框 -->
+        <div id="app-modal" class="fixed inset-0 z-70 hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeApp()"></div>
+            <div class="absolute inset-4 glass-effect rounded-3xl overflow-hidden">
+                <div class="h-full flex flex-col">
+                    <!-- 应用头部 -->
+                    <div class="flex items-center justify-between p-6 border-b border-white border-opacity-20">
+                        <div class="flex items-center space-x-4">
+                            <div id="modal-app-icon"
+                                class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"></div>
+                            <div>
+                                <h2 id="modal-app-title" class="text-xl font-bold text-white">应用名称</h2>
+                                <p id="modal-app-subtitle" class="text-sm text-white opacity-75">应用描述</p>
+                            </div>
+                        </div>
+                        <button onclick="closeApp()"
+                            class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- 应用内容 -->
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div id="modal-app-content" class="text-white">
+                            <!-- 动态内容 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置面板 -->
+        <div id="settings-panel" class="fixed inset-0 z-80 hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeSettings()"></div>
+            <div class="absolute inset-4 glass-effect rounded-3xl overflow-hidden">
+                <div class="h-full flex flex-col">
+                    <div class="flex items-center justify-between p-6 border-b border-white border-opacity-20">
+                        <h2 class="text-xl font-bold text-white">⚙️ 系统设置</h2>
+                        <button onclick="closeSettings()"
+                            class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div class="space-y-6 text-white">
+                            <!-- 显示设置 -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-ancient-gold">🎨 显示设置</h3>
+
+                                <div class="flex items-center justify-between p-4 bg-white bg-opacity-10 rounded-xl">
+                                    <div>
+                                        <div class="font-medium">壁纸主题</div>
+                                        <div class="text-sm opacity-75">选择桌面背景主题</div>
+                                    </div>
+                                    <select class="bg-white bg-opacity-20 rounded-lg px-3 py-2 text-white"
+                                        onchange="changeWallpaper(this.value)">
+                                        <option value="default">古韵渐变</option>
+                                        <option value="mountain">山水画卷</option>
+                                        <option value="palace">宫廷华贵</option>
+                                        <option value="garden">园林雅致</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-white bg-opacity-10 rounded-xl">
+                                    <div>
+                                        <div class="font-medium">动画效果</div>
+                                        <div class="text-sm opacity-75">开启应用图标动画</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked
+                                            onchange="toggleAnimations(this.checked)">
+                                        <div
+                                            class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ancient-gold">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 通知设置 -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-ancient-gold">🔔 通知设置</h3>
+
+                                <div class="flex items-center justify-between p-4 bg-white bg-opacity-10 rounded-xl">
+                                    <div>
+                                        <div class="font-medium">推送通知</div>
+                                        <div class="text-sm opacity-75">接收应用推送消息</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div
+                                            class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ancient-gold">
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-white bg-opacity-10 rounded-xl">
+                                    <div>
+                                        <div class="font-medium">勿扰模式</div>
+                                        <div class="text-sm opacity-75">静音所有通知</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ancient-gold">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 系统信息 -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-ancient-gold">📱 系统信息</h3>
+
+                                <div class="p-4 bg-white bg-opacity-10 rounded-xl space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="opacity-75">系统版本</span>
+                                        <span>古韵OS 1.0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="opacity-75">存储空间</span>
+                                        <span>128GB 可用</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="opacity-75">电池健康</span>
+                                        <span class="text-green-400">100%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="opacity-75">网络状态</span>
+                                        <span class="text-green-400">已连接</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentApp = null;
+        let notificationVisible = false;
+        let animationsEnabled = true;
+
+        // 应用数据
+        const apps = {
+            poetry: {
+                title: '诗词雅集',
+                subtitle: '品味千年文学之美',
+                icon: '📜',
+                color: 'from-ancient-gold to-yellow-600',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-bold mb-4 text-ancient-gold">今日推荐</h3>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                <h4 class="text-xl mb-4">春江花月夜</h4>
+                                <div class="text-center space-y-2 text-lg leading-relaxed">
+                                    <p>春江潮水连海平，海上明月共潮生。</p>
+                                    <p>滟滟随波千万里，何处春江无月明！</p>
+                                    <p>江流宛转绕芳甸，月照花林皆似霰。</p>
+                                    <p>空里流霜不觉飞，汀上白沙看不见。</p>
+                                </div>
+                                <div class="text-right mt-4 text-sm opacity-75">—— 张若虚</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2">📚</div>
+                                <div class="font-medium">诗词库</div>
+                                <div class="text-sm opacity-75">10000+ 首</div>
+                            </div>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2">✍️</div>
+                                <div class="font-medium">创作工具</div>
+                                <div class="text-sm opacity-75">AI 辅助</div>
+                            </div>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2">🎵</div>
+                                <div class="font-medium">吟诵音频</div>
+                                <div class="text-sm opacity-75">名家朗诵</div>
+                            </div>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2">📖</div>
+                                <div class="font-medium">学习笔记</div>
+                                <div class="text-sm opacity-75">个人收藏</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            calligraphy: {
+                title: '书法练习',
+                subtitle: '传承千年笔墨精神',
+                icon: '🖌️',
+                color: 'from-gray-800 to-gray-600',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-bold mb-4 text-ancient-gold">今日练习</h3>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                <div class="text-6xl mb-4 font-bold" style="font-family: 'Noto Serif SC', serif;">静</div>
+                                <p class="text-lg">静以修身，俭以养德</p>
+                                <div class="text-sm opacity-75 mt-2">楷书 · 颜真卿体</div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-white bg-opacity-10 rounded-xl p-4">
+                                <h4 class="font-semibold mb-2">🎯 练习进度</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span>楷书基础</span>
+                                        <span>85%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-600 rounded-full h-2">
+                                        <div class="bg-ancient-gold h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="bg-white bg-opacity-10 rounded-lg p-3 text-center">
+                                    <div class="text-xl mb-1">📝</div>
+                                    <div class="text-sm">临摹练习</div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 rounded-lg p-3 text-center">
+                                    <div class="text-xl mb-1">🎨</div>
+                                    <div class="text-sm">创作模式</div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 rounded-lg p-3 text-center">
+                                    <div class="text-xl mb-1">📊</div>
+                                    <div class="text-sm">进度统计</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            music: {
+                title: '古典音乐',
+                subtitle: '聆听华夏千年雅音',
+                icon: '🎵',
+                color: 'from-ancient-red to-red-600',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-bold mb-4 text-ancient-gold">正在播放</h3>
+                            <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                <div class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-ancient-red to-red-600 rounded-full flex items-center justify-center text-4xl">
+                                    🎵
+                                </div>
+                                <h4 class="text-xl mb-2">高山流水</h4>
+                                <p class="text-sm opacity-75">古琴独奏 · 管平湖</p>
+                                
+                                <div class="mt-4">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>2:34</span>
+                                        <span>6:42</span>
+                                    </div>
+                                    <div class="w-full bg-gray-600 rounded-full h-1">
+                                        <div class="bg-ancient-gold h-1 rounded-full" style="width: 38%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-center items-center space-x-6 mt-6">
+                                    <button class="text-2xl">⏮️</button>
+                                    <button class="text-3xl">⏸️</button>
+                                    <button class="text-2xl">⏭️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <h4 class="font-semibold">🎼 推荐曲目</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
+                                    <div class="text-xl">🎶</div>
+                                    <div class="flex-1">
+                                        <div class="font-medium">梅花三弄</div>
+                                        <div class="text-xs opacity-75">古琴 · 龚一</div>
+                                    </div>
+                                    <div class="text-xs opacity-50">4:23</div>
+                                </div>
+                                <div class="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
+                                    <div class="text-xl">🎶</div>
+                                    <div class="flex-1">
+                                        <div class="font-medium">春江花月夜</div>
+                                        <div class="text-xs opacity-75">琵琶 · 刘德海</div>
+                                    </div>
+                                    <div class="text-xs opacity-50">7:15</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            settings: {
+                title: '系统设置',
+                subtitle: '个性化定制您的设备',
+                icon: '⚙️',
+                color: 'from-gray-500 to-gray-700',
+                content: '设置内容将在设置面板中显示'
+            }
+        };
+
+        // 时间更新
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            const dateString = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+
+            document.getElementById('current-time').textContent = timeString;
+            document.getElementById('main-time').textContent = timeString;
+            document.getElementById('main-date').textContent = dateString;
+        }
+
+        // 打开应用
+        function openApp(appId) {
+            if (appId === 'settings') {
+                openSettings();
+                return;
+            }
+
+            const app = apps[appId];
+            if (!app) return;
+
+            currentApp = appId;
+
+            // 更新模态框内容
+            document.getElementById('modal-app-icon').className = `w-12 h-12 bg-gradient-to-br ${app.color} rounded-xl flex items-center justify-center text-2xl`;
+            document.getElementById('modal-app-icon').textContent = app.icon;
+            document.getElementById('modal-app-title').textContent = app.title;
+            document.getElementById('modal-app-subtitle').textContent = app.subtitle;
+            document.getElementById('modal-app-content').innerHTML = app.content;
+
+            // 显示模态框
+            document.getElementById('app-modal').classList.remove('hidden');
+
+            // 添加震动效果
+            if (animationsEnabled) {
+                const appIcon = event.currentTarget;
+                appIcon.classList.add('animate-shake');
+                setTimeout(() => {
+                    appIcon.classList.remove('animate-shake');
+                }, 500);
+            }
+        }
+
+        // 关闭应用
+        function closeApp() {
+            document.getElementById('app-modal').classList.add('hidden');
+            currentApp = null;
+        }
+
+        // 打开设置
+        function openSettings() {
+            document.getElementById('settings-panel').classList.remove('hidden');
+        }
+
+        // 关闭设置
+        function closeSettings() {
+            document.getElementById('settings-panel').classList.add('hidden');
+        }
+
+        // 切换通知面板
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            notificationVisible = !notificationVisible;
+
+            if (notificationVisible) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        // 更换壁纸
+        function changeWallpaper(theme) {
+            const body = document.body;
+            const container = body.querySelector('.wallpaper');
+
+            // 移除现有主题类
+            container.classList.remove('wallpaper', 'mountain-theme', 'palace-theme', 'garden-theme');
+
+            switch (theme) {
+                case 'mountain':
+                    container.classList.add('mountain-theme');
+                    container.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 25%, #7f8c8d 50%, #95a5a6 75%, #bdc3c7 100%)';
+                    break;
+                case 'palace':
+                    container.classList.add('palace-theme');
+                    container.style.background = 'linear-gradient(135deg, #8B0000 0%, #DC143C 25%, #B22222 50%, #CD5C5C 75%, #F08080 100%)';
+                    break;
+                case 'garden':
+                    container.classList.add('garden-theme');
+                    container.style.background = 'linear-gradient(135deg, #2d5016 0%, #3e6b1f 25%, #4f7942 50%, #6b8e23 75%, #9acd32 100%)';
+                    break;
+                default:
+                    container.classList.add('wallpaper');
+                    container.style.background = '';
+            }
+        }
+
+        // 切换动画
+        function toggleAnimations(enabled) {
+            animationsEnabled = enabled;
+            const icons = document.querySelectorAll('.app-icon');
+
+            icons.forEach(icon => {
+                if (enabled) {
+                    icon.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                } else {
+                    icon.style.transition = 'none';
+                }
+            });
+        }
+
+        // 添加触摸事件支持
+        function addTouchSupport() {
+            const appIcons = document.querySelectorAll('.app-icon');
+
+            appIcons.forEach(icon => {
+                icon.addEventListener('touchstart', function (e) {
+                    if (animationsEnabled) {
+                        this.style.transform = 'scale(0.95)';
+                    }
+                });
+
+                icon.addEventListener('touchend', function (e) {
+                    if (animationsEnabled) {
+                        this.style.transform = '';
+                    }
+                });
+            });
+        }
+
+        // 状态栏点击事件
+        document.querySelector('.glass-effect').addEventListener('click', function (e) {
+            if (e.target.closest('.glass-effect')) {
+                toggleNotifications();
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                if (currentApp) {
+                    closeApp();
+                } else if (notificationVisible) {
+                    toggleNotifications();
+                }
+            }
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            updateTime();
+            setInterval(updateTime, 1000);
+            addTouchSupport();
+
+            // 添加长按效果
+            const appIcons = document.querySelectorAll('.app-icon');
+            appIcons.forEach(icon => {
+                let pressTimer;
+
+                icon.addEventListener('mousedown', function () {
+                    pressTimer = setTimeout(() => {
+                        if (animationsEnabled) {
+                            this.classList.add('animate-bounce-slow');
+                        }
+                    }, 500);
+                });
+
+                icon.addEventListener('mouseup', function () {
+                    clearTimeout(pressTimer);
+                    this.classList.remove('animate-bounce-slow');
+                });
+
+                icon.addEventListener('mouseleave', function () {
+                    clearTimeout(pressTimer);
+                    this.classList.remove('animate-bounce-slow');
+                });
+            });
+        });
+
+        // 模拟通知推送
+        function showNotification(title, message, icon) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-6 z-50 bg-white bg-opacity-10 backdrop-blur-lg rounded-xl p-4 text-white max-w-sm notification';
+            notification.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="text-2xl">${icon}</div>
+                    <div class="flex-1">
+                        <div class="font-medium">${title}</div>
+                        <div class="text-sm opacity-75">${message}</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white opacity-50 hover:opacity-100">
+                        ✕
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // 定期推送通知
+        setTimeout(() => {
+            showNotification('诗词雅集', '今日推荐：《静夜思》', '📜');
+        }, 10000);
+
+        setTimeout(() => {
+            showNotification('天气提醒', '今日天气晴朗，适宜出行', '☀️');
+        }, 20000);
+    </script>
+</body>
+
+</html>

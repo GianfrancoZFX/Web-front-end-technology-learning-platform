@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手机桌面风格界面 - Tailwind CSS版</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // 自定义Tailwind配置
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blue: '#4285F4',
+                        red: '#EA4335',
+                        yellow: '#FBBC05',
+                        green: '#34A853',
+                        purple: '#9c27b0',
+                        orange: '#FF9800',
+                        pink: '#E91E63',
+                        teal: '#009688',
+                        indigo: '#3F51B5',
+                        cyan: '#00BCD4',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cover bg-center bg-no-repeat h-screen flex flex-col p-5 text-white overflow-hidden" style="background-image: url('images/image.png');">
+    <!-- 时间和日期显示 -->
+    <div class="text-center mt-5 mb-8">
+        <div id="current-time" class="text-6xl font-light">09:32</div>
+        <div id="current-date" class="text-sm mt-1 opacity-90">5月7日 星期二 四月初十</div>
+    </div>
+    
+    <!-- 搜索框 -->
+    <div class="mx-auto w-4/5 max-w-lg mt-5">
+        <div class="bg-gray-800/70 rounded-full py-2 px-5 flex items-center">
+            <span class="mr-2 text-gray-400">🔍</span>
+            <input type="text" placeholder="输入搜索内容" class="bg-transparent border-none text-white w-full py-1 outline-none placeholder-gray-400">
+        </div>
+    </div>
+    
+    <!-- 应用图标网格容器 -->
+    <div class="mt-10">
+        <!-- 应用图标网格 -->
+        <div class="flex flex-wrap justify-center gap-5 p-5 mt-auto" id="app-grid">
+            <!-- 应用图标将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 底部文本 -->
+    <div class="text-center mt-5 text-xs opacity-70">「无论做什么都要有人，若无其人，则何能成人之事。」</div>
+    
+    <!-- JavaScript 代码 -->
+    <script>
+        // 应用图标数据 - 使用Props模式
+        const appIcons = [
+            { name: '爱奇艺', icon: '爱', color: 'blue' },
+            { name: '微博精选', icon: '微', color: 'red' },
+            { name: '知乎', icon: '知', color: 'yellow' },
+            { name: '小红书', icon: '小', color: 'red' },
+            { name: '百度翻译', icon: '百', color: 'blue' },
+            { name: 'QQ浏览器', icon: 'QQ', color: 'green' },
+            { name: '中国地图', icon: '中', color: 'blue' },
+            { name: '学习通', icon: '学', color: 'purple' },
+            { name: '外卖', icon: '外', color: 'orange' },
+            { name: 'GPT', icon: 'G', color: 'red' },
+            { name: '哔哩哔哩', icon: '哔', color: 'pink' },
+            { name: '哔哩直播', icon: '哔', color: 'pink' },
+            { name: '每日一练', icon: '每', color: 'orange' },
+            { name: '抖音', icon: '抖', color: 'orange' },
+            { name: 'Twitter', icon: 'X', color: 'teal' }
+        ];
+        
+        // 创建应用图标组件函数
+        function createAppIcon(props) {
+            const { name, icon, color } = props;
+            
+            // 创建图标元素
+            const appElement = document.createElement('a');
+            appElement.href = '#';
+            appElement.className = 'flex flex-col items-center w-20 mb-4 transition-transform duration-200 ease-in-out hover:scale-110';
+            
+            // 创建图标容器
+            const iconElement = document.createElement('div');
+            iconElement.className = `w-12 h-12 rounded-xl flex items-center justify-center mb-1 text-xl text-white bg-${color}`;
+            iconElement.textContent = icon;
+            
+            // 创建应用名称
+            const nameElement = document.createElement('div');
+            nameElement.className = 'text-xs text-center text-white drop-shadow-md';
+            nameElement.textContent = name;
+            
+            // 组装组件
+            appElement.appendChild(iconElement);
+            appElement.appendChild(nameElement);
+            
+            return appElement;
+        }
+        
+        // 渲染所有应用图标
+        function renderAppIcons() {
+            const appGrid = document.getElementById('app-grid');
+            
+            // 清空容器
+            appGrid.innerHTML = '';
+            
+            // 添加所有图标
+            appIcons.forEach(app => {
+                const appElement = createAppIcon(app);
+                appGrid.appendChild(appElement);
+            });
+        }
+        
+        // 更新时间函数
+        function updateTime() {
+            const now = new Date();
+            
+            // 格式化时间
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+            
+            // 格式化日期
+            const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            
+            const month = now.getMonth();
+            const date = now.getDate();
+            const day = now.getDay();
+            
+            // 使用 npx 命令获取农历日期（这里只是模拟，实际需要安装相关包）
+            // 实际使用时可以通过 npx lunar-calendar 或类似工具获取农历
+            const lunarDate = '四月初十'; // 这里只是示例
+            
+            document.getElementById('current-date').textContent = 
+                `${month + 1}月${date}日 ${days[day]} ${lunarDate}`;
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 渲染应用图标
+            renderAppIcons();
+            
+            // 更新时间
+            updateTime();
+            
+            // 每分钟更新一次时间
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>

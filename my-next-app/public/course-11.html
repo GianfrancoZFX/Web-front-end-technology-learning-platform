@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十一周 - Next.js 框架入门与应用开发</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            background: #ffd700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .output {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            border: 2px solid #4a5568;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: scale(1.05);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 2s ease;
+        }
+
+        .interactive-demo {
+            background: #f0f4f8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .file-structure {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+
+        .folder {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .file {
+            color: #68d391;
+        }
+
+        .indent-1 { margin-left: 20px; }
+        .indent-2 { margin-left: 40px; }
+        .indent-3 { margin-left: 60px; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .week-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="week-badge">第 11 周课程</div>
+            <h1>🚀 Next.js 框架入门与应用开发</h1>
+            <p>掌握现代化React全栈框架，构建高性能Web应用</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Next.js 简介 -->
+            <div class="card animate-in">
+                <h2>📚 Next.js 框架简介</h2>
+                <div class="demo-section">
+                    <h3>🎯 什么是 Next.js？</h3>
+                    <p><span class="highlight">Next.js</span> 是一个基于React的生产级框架，提供了构建现代Web应用所需的所有功能。</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <h4>🔥 服务端渲染</h4>
+                            <p>SSR & SSG</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>⚡ 性能优化</h4>
+                            <p>自动代码分割</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🛠️ 零配置</h4>
+                            <p>开箱即用</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🌐 全栈支持</h4>
+                            <p>API Routes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🆚 Next.js vs React</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>特性</th>
+                                <th>React</th>
+                                <th>Next.js</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>渲染方式</td>
+                                <td>客户端渲染(CSR)</td>
+                                <td>SSR/SSG/CSR</td>
+                            </tr>
+                            <tr>
+                                <td>路由</td>
+                                <td>需要React Router</td>
+                                <td>文件系统路由</td>
+                            </tr>
+                            <tr>
+                                <td>配置</td>
+                                <td>需要Webpack配置</td>
+                                <td>零配置</td>
+                            </tr>
+                            <tr>
+                                <td>性能优化</td>
+                                <td>手动优化</td>
+                                <td>自动优化</td>
+                            </tr>
+                            <tr>
+                                <td>API支持</td>
+                                <td>需要单独后端</td>
+                                <td>内置API Routes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn" onclick="demonstrateNextjsFeatures()">🎯 演示Next.js特性</button>
+                <div id="nextjsOutput" class="output"></div>
+            </div>
+
+            <!-- 项目创建与结构 -->
+            <div class="card animate-in">
+                <h2>🏗️ 项目创建与结构</h2>
+                <div class="demo-section">
+                    <h3>🚀 创建Next.js项目</h3>
+                    <div class="code-block"># 使用create-next-app创建项目
+npx create-next-app@latest my-app
+
+# 进入项目目录
+cd my-app
+
+# 启动开发服务器
+npm run dev
+
+# 项目将在 http://localhost:3000 运行</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📁 项目目录结构</h3>
+                    <div class="file-structure">
+<span class="folder">my-app/</span>
+<div class="indent-1"><span class="folder">├── pages/</span>          <span style="color: #a0aec0;"># 页面目录(App Router: app/)</span></div>
+<div class="indent-2"><span class="file">│   ├── index.js</span>    <span style="color: #a0aec0;"># 首页</span></div>
+<div class="indent-2"><span class="file">│   ├── about.js</span>    <span style="color: #a0aec0;"># 关于页面</span></div>
+<div class="indent-2"><span class="folder">│   └── api/</span>        <span style="color: #a0aec0;"># API路由</span></div>
+<div class="indent-3"><span class="file">│       └── hello.js</span></div>
+<div class="indent-1"><span class="folder">├── public/</span>         <span style="color: #a0aec0;"># 静态资源</span></div>
+<div class="indent-2"><span class="file">│   ├── favicon.ico</span></div>
+<div class="indent-2"><span class="file">│   └── images/</span></div>
+<div class="indent-1"><span class="folder">├── styles/</span>         <span style="color: #a0aec0;"># 样式文件</span></div>
+<div class="indent-2"><span class="file">│   ├── globals.css</span></div>
+<div class="indent-2"><span class="file">│   └── Home.module.css</span></div>
+<div class="indent-1"><span class="folder">├── components/</span>     <span style="color: #a0aec0;"># 组件目录</span></div>
+<div class="indent-1"><span class="file">├── package.json</span></div>
+<div class="indent-1"><span class="file">├── next.config.js</span>  <span style="color: #a0aec0;"># Next.js配置</span></div>
+<div class="indent-1"><span class="file">└── README.md</span></div>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>⚙️ 配置选项</h3>
+                    <div class="code-block">// next.config.js
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: ['example.com'],
+  },
+  env: {
+    CUSTOM_KEY: 'my-value',
+  },
+  async redirects() {
+    return [
+      {
+        source: '/old-page',
+        destination: '/new-page',
+        permanent: true,
+      },
+    ]
+  },
+}
+
+module.exports = nextConfig</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateProjectStructure()">📁 演示项目结构</button>
+                <div id="structureOutput" class="output"></div>
+            </div>
+
+            <!-- 页面与路由 -->
+            <div class="card animate-in">
+                <h2>🛣️ 页面与路由系统</h2>
+                <div class="demo-section">
+                    <h3>📄 基础页面创建</h3>
+                    <div class="code-block">// pages/index.js - 首页
+export default function Home() {
+  return (
+    <div>
+      <h1>欢迎来到我的网站</h1>
+      <p>这是首页内容</p>
+    </div>
+  )
+}
+
+// pages/about.js - 关于页面
+export default function About() {
+  return (
+    <div>
+      <h1>关于我们</h1>
+      <p>这是关于页面</p>
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔗 动态路由</h3>
+                    <div class="code-block">// pages/posts/[id].js - 动态路由
+import { useRouter } from 'next/router'
+
+export default function Post() {
+  const router = useRouter()
+  const { id } = router.query
+
+  return (
+    <div>
+      <h1>文章 ID: {id}</h1>
+      <p>这是动态生成的文章页面</p>
+    </div>
+  )
+}
+
+// 访问路径: /posts/1, /posts/hello, /posts/123</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🌐 嵌套路由</h3>
+                    <div class="code-block">// pages/blog/[...slug].js - 捕获所有路由
+export default function BlogPost() {
+  const router = useRouter()
+  const { slug } = router.query
+
+  return (
+    <div>
+      <h1>博客路径: {slug?.join('/')}</h1>
+    </div>
+  )
+}
+
+// 匹配: /blog/a, /blog/a/b, /blog/a/b/c</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔄 页面导航</h3>
+                    <div class="code-block">import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+export default function Navigation() {
+  const router = useRouter()
+
+  const handleNavigation = () => {
+    router.push('/about')
+  }
+
+  return (
+    <nav>
+      {/* 声明式导航 */}
+      <Link href="/">
+        <a>首页</a>
+      </Link>
+      
+      <Link href="/about">
+        <a>关于</a>
+      </Link>
+      
+      {/* 编程式导航 */}
+      <button onClick={handleNavigation}>
+        跳转到关于页面
+      </button>
+    </nav>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateRouting()">🛣️ 演示路由系统</button>
+                <div id="routingOutput" class="output"></div>
+            </div>
+
+            <!-- 组件与样式 -->
+            <div class="card animate-in">
+                <h2>🎨 组件开发与样式管理</h2>
+                <div class="demo-section">
+                    <h3>🧩 组件创建</h3>
+                    <div class="code-block">// components/Header.js
+export default function Header({ title }) {
+  return (
+    <header className="header">
+      <h1>{title}</h1>
+      <nav>
+        <a href="/">首页</a>
+        <a href="/about">关于</a>
+      </nav>
+    </header>
+  )
+}
+
+// 在页面中使用
+import Header from '../components/Header'
+
+export default function Home() {
+  return (
+    <div>
+      <Header title="我的网站" />
+      <main>
+        <p>页面内容</p>
+      </main>
+    </div>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>💅 CSS模块化</h3>
+                    <div class="code-block">/* styles/Header.module.css */
+.header {
+  background: #333;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🎯 使用CSS模块</h3>
+                    <div class="code-block">// components/Header.js
+import styles from '../styles/Header.module.css'
+
+export default function Header() {
+  return (
+    <header className={styles.header}>
+      <h1>我的网站</h1>
+      <nav className={styles.nav}>
+        <a href="/" className={styles.navLink}>首页</a>
+        <a href="/about" className={styles.navLink}>关于</a>
+      </nav>
+    </header>
+  )
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🌟 Styled JSX</h3>
+                    <div class="code-block">export default function StyledComponent() {
+  return (
+    <div>
+      <h1>样式化组件</h1>
+      <style jsx>
+        h1 {
+          color: #0070f3;
+          font-size: 2rem;
+          text-align: center;
+        }
+        div {
+          padding: 2rem;
+          background: #f9f9f9;
+          border-radius: 8px;
+        }
+      </style>
+    </div>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateComponents()">🧩 演示组件开发</button>
+                <div id="componentsOutput" class="output"></div>
+            </div>
+
+            <!-- API Routes -->
+            <div class="card animate-in">
+                <h2>🔌 API Routes 后端开发</h2>
+                <div class="demo-section">
+                    <h3>🚀 创建API端点</h3>
+                    <div class="code-block">// pages/api/hello.js
+export default function handler(req, res) {
+  res.status(200).json({ 
+    message: 'Hello from Next.js API!',
+    timestamp: new Date().toISOString()
+  })
+}
+
+// 访问: GET /api/hello</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📝 处理不同HTTP方法</h3>
+                    <div class="code-block">// pages/api/users.js
+export default function handler(req, res) {
+  const { method } = req
+
+  switch (method) {
+    case 'GET':
+      // 获取用户列表
+      res.status(200).json({ users: [] })
+      break
+    
+    case 'POST':
+      // 创建新用户
+      const { name, email } = req.body
+      res.status(201).json({ 
+        id: Date.now(),
+        name,
+        email
+      })
+      break
+    
+    default:
+      res.setHeader('Allow', ['GET', 'POST'])
+      res.status(405).end(`Method ${method} Not Allowed`)
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🔗 动态API路由</h3>
+                    <div class="code-block">// pages/api/users/[id].js
+export default function handler(req, res) {
+  const { id } = req.query
+  
+  if (req.method === 'GET') {
+    // 获取特定用户
+    res.status(200).json({
+      id,
+      name: `用户${id}`,
+      email: `user${id}@example.com`
+    })
+  } else if (req.method === 'DELETE') {
+    // 删除用户
+    res.status(200).json({
+      message: `用户${id}已删除`
+    })
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📡 前端调用API</h3>
+                    <div class="code-block">// 在组件中调用API
+import { useState, useEffect } from 'react'
+
+export default function UserList() {
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users')
+      const data = await response.json()
+      setUsers(data.users)
+    } catch (error) {
+      console.error('获取用户失败:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createUser = async (userData) => {
+    const response = await fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+    
+    if (response.ok) {
+      fetchUsers() // 重新获取用户列表
+    }
+  }
+
+  return (
+    <div>
+      {loading ? <p>加载中...</p> : (
+        <ul>
+          {users.map(user => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}</div>
+                </div>
+
+                <button class="btn" onclick="demonstrateAPI()">🔌 演示API Routes</button>
+                <div id="apiOutput" class="output"></div>
+            </div>
+
+            <!-- 数据获取 -->
+            <div class="card animate-in">
+                <h2>📊 数据获取与渲染策略</h2>
+                <div class="demo-section">
+                    <h3>🔄 getStaticProps (SSG)</h3>
+                    <div class="code-block">// 静态生成 - 构建时获取数据
+export default function StaticPage({ posts }) {
+  return (
+    <div>
+      <h1>博客文章</h1>
+      {posts.map(post => (
+        <article key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.excerpt}</p>
+        </article>
+      ))}
+    </div>
+  )
+}
+
+// 构建时执行
+export async function getStaticProps() {
+  // 从API或文件系统获取数据
+  const posts = await fetchPosts()
+  
+  return {
+    props: {
+      posts,
+    },
+    // 增量静态再生成 (ISR)
+    revalidate: 60, // 60秒后重新生成
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>⚡ getServerSideProps (SSR)</h3>
+                    <div class="code-block">// 服务端渲染 - 每次请求时获取数据
+export default function DynamicPage({ user, timestamp }) {
+  return (
+    <div>
+      <h1>用户信息</h1>
+      <p>用户名: {user.name}</p>
+      <p>页面生成时间: {timestamp}</p>
+    </div>
+  )
+}
+
+// 每次请求时执行
+export async function getServerSideProps(context) {
+  const { req, res, params, query } = context
+  
+  // 获取用户数据
+  const user = await fetchUser(params.id)
+  
+  if (!user) {
+    return {
+      notFound: true,
+    }
+  }
+  
+  return {
+    props: {
+      user,
+      timestamp: new Date().toISOString(),
+    },
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>🎯 getStaticPaths (动态SSG)</h3>
+                    <div class="code-block">// pages/posts/[slug].js
+export default function Post({ post }) {
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>{post.content}</div>
+    </article>
+  )
+}
+
+// 生成静态路径
+export async function getStaticPaths() {
+  const posts = await fetchAllPosts()
+  
+  const paths = posts.map(post => ({
+    params: { slug: post.slug }
+  }))
+  
+  return {
+    paths,
+    fallback: 'blocking', // 或 false, true
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const post = await fetchPost(params.slug)
+  
+  return {
+    props: {
+      post,
+    },
+  }
+}</div>
+                </div>
+
+                <div class="demo-section">
+                    <h3>📈 渲染策略对比</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>策略</th>
+                                <th>执行时机</th>
+                                <th>适用场景</th>
+                                <th>性能</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SSG</td>
+                                <td>构建时</td>
+                                <td>静态内容、博客</td>
+                                <td>最快</td>
+                            </tr>
+                            <tr>
+                                <td>ISR</td>
+                                <td>构建时+定时</td>
+                                <td>半静态内容</td>
+                                <td>快</td>
+                            </tr>
+                            <tr>
+                                <td>SSR</td>
+                                <td>每次请求</td>
+                                <td>动态内容、个性化</td>
+                                <td>中等</td>
+                            </tr>
+                            <tr>
+                                <td>CSR</td>
+                                <td>客户端</td>
+                                <td>交互性强的应用</td>
+                                <td>取决于网络</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn" onclick="demonstrateDataFetching()">📊 演示数据获取</button>
+                <div id="dataOutput" class="output"></div>
+            </div>
+        </div>
+
+        <!-- 学习进度 -->
+        <div class="card">
+            <h2>📈 本周学习进度</h2>
+            <div class="demo-section">
+                <div style="margin: 10px 0;">
+                    <span>Next.js基础概念</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>项目结构与配置</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>路由系统</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>API Routes</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <span>数据获取策略</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 本周作业 -->
+        <div class="card">
+            <h2>📝 本周作业</h2>
+            <div class="demo-section">
+                <h3>🎯 作业要求</h3>
+                <ol style="line-height: 2;">
+                    <li>创建一个Next.js项目，包含至少3个页面（首页、关于、联系）</li>
+                    <li>实现页面间的导航功能</li>
+                    <li>创建至少2个可复用组件</li>
+                    <li>实现一个简单的API端点</li>
+                    <li>使用CSS模块或Styled JSX进行样式管理</li>
+                    <li>部署项目到Vercel或其他平台</li>
+                </ol>
+                
+                <h3>💡 加分项</h3>
+                <ul style="line-height: 2;">
+                    <li>使用动态路由创建博客文章页面</li>
+                    <li>实现数据获取（getStaticProps或getServerSideProps）</li>
+                    <li>添加响应式设计</li>
+                    <li>集成第三方API</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Next.js特性演示
+        function demonstrateNextjsFeatures() {
+            const output = document.getElementById('nextjsOutput');
+            output.textContent = '🚀 Next.js 核心特性演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '✅ 服务端渲染 (SSR)\n';
+                output.textContent += '   - 更好的SEO优化\n';
+                output.textContent += '   - 更快的首屏加载\n\n';
+                
+                output.textContent += '✅ 静态生成 (SSG)\n';
+                output.textContent += '   - 极快的页面加载\n';
+                output.textContent += '   - CDN友好\n\n';
+                
+                output.textContent += '✅ 自动代码分割\n';
+                output.textContent += '   - 按需加载\n';
+                output.textContent += '   - 优化包大小\n\n';
+                
+                output.textContent += '✅ 内置性能优化\n';
+                output.textContent += '   - 图片优化\n';
+                output.textContent += '   - 字体优化\n';
+                output.textContent += '   - 预加载\n';
+            }, 500);
+        }
+
+        function demonstrateProjectStructure() {
+            const output = document.getElementById('structureOutput');
+            output.textContent = '📁 Next.js 项目结构分析...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '📂 pages/ - 页面目录\n';
+                output.textContent += '   └── 文件系统路由\n';
+                output.textContent += '   └── 自动代码分割\n\n';
+                
+                output.textContent += '📂 public/ - 静态资源\n';
+                output.textContent += '   └── 直接访问\n';
+                output.textContent += '   └── 自动优化\n\n';
+                
+                output.textContent += '📂 styles/ - 样式文件\n';
+                output.textContent += '   └── CSS模块化\n';
+                output.textContent += '   └── 全局样式\n\n';
+                
+                output.textContent += '⚙️ next.config.js - 配置文件\n';
+                output.textContent += '   └── 自定义配置\n';
+                output.textContent += '   └── 插件集成\n';
+            }, 500);
+        }
+
+        function demonstrateRouting() {
+            const output = document.getElementById('routingOutput');
+            output.textContent = '🛣️ Next.js 路由系统演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '📄 静态路由\n';
+                output.textContent += '   pages/about.js → /about\n';
+                output.textContent += '   pages/contact.js → /contact\n\n';
+                
+                output.textContent += '🔗 动态路由\n';
+                output.textContent += '   pages/posts/[id].js → /posts/123\n';
+                output.textContent += '   pages/users/[...params].js → /users/a/b/c\n\n';
+                
+                output.textContent += '🌐 嵌套路由\n';
+                output.textContent += '   pages/blog/[category]/[slug].js\n';
+                output.textContent += '   → /blog/tech/nextjs-tutorial\n\n';
+                
+                output.textContent += '🔄 程序化导航\n';
+                output.textContent += '   router.push(\'/about\')\n';
+                output.textContent += '   router.replace(\'/login\')\n';
+            }, 500);
+        }
+
+        function demonstrateComponents() {
+            const output = document.getElementById('componentsOutput');
+            output.textContent = '🧩 Next.js 组件开发演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '🎨 CSS 模块化\n';
+                output.textContent += '   import styles from \'./Button.module.css\'\n';
+                output.textContent += '   <button className={styles.primary}>\n\n';
+                
+                output.textContent += '💅 Styled JSX\n';
+                output.textContent += '   <style jsx>{`\n';
+                output.textContent += '     .button { color: blue; }\n';
+                output.textContent += '   `}</style>\n\n';
+                
+                output.textContent += '🔧 组件复用\n';
+                output.textContent += '   <Header title="我的网站" />\n';
+                output.textContent += '   <Footer year={2024} />\n\n';
+                
+                output.textContent += '📱 响应式设计\n';
+                output.textContent += '   @media (max-width: 768px) {\n';
+                output.textContent += '     .container { padding: 1rem; }\n';
+                output.textContent += '   }\n';
+            }, 500);
+        }
+
+        function demonstrateAPI() {
+            const output = document.getElementById('apiOutput');
+            output.textContent = '🔌 API Routes 演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '🚀 创建API端点\n';
+                output.textContent += '   pages/api/users.js\n';
+                output.textContent += '   → GET /api/users\n\n';
+                
+                output.textContent += '📝 处理HTTP方法\n';
+                output.textContent += '   GET: 获取数据\n';
+                output.textContent += '   POST: 创建数据\n';
+                output.textContent += '   PUT: 更新数据\n';
+                output.textContent += '   DELETE: 删除数据\n\n';
+                
+                output.textContent += '🔗 动态API路由\n';
+                output.textContent += '   pages/api/users/[id].js\n';
+                output.textContent += '   → /api/users/123\n\n';
+                
+                output.textContent += '📡 前端调用\n';
+                output.textContent += '   const response = await fetch(\'/api/users\')\n';
+                output.textContent += '   const data = await response.json()\n';
+            }, 500);
+        }
+
+        function demonstrateDataFetching() {
+            const output = document.getElementById('dataOutput');
+            output.textContent = '📊 数据获取策略演示...\n\n';
+            
+            setTimeout(() => {
+                output.textContent += '🔄 getStaticProps (SSG)\n';
+                output.textContent += '   - 构建时获取数据\n';
+                output.textContent += '   - 静态生成页面\n';
+                output.textContent += '   - 最佳性能\n\n';
+                
+                output.textContent += '⚡ getServerSideProps (SSR)\n';
+                output.textContent += '   - 请求时获取数据\n';
+                output.textContent += '   - 服务端渲染\n';
+                output.textContent += '   - 实时数据\n\n';
+                
+                output.textContent += '🎯 getStaticPaths\n';
+                output.textContent += '   - 动态路由预生成\n';
+                output.textContent += '   - 结合SSG使用\n';
+                output.textContent += '   - 灵活的fallback策略\n\n';
+                
+                output.textContent += '📈 增量静态再生成 (ISR)\n';
+                output.textContent += '   - 定时更新静态页面\n';
+                output.textContent += '   - 兼顾性能和实时性\n';
+            }, 500);
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

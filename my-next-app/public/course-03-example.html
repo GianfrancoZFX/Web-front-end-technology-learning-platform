@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS基础知识实例 - 中国古代诗词展示</title>
+    <style>
+        /* 外部样式表模拟 */
+        body {
+            font-family: "Microsoft YaHei", "楷体", serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* 内部样式表 */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .poem-section {
+            background-color: #fff3cd;
+            padding: 25px;
+            border-left: 5px solid #ffc107;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .poem-title {
+            font-family: "楷体", serif;
+            text-decoration: underline;
+            color: #e74c3c;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .poem-content {
+            color: #27ae60;
+            font-weight: bold;
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            line-height: 2;
+            text-align: center;
+        }
+
+        .author-info {
+            background: #ecf0f1;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .author-info:hover {
+            background: #d5dbdb;
+            transform: translateX(10px);
+        }
+
+        .css-demo {
+            border: 2px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .selector-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: "Courier New", monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* 类选择器示例 */
+        .ancient-wisdom {
+            font-style: italic;
+            color: #8e44ad;
+            background: #f4f1fb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* ID选择器示例 */
+        #special-poem {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>CSS基础知识实例展示</h1>
+
+        <div class="highlight-box">
+            <strong>本页面展示CSS三种样式表的使用方式：外部样式表、内部样式表和内联样式</strong>
+        </div>
+
+        <div class="poem-section">
+            <h2 class="poem-title">静夜思 - 李白</h2>
+            <div class="poem-content">
+                床前明月光，疑是地上霜。<br>
+                举头望明月，低头思故乡。
+            </div>
+            <div class="author-info">
+                <strong>作者简介：</strong>李白（701年-762年），字太白，号青莲居士，唐代伟大的浪漫主义诗人，被后人誉为"诗仙"。
+            </div>
+        </div>
+
+        <div class="css-demo">
+            <h3>CSS选择器类型演示</h3>
+            <div class="selector-example">
+                /* 元素选择器 */
+                h1 { color: #2c3e50; }
+
+                /* 类选择器 */
+                .poem-content { color: #27ae60; }
+
+                /* ID选择器 */
+                #special-poem { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); }
+
+                /* 后代选择器 */
+                .container h2 { color: #e74c3c; }
+            </div>
+        </div>
+
+        <div class="ancient-wisdom">
+            <strong>古人智慧：</strong>"学而时习之，不亦说乎？" - 孔子
+        </div>
+
+        <div id="special-poem">
+            <h3>春晓 - 孟浩然</h3>
+            <p>春眠不觉晓，处处闻啼鸟。<br>
+                夜来风雨声，花落知多少。</p>
+        </div>
+
+        <!-- 内联样式示例 -->
+        <div
+            style="color: #8e44ad; font-weight: bold; background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            这是使用内联样式的文本：展示了颜色、字体粗细、背景色、内边距、外边距和文本对齐等CSS属性
+        </div>
+
+        <div class="highlight-box">
+            <strong>总结：</strong>本页面通过中国古代诗词展示了CSS的基础语法、三种样式表的使用方式以及常用的CSS属性和选择器类型。
+        </div>
+    </div>
+</body>
+
+</html>

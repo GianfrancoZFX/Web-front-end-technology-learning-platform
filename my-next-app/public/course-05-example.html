@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS定位与布局实例 - 中国古代天文观测</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #f39c12;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .astronomy-header {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientShift 6s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 相对定位演示 - 北斗七星 */
+        .big-dipper {
+            position: relative;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            height: 300px;
+            border: 3px solid #f39c12;
+            margin: 25px 0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #fff 0%, #f39c12 70%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #f39c12, 0 0 40px #f39c12;
+            animation: twinkle 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .star1 {
+            top: 50px;
+            left: 80px;
+        }
+
+        .star2 {
+            top: 70px;
+            left: 120px;
+        }
+
+        .star3 {
+            top: 90px;
+            left: 160px;
+        }
+
+        .star4 {
+            top: 110px;
+            left: 200px;
+        }
+
+        .star5 {
+            top: 130px;
+            left: 180px;
+        }
+
+        .star6 {
+            top: 150px;
+            left: 140px;
+        }
+
+        .star7 {
+            top: 170px;
+            left: 100px;
+        }
+
+        .constellation-label {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(243, 156, 18, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        /* 绝对定位演示 - 古代观星台 */
+        .observatory {
+            position: relative;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            height: 400px;
+            border: 4px solid #2c3e50;
+            margin: 25px 0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .main-tower {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .telescope {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 15px;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            border-radius: 10px;
+            transform-origin: center;
+            animation: rotate 8s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(360deg);
+            }
+        }
+
+        .moon {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #f1c40f, #f39c12);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
+            animation: moonPhase 4s ease-in-out infinite;
+        }
+
+        @keyframes moonPhase {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            animation: drift 10s linear infinite;
+        }
+
+        .cloud1 {
+            top: 80px;
+            left: -100px;
+            width: 80px;
+            height: 30px;
+        }
+
+        .cloud2 {
+            top: 120px;
+            left: -120px;
+            width: 100px;
+            height: 40px;
+            animation-delay: -5s;
+        }
+
+        @keyframes drift {
+            0% {
+                left: -120px;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* 浮动布局演示 - 古代星图 */
+        .star-map {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
+
+        .constellation {
+            float: left;
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin: 10px;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .constellation:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(155, 89, 182, 0.4);
+        }
+
+        .constellation::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .constellation:hover::before {
+            animation: shine 0.5s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Fixed定位演示 - 指南针 */
+        .compass {
+            position: fixed;
+            top: 120px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #e74c3c 0%, #c0392b 100%);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: compassSpin 8s linear infinite;
+        }
+
+        @keyframes compassSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .compass::before {
+            content: "N";
+            position: absolute;
+            top: 5px;
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        /* Z-index层叠演示 - 古代建筑群 */
+        .ancient-buildings {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border-radius: 15px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
+
+        .building {
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            border-radius: 10px 10px 0 0;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            padding-top: 20px;
+        }
+
+        .building1 {
+            left: 50px;
+            width: 100px;
+            height: 120px;
+            z-index: 1;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .building2 {
+            left: 120px;
+            width: 120px;
+            height: 180px;
+            z-index: 3;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .building3 {
+            left: 200px;
+            width: 100px;
+            height: 150px;
+            z-index: 2;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #e74c3c;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #e74c3c;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="compass">🧭<br>指南针</div>
+
+    <div class="container">
+        <h1>CSS定位与布局实例 - 中国古代天文观测</h1>
+
+        <div class="astronomy-header">
+            🌟 探索古代天文学家的观星智慧与CSS定位技术 🌟
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示CSS的相对定位、绝对定位、固定定位、浮动布局和z-index层叠
+        </div>
+
+        <h2 class="section-title">⭐ 相对定位 (position: relative) - 北斗七星</h2>
+        <div class="big-dipper">
+            <div class="star star1"></div>
+            <div class="star star2"></div>
+            <div class="star star3"></div>
+            <div class="star star4"></div>
+            <div class="star star5"></div>
+            <div class="star star6"></div>
+            <div class="star star7"></div>
+            <div class="constellation-label">北斗七星 - 古代导航之星</div>
+        </div>
+
+        <h2 class="section-title">🏛️ 绝对定位 (position: absolute) - 古代观星台</h2>
+        <div class="observatory">
+            <div class="main-tower"></div>
+            <div class="telescope"></div>
+            <div class="moon"></div>
+            <div class="cloud cloud1"></div>
+            <div class="cloud cloud2"></div>
+        </div>
+
+        <h2 class="section-title">🗺️ 浮动布局 (float) - 古代星座图</h2>
+        <div class="star-map clearfix">
+            <div class="constellation">
+                🐉<br>青龙<br><small>东方七宿</small>
+            </div>
+            <div class="constellation">
+                🐅<br>白虎<br><small>西方七宿</small>
+            </div>
+            <div class="constellation">
+                🐦<br>朱雀<br><small>南方七宿</small>
+            </div>
+            <div class="constellation">
+                🐢<br>玄武<br><small>北方七宿</small>
+            </div>
+        </div>
+
+        <h2 class="section-title">🏗️ Z-index层叠 - 古代建筑群</h2>
+        <div class="ancient-buildings">
+            <div class="building building1">钟楼<br>z-index: 1</div>
+            <div class="building building2">鼓楼<br>z-index: 3</div>
+            <div class="building building3">城楼<br>z-index: 2</div>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🔭 中国古代天文学成就</h3>
+            <p><strong>浑天仪：</strong>中国古代重要的天文观测仪器，用于观测天体运行规律。</p>
+            <p><strong>二十八宿：</strong>中国古代天文学将天空分为二十八个星座区域，用于观测和记录。</p>
+            <p><strong>历法制定：</strong>通过长期观测，制定了精确的农历系统，指导农业生产。</p>
+            <p><strong>日食月食：</strong>古代天文学家能够准确预测日食月食现象，体现了高超的计算能力。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过古代天文观测场景展示了CSS定位的核心概念：
+            <br>• <strong>相对定位：</strong>元素相对于其正常位置进行偏移，不脱离文档流
+            <br>• <strong>绝对定位：</strong>元素相对于最近的已定位祖先元素进行定位，脱离文档流
+            <br>• <strong>固定定位：</strong>元素相对于浏览器窗口进行定位，滚动时位置不变
+            <br>• <strong>浮动布局：</strong>元素向左或向右浮动，其他元素围绕其排列
+            <br>• <strong>z-index：</strong>控制元素的层叠顺序，数值越大越在上层
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js服务端开发实例 - 古代驿站系统</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #ecf0f1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            color: #2c3e50;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .post-station-header {
+            background: linear-gradient(45deg, #2c3e50, #34495e, #3498db, #2980b9);
+            background-size: 400% 400%;
+            animation: gradientShift 6s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .server-demo {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .server-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-indicator.online {
+            background: #27ae60;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .api-demo {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .api-endpoint {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .api-endpoint:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .api-response {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .file-system-demo {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .file-tree {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .file-item {
+            padding: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 10px;
+        }
+
+        .file-item.folder {
+            font-weight: bold;
+            color: #f1c40f;
+        }
+
+        .file-item.file {
+            color: #ecf0f1;
+            margin-left: 20px;
+        }
+
+        .middleware-demo {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .middleware-chain {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .middleware-step {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 5px;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .middleware-step:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .middleware-step.active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: #f1c40f;
+            margin: 0 10px;
+        }
+
+        .control-panel {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .database-demo {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .message-log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            height: 200px;
+            overflow-y: auto;
+            border: 2px solid #27ae60;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .message-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #e74c3c;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #e74c3c;
+            font-size: 1.5em;
+        }
+
+        .code-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .post-station {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .post-station:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .post-station.active {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #f1c40f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Node.js服务端开发实例 - 古代驿站系统</h1>
+
+        <div class="post-station-header">
+            🏛️ 探索古代驿站的信息传递与现代Node.js服务端开发 🏛️
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示Node.js的服务器创建、API开发、文件系统操作、中间件和数据库交互
+        </div>
+
+        <h2 class="section-title">🖥️ HTTP服务器 - 驿站总部</h2>
+        <div class="server-demo">
+            <h4>🏛️ 驿站服务器状态监控</h4>
+            <div class="server-status">
+                <span>主服务器 (端口 3000)</span>
+                <div class="status-indicator" id="mainServer"></div>
+            </div>
+            <div class="server-status">
+                <span>API服务器 (端口 8080)</span>
+                <div class="status-indicator" id="apiServer"></div>
+            </div>
+            <div class="server-status">
+                <span>文件服务器 (端口 8081)</span>
+                <div class="status-indicator" id="fileServer"></div>
+            </div>
+            <div class="control-panel">
+                <button class="btn success" onclick="startServer('mainServer')">启动主服务器</button>
+                <button class="btn warning" onclick="startServer('apiServer')">启动API服务器</button>
+                <button class="btn" onclick="startServer('fileServer')">启动文件服务器</button>
+                <button class="btn danger" onclick="stopAllServers()">停止所有服务器</button>
+            </div>
+            <div class="code-display" id="serverCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleServerCode()">查看服务器代码</button>
+        </div>
+
+        <h2 class="section-title">🛣️ API路由 - 驿站路线管理</h2>
+        <div class="api-demo">
+            <h4>📮 驿站API接口测试</h4>
+            <div class="api-endpoint" onclick="callAPI('GET', '/stations', null)">
+                GET /stations - 获取所有驿站信息
+            </div>
+            <div class="api-endpoint" onclick="callAPI('POST', '/message', {from: '长安', to: '洛阳', content: '紧急军情'})">
+                POST /message - 发送驿站消息
+            </div>
+            <div class="api-endpoint" onclick="callAPI('GET', '/message/status', null)">
+                GET /message/status - 查询消息状态
+            </div>
+            <div class="api-endpoint" onclick="callAPI('PUT', '/station/update', {id: 1, status: 'active'})">
+                PUT /station/update - 更新驿站状态
+            </div>
+            <div class="api-response" id="apiResponse">API响应将显示在这里...</div>
+            <div class="code-display" id="apiCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleAPICode()">查看API代码</button>
+        </div>
+
+        <h2 class="section-title">📁 文件系统 - 驿站档案管理</h2>
+        <div class="file-system-demo">
+            <h4>📚 驿站档案目录结构</h4>
+            <div class="file-tree" id="fileTree">
+                <div class="file-item folder" onclick="toggleFolder(this)">📁 驿站档案/</div>
+                <div class="file-item folder" onclick="toggleFolder(this)">📁 官方文件/</div>
+                <div class="file-item folder" onclick="toggleFolder(this)">📁 商贸记录/</div>
+                <div class="file-item folder" onclick="toggleFolder(this)">📁 人员档案/</div>
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="readFile()">读取文件</button>
+                <button class="btn success" onclick="writeFile()">写入文件</button>
+                <button class="btn warning" onclick="createDirectory()">创建目录</button>
+                <button class="btn danger" onclick="deleteFile()">删除文件</button>
+            </div>
+            <div class="api-response" id="fileResponse">文件操作结果将显示在这里...</div>
+            <div class="code-display" id="fileCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleFileCode()">查看文件系统代码</button>
+        </div>
+
+        <h2 class="section-title">⚙️ 中间件 - 驿站检查流程</h2>
+        <div class="middleware-demo">
+            <h4>🔍 消息传递中间件链</h4>
+            <div class="middleware-chain">
+                <div class="middleware-step" id="auth">🔐<br>身份验证</div>
+                <div class="arrow">→</div>
+                <div class="middleware-step" id="validate">✅<br>消息验证</div>
+                <div class="arrow">→</div>
+                <div class="middleware-step" id="log">📝<br>记录日志</div>
+                <div class="arrow">→</div>
+                <div class="middleware-step" id="process">⚡<br>处理请求</div>
+                <div class="arrow">→</div>
+                <div class="middleware-step" id="response">📤<br>发送响应</div>
+            </div>
+            <div class="control-panel">
+                <button class="btn success" onclick="processMessage()">处理消息</button>
+                <button class="btn danger" onclick="simulateError()">模拟错误</button>
+                <button class="btn" onclick="resetMiddleware()">重置流程</button>
+            </div>
+            <div class="code-display" id="middlewareCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleMiddlewareCode()">查看中间件代码</button>
+        </div>
+
+        <h2 class="section-title">💾 数据存储 - 驿站消息系统</h2>
+        <div class="database-demo">
+            <h4>📨 实时消息传递系统</h4>
+            <div class="message-log" id="messageLog">驿站消息系统已启动...
+                等待消息传递...
+            </div>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="输入要传递的消息..." onkeypress="handleEnter(event)">
+                <button class="btn success" onclick="sendMessage()">发送消息</button>
+                <button class="btn warning" onclick="clearMessages()">清空消息</button>
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="simulateTraffic()">模拟消息流量</button>
+                <button class="btn danger" onclick="emergencyMessage()">紧急消息</button>
+            </div>
+            <div class="code-display" id="dbCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleDBCode()">查看数据库代码</button>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🏛️ 中国古代驿站制度</h3>
+            <p><strong>驿站系统：</strong>中国古代重要的通信和交通网络，确保政令传达和信息流通。</p>
+            <p><strong>八百里加急：</strong>古代最高级别的紧急文件传递，体现了高效的信息传递机制。</p>
+            <p><strong>驿马传书：</strong>通过驿站网络，实现了跨越千里的快速通信。</p>
+            <p><strong>制度完善：</strong>从秦朝开始建立，历代不断完善，成为古代行政管理的重要组成部分。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过古代驿站系统展示了Node.js服务端开发的核心概念：
+            <br>• <strong>HTTP服务器：</strong>使用http模块创建服务器，处理客户端请求
+            <br>• <strong>路由系统：</strong>根据URL路径和HTTP方法分发请求到对应处理函数
+            <br>• <strong>文件系统：</strong>使用fs模块进行文件读写、目录操作等文件系统交互
+            <br>• <strong>中间件：</strong>在请求处理过程中插入的函数，用于身份验证、日志记录等
+            <br>• <strong>异步处理：</strong>使用回调、Promise、async/await处理异步操作
+            <br>• <strong>数据持久化：</strong>与数据库交互，存储和检索应用数据
+        </div>
+    </div>
+
+    <script>
+        // 服务器状态管理
+        const serverStatus = {
+            mainServer: false,
+            apiServer: false,
+            fileServer: false
+        };
+
+        function startServer(serverId) {
+            const indicator = document.getElementById(serverId);
+            indicator.classList.add('online');
+            serverStatus[serverId] = true;
+
+            // 模拟服务器启动过程
+            const messages = {
+                mainServer: '主服务器启动中...',
+                apiServer: 'API服务器启动中...',
+                fileServer: '文件服务器启动中...'
+            };
+
+            logMessage(messages[serverId]);
+
+            setTimeout(() => {
+                logMessage(`${messages[serverId].replace('启动中', '启动完成')} ✅`);
+            }, 1500);
+        }
+
+        function stopAllServers() {
+            Object.keys(serverStatus).forEach(serverId => {
+                const indicator = document.getElementById(serverId);
+                indicator.classList.remove('online');
+                serverStatus[serverId] = false;
+            });
+            logMessage('所有服务器已停止 🛑');
+        }
+
+        function toggleServerCode() {
+            const codeDisplay = document.getElementById('serverCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Node.js HTTP服务器示例
+const http = require('http');
+const url = require('url');
+
+// 创建HTTP服务器
+const server = http.createServer((req, res) => {
+    const parsedUrl = url.parse(req.url, true);
+    const path = parsedUrl.pathname;
+    const method = req.method;
+    
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    // 路由处理
+    if (path === '/stations' && method === 'GET') {
+        handleGetStations(req, res);
+    } else if (path === '/message' && method === 'POST') {
+        handlePostMessage(req, res);
+    } else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: '路由未找到' }));
+    }
+});
+
+// 启动服务器
+server.listen(3000, () => {
+    console.log('驿站服务器运行在端口 3000');
+});
+
+// 处理获取驿站信息
+function handleGetStations(req, res) {
+    const stations = [
+        { id: 1, name: '长安驿站', status: 'active' },
+        { id: 2, name: '洛阳驿站', status: 'active' },
+        { id: 3, name: '开封驿站', status: 'maintenance' }
+    ];
+    
+    res.statusCode = 200;
+    res.end(JSON.stringify({ success: true, data: stations }));
+}
+            `;
+        }
+
+        // API调用模拟
+        function callAPI(method, endpoint, data) {
+            const response = document.getElementById('apiResponse');
+            response.innerHTML = `<div class="loading-spinner"></div>正在调用 ${method} ${endpoint}...`;
+
+            // 模拟API响应
+            setTimeout(() => {
+                const mockResponses = {
+                    'GET /stations': {
+                        success: true,
+                        data: [
+                            { id: 1, name: '长安驿站', location: '陕西西安', status: 'active', horses: 25 },
+                            { id: 2, name: '洛阳驿站', location: '河南洛阳', status: 'active', horses: 18 },
+                            { id: 3, name: '开封驿站', location: '河南开封', status: 'maintenance', horses: 12 }
+                        ]
+                    },
+                    'POST /message': {
+                        success: true,
+                        messageId: 'MSG_' + Date.now(),
+                        status: 'sent',
+                        estimatedDelivery: '2小时'
+                    },
+                    'GET /message/status': {
+                        success: true,
+                        messages: [
+                            { id: 'MSG_001', status: 'delivered', from: '长安', to: '洛阳' },
+                            { id: 'MSG_002', status: 'in_transit', from: '洛阳', to: '开封' }
+                        ]
+                    },
+                    'PUT /station/update': {
+                        success: true,
+                        message: '驿站状态更新成功'
+                    }
+                };
+
+                const key = `${method} ${endpoint}`;
+                const mockResponse = mockResponses[key] || { error: '未知API端点' };
+
+                response.innerHTML = JSON.stringify(mockResponse, null, 2);
+                logMessage(`API调用: ${method} ${endpoint} - 响应已返回`);
+            }, 1000);
+        }
+
+        function toggleAPICode() {
+            const codeDisplay = document.getElementById('apiCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Express.js API路由示例
+const express = require('express');
+const app = express();
+
+// 中间件
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 获取所有驿站
+app.get('/stations', (req, res) => {
+    try {
+        const stations = getStationsFromDB();
+        res.json({ success: true, data: stations });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 发送消息
+app.post('/message', async (req, res) => {
+    try {
+        const { from, to, content } = req.body;
+        
+        // 验证输入
+        if (!from || !to || !content) {
+            return res.status(400).json({ 
+                error: '缺少必要参数' 
+            });
+        }
+        
+        // 保存消息到数据库
+        const message = await saveMessage({ from, to, content });
+        
+        // 发送到消息队列
+        await sendToQueue(message);
+        
+        res.json({ 
+            success: true, 
+            messageId: message.id,
+            status: 'sent'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 启动服务器
+app.listen(8080, () => {
+    console.log('API服务器运行在端口 8080');
+});
+            `;
+        }
+
+        // 文件系统操作
+        function toggleFolder(element) {
+            const isExpanded = element.dataset.expanded === 'true';
+
+            if (!isExpanded) {
+                const files = [
+                    '📄 官方公文.txt',
+                    '📄 商贸合同.pdf',
+                    '📄 人员名册.xlsx',
+                    '📄 财务记录.json'
+                ];
+
+                files.forEach(file => {
+                    const fileElement = document.createElement('div');
+                    fileElement.className = 'file-item file';
+                    fileElement.textContent = file;
+                    fileElement.onclick = () => selectFile(file);
+                    element.parentNode.insertBefore(fileElement, element.nextSibling);
+                });
+
+                element.dataset.expanded = 'true';
+                element.textContent = element.textContent.replace('📁', '📂');
+            } else {
+                // 收起文件夹
+                let nextElement = element.nextSibling;
+                while (nextElement && nextElement.classList.contains('file')) {
+                    const toRemove = nextElement;
+                    nextElement = nextElement.nextSibling;
+                    toRemove.remove();
+                }
+
+                element.dataset.expanded = 'false';
+                element.textContent = element.textContent.replace('📂', '📁');
+            }
+        }
+
+        function selectFile(fileName) {
+            const response = document.getElementById('fileResponse');
+            response.innerHTML = `已选择文件: ${fileName}`;
+        }
+
+        function readFile() {
+            const response = document.getElementById('fileResponse');
+            response.innerHTML = `<div class="loading-spinner"></div>正在读取文件...`;
+
+            setTimeout(() => {
+                response.innerHTML = `文件读取成功:
+文件名: 官方公文.txt
+大小: 2.5KB
+修改时间: 2024-01-15 10:30:00
+内容: 奉天承运，皇帝诏曰...`;
+                logMessage('文件读取操作完成');
+            }, 1000);
+        }
+
+        function writeFile() {
+            const response = document.getElementById('fileResponse');
+            response.innerHTML = `<div class="loading-spinner"></div>正在写入文件...`;
+
+            setTimeout(() => {
+                response.innerHTML = `文件写入成功:
+新文件: 新建公文_${Date.now()}.txt
+写入内容: 驿站日常报告
+状态: 写入完成 ✅`;
+                logMessage('文件写入操作完成');
+            }, 1200);
+        }
+
+        function createDirectory() {
+            const response = document.getElementById('fileResponse');
+            response.innerHTML = `目录创建成功:
+新目录: 临时文件_${new Date().getFullYear()}
+权限: 755
+状态: 创建完成 ✅`;
+            logMessage('目录创建操作完成');
+        }
+
+        function deleteFile() {
+            const response = document.getElementById('fileResponse');
+            response.innerHTML = `文件删除成功:
+删除文件: 临时文件.tmp
+状态: 删除完成 ✅`;
+            logMessage('文件删除操作完成');
+        }
+
+        function toggleFileCode() {
+            const codeDisplay = document.getElementById('fileCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Node.js文件系统操作示例
+const fs = require('fs').promises;
+const path = require('path');
+
+// 异步读取文件
+async function readFileAsync(filePath) {
+    try {
+        const data = await fs.readFile(filePath, 'utf8');
+        console.log('文件内容:', data);
+        return data;
+    } catch (error) {
+        console.error('读取文件失败:', error.message);
+        throw error;
+    }
+}
+
+// 异步写入文件
+async function writeFileAsync(filePath, content) {
+    try {
+        await fs.writeFile(filePath, content, 'utf8');
+        console.log('文件写入成功');
+    } catch (error) {
+        console.error('写入文件失败:', error.message);
+        throw error;
+    }
+}
+
+// 创建目录
+async function createDirectoryAsync(dirPath) {
+    try {
+        await fs.mkdir(dirPath, { recursive: true });
+        console.log('目录创建成功');
+    } catch (error) {
+        console.error('创建目录失败:', error.message);
+        throw error;
+    }
+}
+
+// 读取目录内容
+async function readDirectoryAsync(dirPath) {
+    try {
+        const files = await fs.readdir(dirPath);
+        console.log('目录内容:', files);
+        return files;
+    } catch (error) {
+        console.error('读取目录失败:', error.message);
+        throw error;
+    }
+}
+
+// 文件状态检查
+async function getFileStatsAsync(filePath) {
+    try {
+        const stats = await fs.stat(filePath);
+        return {
+            size: stats.size,
+            isFile: stats.isFile(),
+            isDirectory: stats.isDirectory(),
+            modified: stats.mtime
+        };
+    } catch (error) {
+        console.error('获取文件状态失败:', error.message);
+        throw error;
+    }
+}
+            `;
+        }
+
+        // 中间件演示
+        function processMessage() {
+            resetMiddleware();
+            const steps = ['auth', 'validate', 'log', 'process', 'response'];
+
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    const element = document.getElementById(step);
+                    element.classList.add('active');
+
+                    setTimeout(() => {
+                        element.classList.remove('active');
+                        element.style.background = 'rgba(39, 174, 96, 0.8)';
+                    }, 800);
+
+                    if (index === steps.length - 1) {
+                        setTimeout(() => {
+                            logMessage('消息处理完成，所有中间件执行成功 ✅');
+                        }, 1000);
+                    }
+                }, index * 1000);
+            });
+        }
+
+        function simulateError() {
+            resetMiddleware();
+            const steps = ['auth', 'validate'];
+
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    const element = document.getElementById(step);
+                    element.classList.add('active');
+
+                    setTimeout(() => {
+                        element.classList.remove('active');
+                        if (index === steps.length - 1) {
+                            element.style.background = 'rgba(231, 76, 60, 0.8)';
+                            logMessage('中间件执行失败：消息验证错误 ❌');
+                        } else {
+                            element.style.background = 'rgba(39, 174, 96, 0.8)';
+                        }
+                    }, 800);
+                }, index * 1000);
+            });
+        }
+
+        function resetMiddleware() {
+            const steps = ['auth', 'validate', 'log', 'process', 'response'];
+            steps.forEach(step => {
+                const element = document.getElementById(step);
+                element.classList.remove('active');
+                element.style.background = 'rgba(255, 255, 255, 0.2)';
+            });
+        }
+
+        function toggleMiddlewareCode() {
+            const codeDisplay = document.getElementById('middlewareCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Express.js中间件示例
+const express = require('express');
+const app = express();
+
+// 身份验证中间件
+function authenticateUser(req, res, next) {
+    const token = req.headers.authorization;
+    
+    if (!token) {
+        return res.status(401).json({ error: '缺少认证令牌' });
+    }
+    
+    // 验证令牌
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next(); // 继续到下一个中间件
+    } catch (error) {
+        return res.status(401).json({ error: '无效令牌' });
+    }
+}
+
+// 请求验证中间件
+function validateRequest(req, res, next) {
+    const { from, to, content } = req.body;
+    
+    if (!from || !to || !content) {
+        return res.status(400).json({ 
+            error: '请求参数不完整' 
+        });
+    }
+    
+    // 验证驿站是否存在
+    if (!isValidStation(from) || !isValidStation(to)) {
+        return res.status(400).json({ 
+            error: '无效的驿站' 
+        });
+    }
+    
+    next();
+}
+
+// 日志记录中间件
+function logRequest(req, res, next) {
+    const timestamp = new Date().toISOString();
+    console.log(\`[\${timestamp}] \${req.method} \${req.url}\`);
+    
+    // 记录请求开始时间
+    req.startTime = Date.now();
+    
+    // 监听响应结束事件
+    res.on('finish', () => {
+        const duration = Date.now() - req.startTime;
+        console.log(\`请求处理耗时: \${duration}ms\`);
+    });
+    
+    next();
+}
+
+// 使用中间件
+app.use(express.json());
+app.use(logRequest);
+app.post('/message', authenticateUser, validateRequest, (req, res) => {
+    // 处理消息发送
+    res.json({ success: true, message: '消息发送成功' });
+});
+            `;
+        }
+
+        // 消息系统
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (message) {
+                const timestamp = new Date().toLocaleTimeString();
+                logMessage(`[${timestamp}] 用户消息: ${message}`);
+                input.value = '';
+
+                // 模拟消息处理
+                setTimeout(() => {
+                    logMessage(`[${timestamp}] 消息已送达目标驿站 ✅`);
+                }, 1500);
+            }
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function clearMessages() {
+            const log = document.getElementById('messageLog');
+            log.innerHTML = '消息日志已清空...\n';
+        }
+
+        function simulateTraffic() {
+            const messages = [
+                '长安驿站报告：一切正常',
+                '洛阳驿站：商队已到达',
+                '开封驿站：需要补充马匹',
+                '汴梁驿站：天气良好，道路畅通',
+                '临安驿站：收到紧急公文'
+            ];
+
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const timestamp = new Date().toLocaleTimeString();
+                    logMessage(`[${timestamp}] 系统消息: ${msg}`);
+                }, index * 800);
+            });
+        }
+
+        function emergencyMessage() {
+            const timestamp = new Date().toLocaleTimeString();
+            logMessage(`[${timestamp}] 🚨 紧急消息: 八百里加急！边境军情紧急！`);
+            logMessage(`[${timestamp}] 🚨 优先级: 最高 | 预计送达: 6小时`);
+        }
+
+        function logMessage(message) {
+            const log = document.getElementById('messageLog');
+            log.innerHTML += message + '\n';
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function toggleDBCode() {
+            const codeDisplay = document.getElementById('dbCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// MongoDB数据库操作示例
+const { MongoClient } = require('mongodb');
+
+// 连接数据库
+async function connectDB() {
+    const client = new MongoClient(process.env.MONGODB_URI);
+    await client.connect();
+    return client.db('postStation');
+}
+
+// 保存消息
+async function saveMessage(messageData) {
+    const db = await connectDB();
+    const collection = db.collection('messages');
+    
+    const message = {
+        ...messageData,
+        timestamp: new Date(),
+        status: 'pending',
+        id: generateMessageId()
+    };
+    
+    const result = await collection.insertOne(message);
+    return { ...message, _id: result.insertedId };
+}
+
+// 查询消息
+async function getMessages(query = {}) {
+    const db = await connectDB();
+    const collection = db.collection('messages');
+    
+    return await collection.find(query).toArray();
+}
+
+// 更新消息状态
+async function updateMessageStatus(messageId, status) {
+    const db = await connectDB();
+    const collection = db.collection('messages');
+    
+    return await collection.updateOne(
+        { id: messageId },
+        { 
+            $set: { 
+                status: status,
+                updatedAt: new Date()
+            }
+        }
+    );
+}
+
+// Redis缓存示例
+const redis = require('redis');
+const client = redis.createClient();
+
+// 缓存驿站信息
+async function cacheStationInfo(stationId, info) {
+    const key = \`station:\${stationId}\`;
+    await client.setex(key, 3600, JSON.stringify(info)); // 1小时过期
+}
+
+// 获取缓存的驿站信息
+async function getCachedStationInfo(stationId) {
+    const key = \`station:\${stationId}\`;
+    const cached = await client.get(key);
+    return cached ? JSON.parse(cached) : null;
+}
+            `;
+        }
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Node.js服务端开发页面已加载');
+            logMessage('驿站管理系统初始化完成');
+            logMessage('等待用户操作...');
+        });
+    </script>
+</body>
+
+</html>

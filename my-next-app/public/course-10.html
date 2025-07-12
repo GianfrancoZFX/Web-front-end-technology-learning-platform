@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第十周 - React 框架入门与组件开发</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #61dafb 0%, #21232a 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #61dafb;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        background: linear-gradient(135deg, #61dafb, #21232a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      h2 {
+        color: #61dafb;
+        margin-top: 40px;
+        padding-left: 15px;
+        border-left: 5px solid #61dafb;
+        background: linear-gradient(90deg, #e6f7ff 0%, transparent 100%);
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-icon {
+        font-size: 1.5em;
+      }
+      .highlight {
+        background: linear-gradient(135deg, #61dafb 0%, #21232a 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 25px 0;
+        box-shadow: 0 8px 25px rgba(97, 218, 251, 0.3);
+      }
+      .concept-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #61dafb;
+        transition: all 0.3s ease;
+      }
+      .concept-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+      .code-block {
+        background: #282c34;
+        color: #abb2bf;
+        padding: 25px;
+        border-radius: 15px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        position: relative;
+        box-shadow: 0 8px 25px rgba(40, 44, 52, 0.3);
+      }
+      .code-block::before {
+        content: "React";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: #61dafb;
+        color: #282c34;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+      .jsx-highlight {
+        color: #e06c75;
+      }
+      .function-highlight {
+        color: #c678dd;
+      }
+      .string-highlight {
+        color: #98c379;
+      }
+      .comment-highlight {
+        color: #5c6370;
+        font-style: italic;
+      }
+      .demo-area {
+        border: 3px solid #61dafb;
+        padding: 25px;
+        margin: 20px 0;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #e6f7ff 0%, #cce7ff 100%);
+        box-shadow: 0 5px 15px rgba(97, 218, 251, 0.2);
+      }
+      .component-demo {
+        background: linear-gradient(135deg, #e6f7ff 0%, #cce7ff 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #61dafb;
+      }
+      .hooks-demo {
+        background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #40a9ff;
+      }
+      .state-demo {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #ff7875;
+      }
+      button {
+        background: linear-gradient(135deg, #61dafb, #40a9ff);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        margin: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(97, 218, 251, 0.3);
+      }
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(97, 218, 251, 0.4);
+        background: linear-gradient(135deg, #40a9ff, #61dafb);
+      }
+      button:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .output {
+        background: #282c34;
+        color: #abb2bf;
+        border: none;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        min-height: 60px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .syntax-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .syntax-item {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #61dafb;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .syntax-item h4 {
+        color: #2c3e50;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .feature-highlight {
+        background: linear-gradient(135deg, #282c34 0%, #21232a 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: bold;
+      }
+      .knowledge-point {
+        background: #f8f9fa;
+        border-left: 4px solid #61dafb;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 10px 10px 0;
+      }
+      .knowledge-point strong {
+        color: #61dafb;
+      }
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .comparison-table th {
+        background: linear-gradient(135deg, #61dafb, #40a9ff);
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+      .comparison-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .benefit-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #61dafb;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .benefit-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #61dafb;
+      }
+      .lifecycle-diagram {
+        background: #f8f9fa;
+        border: 2px solid #61dafb;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .lifecycle-phase {
+        display: inline-block;
+        background: #61dafb;
+        color: white;
+        padding: 10px 15px;
+        margin: 5px;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+      .arrow {
+        font-size: 1.5em;
+        color: #61dafb;
+        margin: 0 10px;
+      }
+      .interactive-demo {
+        background: #f0f8ff;
+        border: 2px solid #61dafb;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .counter-display {
+        font-size: 2em;
+        font-weight: bold;
+        color: #61dafb;
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .todo-item {
+        background: white;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border-left: 4px solid #61dafb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .todo-item.completed {
+        text-decoration: line-through;
+        opacity: 0.6;
+        border-left-color: #52c41a;
+      }
+      .todo-input {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #61dafb;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+      .ecosystem-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .ecosystem-item {
+        background: linear-gradient(135deg, #e6f7ff 0%, #cce7ff 100%);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        border: 2px solid #61dafb;
+        transition: all 0.3s ease;
+      }
+      .ecosystem-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(97, 218, 251, 0.3);
+      }
+      .ecosystem-icon {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #61dafb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第十周 - React 框架入门与组件开发</h1>
+
+      <div class="highlight">
+        <strong>🎯 学习目标：</strong>掌握React框架的核心概念，学会组件开发、状态管理和事件处理，理解虚拟DOM和生命周期，为构建现代化用户界面打下基础
+      </div>
+
+      <div class="concept-card">
+        <h3>⚛️ React 简介</h3>
+        <p>React是由Facebook开发的用于构建用户界面的JavaScript库。它采用组件化开发模式，通过虚拟DOM提高性能，是目前最流行的前端框架之一。</p>
+        
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">🧩</div>
+            <h4>组件化开发</h4>
+            <p>将UI拆分为独立、可复用的组件</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🚀</div>
+            <h4>虚拟DOM</h4>
+            <p>高效的DOM更新机制，提升性能</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🔄</div>
+            <h4>单向数据流</h4>
+            <p>数据流向清晰，易于调试和维护</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🌐</div>
+            <h4>丰富生态</h4>
+            <p>庞大的社区和丰富的第三方库</p>
+          </div>
+        </div>
+        
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>特性</th>
+              <th>传统DOM操作</th>
+              <th>React虚拟DOM</th>
+              <th>优势</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>性能</strong></td>
+              <td>直接操作DOM，较慢</td>
+              <td>批量更新，高效</td>
+              <td>显著提升渲染性能</td>
+            </tr>
+            <tr>
+              <td><strong>开发体验</strong></td>
+              <td>手动管理DOM状态</td>
+              <td>声明式编程</td>
+              <td>代码更简洁易维护</td>
+            </tr>
+            <tr>
+              <td><strong>组件复用</strong></td>
+              <td>困难</td>
+              <td>容易</td>
+              <td>提高开发效率</td>
+            </tr>
+            <tr>
+              <td><strong>状态管理</strong></td>
+              <td>复杂</td>
+              <td>清晰</td>
+              <td>单向数据流</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2><span class="section-icon">🧩</span>JSX 语法与组件基础</h2>
+      <p>JSX是React的语法扩展，允许在JavaScript中编写类似HTML的代码。它使组件的结构更加直观和易于理解。</p>
+
+      <div class="knowledge-point">
+        <strong>JSX核心概念：</strong>
+        <ul>
+          <li><strong>语法糖：</strong>JSX会被编译为React.createElement()调用</li>
+          <li><strong>表达式：</strong>使用{}包裹JavaScript表达式</li>
+          <li><strong>属性：</strong>使用camelCase命名，如className、onClick</li>
+          <li><strong>组件：</strong>自定义组件必须以大写字母开头</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+<span class="comment-highlight">// JSX语法示例</span>
+<span class="comment-highlight">// 函数组件</span>
+<span class="function-highlight">function</span> Welcome(props) {
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div className="welcome"&gt;</span>
+      <span class="jsx-highlight">&lt;h1&gt;</span>Hello, {props.name}!<span class="jsx-highlight">&lt;/h1&gt;</span>
+      <span class="jsx-highlight">&lt;p&gt;</span>Welcome to React learning.<span class="jsx-highlight">&lt;/p&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 类组件</span>
+<span class="function-highlight">class</span> Greeting <span class="function-highlight">extends</span> React.Component {
+  <span class="function-highlight">render</span>() {
+    <span class="function-highlight">return</span> (
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;h2&gt;</span>Class Component Example<span class="jsx-highlight">&lt;/h2&gt;</span>
+        <span class="jsx-highlight">&lt;p&gt;</span>Props: {<span class="function-highlight">this</span>.props.message}<span class="jsx-highlight">&lt;/p&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+    );
+  }
+}
+
+<span class="comment-highlight">// 组件组合</span>
+<span class="function-highlight">function</span> App() {
+  <span class="function-highlight">const</span> user = <span class="string-highlight">"张三"</span>;
+  <span class="function-highlight">const</span> message = <span class="string-highlight">"学习React很有趣！"</span>;
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div className="app"&gt;</span>
+      <span class="jsx-highlight">&lt;Welcome name={user} /&gt;</span>
+      <span class="jsx-highlight">&lt;Greeting message={message} /&gt;</span>
+      <span class="jsx-highlight">&lt;UserProfile /&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 条件渲染</span>
+<span class="function-highlight">function</span> UserProfile() {
+  <span class="function-highlight">const</span> isLoggedIn = <span class="function-highlight">true</span>;
+  <span class="function-highlight">const</span> user = { name: <span class="string-highlight">"李四"</span>, avatar: <span class="string-highlight">"avatar.jpg"</span> };
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div&gt;</span>
+      {isLoggedIn ? (
+        <span class="jsx-highlight">&lt;div className="user-info"&gt;</span>
+          <span class="jsx-highlight">&lt;img src={user.avatar} alt="Avatar" /&gt;</span>
+          <span class="jsx-highlight">&lt;span&gt;</span>欢迎，{user.name}!<span class="jsx-highlight">&lt;/span&gt;</span>
+        <span class="jsx-highlight">&lt;/div&gt;</span>
+      ) : (
+        <span class="jsx-highlight">&lt;button&gt;</span>请登录<span class="jsx-highlight">&lt;/button&gt;</span>
+      )}
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 列表渲染</span>
+<span class="function-highlight">function</span> TodoList() {
+  <span class="function-highlight">const</span> todos = [
+    { id: 1, text: <span class="string-highlight">"学习React基础"</span>, completed: <span class="function-highlight">true</span> },
+    { id: 2, text: <span class="string-highlight">"掌握JSX语法"</span>, completed: <span class="function-highlight">true</span> },
+    { id: 3, text: <span class="string-highlight">"理解组件概念"</span>, completed: <span class="function-highlight">false</span> }
+  ];
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;ul&gt;</span>
+      {todos.map(todo =&gt; (
+        <span class="jsx-highlight">&lt;li key={todo.id} className={todo.completed ? 'completed' : ''}"&gt;</span>
+          {todo.text}
+        <span class="jsx-highlight">&lt;/li&gt;</span>
+      ))}
+    <span class="jsx-highlight">&lt;/ul&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 事件处理</span>
+<span class="function-highlight">function</span> Button() {
+  <span class="function-highlight">const</span> handleClick = (event) =&gt; {
+    event.preventDefault();
+    alert(<span class="string-highlight">"按钮被点击了！"</span>);
+  };
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;button onClick={handleClick}&gt;</span>
+      点击我
+    <span class="jsx-highlight">&lt;/button&gt;</span>
+  );
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>🧩 JSX与组件演示</h3>
+        <div class="component-demo">
+          <div class="feature-highlight">React组件渲染</div>
+          <button onclick="demonstrateJSX()">📝 JSX语法</button>
+          <button onclick="demonstrateComponents()">🧩 组件基础</button>
+          <button onclick="demonstrateProps()">📦 Props传递</button>
+          <button onclick="demonstrateConditional()">🔀 条件渲染</button>
+          <div class="output" id="componentOutput">点击按钮查看React组件演示...</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🔄</span>State 状态管理与 Hooks</h2>
+      <p>State是React组件的核心概念，用于管理组件的内部状态。Hooks是React 16.8引入的新特性，让函数组件也能使用状态和其他React特性。</p>
+
+      <div class="knowledge-point">
+        <strong>常用React Hooks：</strong>
+        <ul>
+          <li><strong>useState：</strong>管理组件状态</li>
+          <li><strong>useEffect：</strong>处理副作用（生命周期）</li>
+          <li><strong>useContext：</strong>使用Context API</li>
+          <li><strong>useReducer：</strong>复杂状态管理</li>
+          <li><strong>useMemo：</strong>性能优化，缓存计算结果</li>
+          <li><strong>useCallback：</strong>缓存函数引用</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+<span class="comment-highlight">// useState Hook 示例</span>
+<span class="function-highlight">import</span> React, { useState } <span class="function-highlight">from</span> <span class="string-highlight">'react'</span>;
+
+<span class="function-highlight">function</span> Counter() {
+  <span class="comment-highlight">// 声明状态变量</span>
+  <span class="function-highlight">const</span> [count, setCount] = useState(0);
+  <span class="function-highlight">const</span> [name, setName] = useState(<span class="string-highlight">''</span>);
+  
+  <span class="comment-highlight">// 事件处理函数</span>
+  <span class="function-highlight">const</span> increment = () =&gt; setCount(count + 1);
+  <span class="function-highlight">const</span> decrement = () =&gt; setCount(count - 1);
+  <span class="function-highlight">const</span> reset = () =&gt; setCount(0);
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div className="counter"&gt;</span>
+      <span class="jsx-highlight">&lt;h3&gt;</span>计数器: {count}<span class="jsx-highlight">&lt;/h3&gt;</span>
+      <span class="jsx-highlight">&lt;button onClick={increment}&gt;</span>+1<span class="jsx-highlight">&lt;/button&gt;</span>
+      <span class="jsx-highlight">&lt;button onClick={decrement}&gt;</span>-1<span class="jsx-highlight">&lt;/button&gt;</span>
+      <span class="jsx-highlight">&lt;button onClick={reset}&gt;</span>重置<span class="jsx-highlight">&lt;/button&gt;</span>
+      
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;input 
+          type="text" 
+          value={name}
+          onChange={(e) =&gt; setName(e.target.value)}
+          placeholder="输入你的名字"
+        /&gt;</span>
+        <span class="jsx-highlight">&lt;p&gt;</span>你好，{name || <span class="string-highlight">'访客'</span>}！<span class="jsx-highlight">&lt;/p&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// useEffect Hook 示例</span>
+<span class="function-highlight">import</span> React, { useState, useEffect } <span class="function-highlight">from</span> <span class="string-highlight">'react'</span>;
+
+<span class="function-highlight">function</span> Timer() {
+  <span class="function-highlight">const</span> [seconds, setSeconds] = useState(0);
+  <span class="function-highlight">const</span> [isRunning, setIsRunning] = useState(<span class="function-highlight">false</span>);
+  
+  <span class="comment-highlight">// 组件挂载和更新时执行</span>
+  useEffect(() =&gt; {
+    <span class="function-highlight">let</span> interval = <span class="function-highlight">null</span>;
+    
+    <span class="function-highlight">if</span> (isRunning) {
+      interval = setInterval(() =&gt; {
+        setSeconds(seconds =&gt; seconds + 1);
+      }, 1000);
+    } <span class="function-highlight">else</span> <span class="function-highlight">if</span> (!isRunning && seconds !== 0) {
+      clearInterval(interval);
+    }
+    
+    <span class="comment-highlight">// 清理函数</span>
+    <span class="function-highlight">return</span> () =&gt; clearInterval(interval);
+  }, [isRunning, seconds]);
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div className="timer"&gt;</span>
+      <span class="jsx-highlight">&lt;h3&gt;</span>计时器: {seconds}秒<span class="jsx-highlight">&lt;/h3&gt;</span>
+      <span class="jsx-highlight">&lt;button onClick={() =&gt; setIsRunning(!isRunning)}&gt;</span>
+        {isRunning ? <span class="string-highlight">'暂停'</span> : <span class="string-highlight">'开始'</span>}
+      <span class="jsx-highlight">&lt;/button&gt;</span>
+      <span class="jsx-highlight">&lt;button onClick={() =&gt; setSeconds(0)}&gt;</span>重置<span class="jsx-highlight">&lt;/button&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 自定义Hook示例</span>
+<span class="function-highlight">function</span> useLocalStorage(key, initialValue) {
+  <span class="function-highlight">const</span> [storedValue, setStoredValue] = useState(() =&gt; {
+    <span class="function-highlight">try</span> {
+      <span class="function-highlight">const</span> item = window.localStorage.getItem(key);
+      <span class="function-highlight">return</span> item ? JSON.parse(item) : initialValue;
+    } <span class="function-highlight">catch</span> (error) {
+      console.log(error);
+      <span class="function-highlight">return</span> initialValue;
+    }
+  });
+  
+  <span class="function-highlight">const</span> setValue = (value) =&gt; {
+    <span class="function-highlight">try</span> {
+      setStoredValue(value);
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } <span class="function-highlight">catch</span> (error) {
+      console.log(error);
+    }
+  };
+  
+  <span class="function-highlight">return</span> [storedValue, setValue];
+}
+
+<span class="comment-highlight">// 使用自定义Hook</span>
+<span class="function-highlight">function</span> Settings() {
+  <span class="function-highlight">const</span> [theme, setTheme] = useLocalStorage(<span class="string-highlight">'theme'</span>, <span class="string-highlight">'light'</span>);
+  <span class="function-highlight">const</span> [language, setLanguage] = useLocalStorage(<span class="string-highlight">'language'</span>, <span class="string-highlight">'zh'</span>);
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div&gt;</span>
+      <span class="jsx-highlight">&lt;h3&gt;</span>设置<span class="jsx-highlight">&lt;/h3&gt;</span>
+      <span class="jsx-highlight">&lt;label&gt;</span>
+        主题: 
+        <span class="jsx-highlight">&lt;select value={theme} onChange={(e) =&gt; setTheme(e.target.value)}&gt;</span>
+          <span class="jsx-highlight">&lt;option value="light"&gt;</span>浅色<span class="jsx-highlight">&lt;/option&gt;</span>
+          <span class="jsx-highlight">&lt;option value="dark"&gt;</span>深色<span class="jsx-highlight">&lt;/option&gt;</span>
+        <span class="jsx-highlight">&lt;/select&gt;</span>
+      <span class="jsx-highlight">&lt;/label&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>🔄 状态管理演示</h3>
+        <div class="hooks-demo">
+          <div class="feature-highlight">React Hooks</div>
+          <button onclick="demonstrateUseState()">📊 useState</button>
+          <button onclick="demonstrateUseEffect()">🔄 useEffect</button>
+          <button onclick="demonstrateCustomHooks()">🔧 自定义Hook</button>
+          <button onclick="demonstrateStateUpdates()">⚡ 状态更新</button>
+          <div class="output" id="hooksOutput">点击按钮查看React Hooks演示...</div>
+        </div>
+        
+        <div class="interactive-demo">
+          <h4>🎮 交互式计数器</h4>
+          <div class="counter-display" id="counterDisplay">0</div>
+          <button onclick="incrementCounter()">➕ 增加</button>
+          <button onclick="decrementCounter()">➖ 减少</button>
+          <button onclick="resetCounter()">🔄 重置</button>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🎯</span>事件处理与表单</h2>
+      <p>React中的事件处理采用合成事件系统，提供了跨浏览器的一致性体验。表单处理是Web应用的重要组成部分。</p>
+
+      <div class="knowledge-point">
+        <strong>React事件处理特点：</strong>
+        <ul>
+          <li><strong>合成事件：</strong>SyntheticEvent，跨浏览器兼容</li>
+          <li><strong>事件委托：</strong>所有事件都绑定到根元素</li>
+          <li><strong>阻止默认：</strong>必须显式调用preventDefault()</li>
+          <li><strong>this绑定：</strong>需要注意函数中this的指向</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+<span class="comment-highlight">// 事件处理示例</span>
+<span class="function-highlight">function</span> EventDemo() {
+  <span class="function-highlight">const</span> [message, setMessage] = useState(<span class="string-highlight">''</span>);
+  
+  <span class="comment-highlight">// 点击事件</span>
+  <span class="function-highlight">const</span> handleClick = (event) =&gt; {
+    console.log(<span class="string-highlight">'按钮被点击'</span>, event.type);
+    setMessage(<span class="string-highlight">'按钮被点击了！'</span>);
+  };
+  
+  <span class="comment-highlight">// 鼠标事件</span>
+  <span class="function-highlight">const</span> handleMouseEnter = () =&gt; {
+    setMessage(<span class="string-highlight">'鼠标进入了！'</span>);
+  };
+  
+  <span class="comment-highlight">// 键盘事件</span>
+  <span class="function-highlight">const</span> handleKeyPress = (event) =&gt; {
+    <span class="function-highlight">if</span> (event.key === <span class="string-highlight">'Enter'</span>) {
+      setMessage(<span class="string-highlight">`你按下了回车键！`</span>);
+    }
+  };
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div&gt;</span>
+      <span class="jsx-highlight">&lt;button 
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+      &gt;</span>
+        点击或悬停
+      <span class="jsx-highlight">&lt;/button&gt;</span>
+      
+      <span class="jsx-highlight">&lt;input 
+        type="text"
+        onKeyPress={handleKeyPress}
+        placeholder="按回车键试试"
+      /&gt;</span>
+      
+      <span class="jsx-highlight">&lt;p&gt;</span>{message}<span class="jsx-highlight">&lt;/p&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// 表单处理示例</span>
+<span class="function-highlight">function</span> ContactForm() {
+  <span class="function-highlight">const</span> [formData, setFormData] = useState({
+    name: <span class="string-highlight">''</span>,
+    email: <span class="string-highlight">''</span>,
+    message: <span class="string-highlight">''</span>,
+    category: <span class="string-highlight">'general'</span>,
+    subscribe: <span class="function-highlight">false</span>
+  });
+  
+  <span class="comment-highlight">// 处理输入变化</span>
+  <span class="function-highlight">const</span> handleInputChange = (event) =&gt; {
+    <span class="function-highlight">const</span> { name, value, type, checked } = event.target;
+    setFormData(prevState =&gt; ({
+      ...prevState,
+      [name]: type === <span class="string-highlight">'checkbox'</span> ? checked : value
+    }));
+  };
+  
+  <span class="comment-highlight">// 表单提交</span>
+  <span class="function-highlight">const</span> handleSubmit = (event) =&gt; {
+    event.preventDefault();
+    console.log(<span class="string-highlight">'表单数据:'</span>, formData);
+    
+    <span class="comment-highlight">// 表单验证</span>
+    <span class="function-highlight">if</span> (!formData.name || !formData.email) {
+      alert(<span class="string-highlight">'请填写必填字段！'</span>);
+      <span class="function-highlight">return</span>;
+    }
+    
+    <span class="comment-highlight">// 提交逻辑</span>
+    alert(<span class="string-highlight">'表单提交成功！'</span>);
+  };
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;form onSubmit={handleSubmit}&gt;</span>
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;label&gt;</span>
+          姓名 *:
+          <span class="jsx-highlight">&lt;input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          /&gt;</span>
+        <span class="jsx-highlight">&lt;/label&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;label&gt;</span>
+          邮箱 *:
+          <span class="jsx-highlight">&lt;input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          /&gt;</span>
+        <span class="jsx-highlight">&lt;/label&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;label&gt;</span>
+          类别:
+          <span class="jsx-highlight">&lt;select name="category" value={formData.category} onChange={handleInputChange}&gt;</span>
+            <span class="jsx-highlight">&lt;option value="general"&gt;</span>一般咨询<span class="jsx-highlight">&lt;/option&gt;</span>
+            <span class="jsx-highlight">&lt;option value="support"&gt;</span>技术支持<span class="jsx-highlight">&lt;/option&gt;</span>
+            <span class="jsx-highlight">&lt;option value="feedback"&gt;</span>意见反馈<span class="jsx-highlight">&lt;/option&gt;</span>
+          <span class="jsx-highlight">&lt;/select&gt;</span>
+        <span class="jsx-highlight">&lt;/label&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;label&gt;</span>
+          消息:
+          <span class="jsx-highlight">&lt;textarea
+            name="message"
+            value={formData.message}
+            onChange={handleInputChange}
+            rows="4"
+          /&gt;</span>
+        <span class="jsx-highlight">&lt;/label&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;label&gt;</span>
+          <span class="jsx-highlight">&lt;input
+            type="checkbox"
+            name="subscribe"
+            checked={formData.subscribe}
+            onChange={handleInputChange}
+          /&gt;</span>
+          订阅邮件通知
+        <span class="jsx-highlight">&lt;/label&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;button type="submit"&gt;</span>提交<span class="jsx-highlight">&lt;/button&gt;</span>
+    <span class="jsx-highlight">&lt;/form&gt;</span>
+  );
+}
+
+<span class="comment-highlight">// Todo应用示例</span>
+<span class="function-highlight">function</span> TodoApp() {
+  <span class="function-highlight">const</span> [todos, setTodos] = useState([]);
+  <span class="function-highlight">const</span> [inputValue, setInputValue] = useState(<span class="string-highlight">''</span>);
+  
+  <span class="comment-highlight">// 添加待办事项</span>
+  <span class="function-highlight">const</span> addTodo = () =&gt; {
+    <span class="function-highlight">if</span> (inputValue.trim()) {
+      setTodos([...todos, {
+        id: Date.now(),
+        text: inputValue,
+        completed: <span class="function-highlight">false</span>
+      }]);
+      setInputValue(<span class="string-highlight">''</span>);
+    }
+  };
+  
+  <span class="comment-highlight">// 切换完成状态</span>
+  <span class="function-highlight">const</span> toggleTodo = (id) =&gt; {
+    setTodos(todos.map(todo =&gt;
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+  
+  <span class="comment-highlight">// 删除待办事项</span>
+  <span class="function-highlight">const</span> deleteTodo = (id) =&gt; {
+    setTodos(todos.filter(todo =&gt; todo.id !== id));
+  };
+  
+  <span class="function-highlight">return</span> (
+    <span class="jsx-highlight">&lt;div className="todo-app"&gt;</span>
+      <span class="jsx-highlight">&lt;h3&gt;</span>待办事项<span class="jsx-highlight">&lt;/h3&gt;</span>
+      <span class="jsx-highlight">&lt;div&gt;</span>
+        <span class="jsx-highlight">&lt;input
+          type="text"
+          value={inputValue}
+          onChange={(e) =&gt; setInputValue(e.target.value)}
+          onKeyPress={(e) =&gt; e.key === 'Enter' && addTodo()}
+          placeholder="添加新的待办事项"
+        /&gt;</span>
+        <span class="jsx-highlight">&lt;button onClick={addTodo}&gt;</span>添加<span class="jsx-highlight">&lt;/button&gt;</span>
+      <span class="jsx-highlight">&lt;/div&gt;</span>
+      
+      <span class="jsx-highlight">&lt;ul&gt;</span>
+        {todos.map(todo =&gt; (
+          <span class="jsx-highlight">&lt;li key={todo.id} className={todo.completed ? 'completed' : ''}&gt;</span>
+            <span class="jsx-highlight">&lt;span onClick={() =&gt; toggleTodo(todo.id)}&gt;</span>
+              {todo.text}
+            <span class="jsx-highlight">&lt;/span&gt;</span>
+            <span class="jsx-highlight">&lt;button onClick={() =&gt; deleteTodo(todo.id)}&gt;</span>删除<span class="jsx-highlight">&lt;/button&gt;</span>
+          <span class="jsx-highlight">&lt;/li&gt;</span>
+        ))}
+      <span class="jsx-highlight">&lt;/ul&gt;</span>
+    <span class="jsx-highlight">&lt;/div&gt;</span>
+  );
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>🎯 事件处理演示</h3>
+        <div class="state-demo">
+          <div class="feature-highlight">事件与表单</div>
+          <button onclick="demonstrateEvents()">🎯 事件处理</button>
+          <button onclick="demonstrateForms()">📝 表单处理</button>
+          <button onclick="demonstrateValidation()">✅ 表单验证</button>
+          <button onclick="demonstrateTodoApp()">📋 Todo应用</button>
+          <div class="output" id="eventsOutput">点击按钮查看事件处理演示...</div>
+        </div>
+        
+        <div class="interactive-demo">
+          <h4>📝 简单Todo应用</h4>
+          <div>
+            <input type="text" id="todoInput" class="todo-input" placeholder="添加新的待办事项..." onkeypress="handleTodoKeyPress(event)">
+            <button onclick="addTodoItem()">➕ 添加</button>
+          </div>
+          <div id="todoList"></div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3>🔄 React 生命周期</h3>
+        <p>React组件有完整的生命周期，从创建到销毁经历多个阶段。理解生命周期有助于优化性能和处理副作用。</p>
+        
+        <div class="lifecycle-diagram">
+          <h4>函数组件生命周期（Hooks）</h4>
+          <div>
+            <span class="lifecycle-phase">挂载</span>
+            <span class="arrow">→</span>
+            <span class="lifecycle-phase">更新</span>
+            <span class="arrow">→</span>
+            <span class="lifecycle-phase">卸载</span>
+          </div>
+          <p><strong>useEffect</strong> 可以模拟所有生命周期方法</p>
+        </div>
+        
+        <div class="syntax-grid">
+          <div class="syntax-item">
+            <h4>🚀 挂载阶段</h4>
+            <ul>
+              <li><strong>组件创建：</strong>初始化state和props</li>
+              <li><strong>首次渲染：</strong>执行render方法</li>
+              <li><strong>DOM更新：</strong>组件挂载到DOM</li>
+              <li><strong>useEffect：</strong>执行副作用</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🔄 更新阶段</h4>
+            <ul>
+              <li><strong>props变化：</strong>父组件传入新props</li>
+              <li><strong>state变化：</strong>调用setState更新状态</li>
+              <li><strong>重新渲染：</strong>执行render方法</li>
+              <li><strong>DOM更新：</strong>更新变化的部分</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>💥 卸载阶段</h4>
+            <ul>
+              <li><strong>组件移除：</strong>从DOM中移除组件</li>
+              <li><strong>清理工作：</strong>清除定时器、事件监听</li>
+              <li><strong>useEffect清理：</strong>执行清理函数</li>
+              <li><strong>内存释放：</strong>释放组件占用的内存</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>⚡ 性能优化</h4>
+            <ul>
+              <li><strong>React.memo：</strong>避免不必要的重渲染</li>
+              <li><strong>useMemo：</strong>缓存计算结果</li>
+              <li><strong>useCallback：</strong>缓存函数引用</li>
+              <li><strong>懒加载：</strong>React.lazy和Suspense</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3>🌐 React 生态系统</h3>
+        <div class="ecosystem-grid">
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">🚀</div>
+            <h4>Create React App</h4>
+            <p>快速创建React应用的脚手架工具</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">🎨</div>
+            <h4>React Router</h4>
+            <p>React应用的路由管理库</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">🗃️</div>
+            <h4>Redux</h4>
+            <p>可预测的状态管理容器</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">💅</div>
+            <h4>Styled Components</h4>
+            <p>CSS-in-JS样式解决方案</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">🧪</div>
+            <h4>React Testing Library</h4>
+            <p>React组件测试工具</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">📱</div>
+            <h4>React Native</h4>
+            <p>使用React构建移动应用</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">⚡</div>
+            <h4>Next.js</h4>
+            <p>React全栈框架</p>
+          </div>
+          <div class="ecosystem-item">
+            <div class="ecosystem-icon">🔧</div>
+            <h4>React DevTools</h4>
+            <p>React开发者调试工具</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🎉 学习总结：</strong>本周学习了React框架的核心概念，包括JSX语法、组件开发、状态管理、事件处理等重要内容。React的组件化思想和虚拟DOM机制为现代前端开发提供了强大的基础。下周我们将学习Next.js框架，进一步提升React应用的开发体验。
+      </div>
+    </div>
+
+    <script>
+      // 全局变量
+      let counter = 0;
+      let todos = [];
+      let todoIdCounter = 1;
+
+      // 计数器功能
+      function incrementCounter() {
+        counter++;
+        updateCounterDisplay();
+      }
+
+      function decrementCounter() {
+        counter--;
+        updateCounterDisplay();
+      }
+
+      function resetCounter() {
+        counter = 0;
+        updateCounterDisplay();
+      }
+
+      function updateCounterDisplay() {
+        document.getElementById('counterDisplay').textContent = counter;
+      }
+
+      // JSX演示函数
+      function demonstrateJSX() {
+        const output = document.getElementById('componentOutput');
+        output.textContent = '📝 JSX语法演示...\n\n';
+        
+        const jsxExamples = [
+          'const element = <h1>Hello, React!</h1>;',
+          'const name = "张三";',
+          'const greeting = <h1>Hello, {name}!</h1>;',
+          'const list = <ul>{items.map(item => <li key={item.id}>{item.name}</li>)}</ul>;',
+          'const conditional = {isLoggedIn ? <UserGreeting /> : <GuestGreeting />};'
+        ];
+        
+        jsxExamples.forEach((example, index) => {
+          setTimeout(() => {
+            output.textContent += `${example}\n\n`;
+          }, index * 800);
+        });
+      }
+
+      function demonstrateComponents() {
+        const output = document.getElementById('componentOutput');
+        output.textContent = '🧩 React组件演示...\n\n';
+        
+        setTimeout(() => {
+          output.textContent += '// 函数组件\n';
+          output.textContent += 'function Welcome(props) {\n';
+          output.textContent += '  return <h1>Hello, {props.name}!</h1>;\n';
+          output.textContent += '}\n\n';
+          
+          output.textContent += '// 类组件\n';
+          output.textContent += 'class Welcome extends React.Component {\n';
+          output.textContent += '  render() {\n';
+          output.textContent += '    return <h1>Hello, {this.props.name}!</h1>;\n';
+          output.textContent += '  }\n';
+          output.textContent += '}\n';
+        }, 500);
+      }
+
+      function demonstrateProps() {
+        const output = document.getElementById('componentOutput');
+        output.textContent = '📦 Props传递演示...\n\n';
+        
+        const propsExamples = [
+          '// 传递字符串\n<Welcome name="张三" />',
+          '// 传递数字\n<Counter initialValue={10} />',
+          '// 传递对象\n<UserCard user={{name: "李四", age: 25}} />',
+          '// 传递函数\n<Button onClick={handleClick} />',
+          '// 传递子元素\n<Card>\n  <h2>标题</h2>\n  <p>内容</p>\n</Card>'
+        ];
+        
+        propsExamples.forEach((example, index) => {
+          setTimeout(() => {
+            output.textContent += `${example}\n\n`;
+          }, index * 700);
+        });
+      }
+
+      function demonstrateConditional() {
+        const output = document.getElementById('componentOutput');
+        output.textContent = '🔀 条件渲染演示...\n\n';
+        
+        setTimeout(() => {
+          output.textContent += '// 三元运算符\n';
+          output.textContent += '{isLoggedIn ? <UserDashboard /> : <LoginForm />}\n\n';
+          
+          output.textContent += '// 逻辑与运算符\n';
+          output.textContent += '{showMessage && <Message text="欢迎回来！" />}\n\n';
+          
+          output.textContent += '// if语句\n';
+          output.textContent += 'if (user.role === "admin") {\n';
+          output.textContent += '  return <AdminPanel />;\n';
+          output.textContent += '}\n';
+          output.textContent += 'return <UserPanel />;\n';
+        }, 500);
+      }
+
+      // Hooks演示函数
+       function demonstrateUseState() {
+         const output = document.getElementById('hooksOutput');
+         output.textContent = '📊 useState Hook演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += 'const [count, setCount] = useState(0);\n';
+           output.textContent += 'const [name, setName] = useState("");\n\n';
+           output.textContent += '// 状态更新\n';
+           output.textContent += 'setCount(count + 1);\n';
+           output.textContent += 'setName("React学习者");\n\n';
+           output.textContent += '// 函数式更新\n';
+           output.textContent += 'setCount(prevCount => prevCount + 1);\n';
+         }, 500);
+       }
+
+       function demonstrateUseEffect() {
+         const output = document.getElementById('hooksOutput');
+         output.textContent = '🔄 useEffect Hook演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 组件挂载时执行\n';
+           output.textContent += 'useEffect(() => {\n';
+           output.textContent += '  console.log("组件已挂载");\n';
+           output.textContent += '}, []);\n\n';
+           
+           output.textContent += '// 依赖项变化时执行\n';
+           output.textContent += 'useEffect(() => {\n';
+           output.textContent += '  document.title = `计数: ${count}`;\n';
+           output.textContent += '}, [count]);\n\n';
+           
+           output.textContent += '// 清理函数\n';
+           output.textContent += 'useEffect(() => {\n';
+           output.textContent += '  const timer = setInterval(() => {}, 1000);\n';
+           output.textContent += '  return () => clearInterval(timer);\n';
+           output.textContent += '}, []);\n';
+         }, 500);
+       }
+
+       function demonstrateCustomHooks() {
+         const output = document.getElementById('hooksOutput');
+         output.textContent = '🔧 自定义Hook演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 自定义Hook定义\n';
+           output.textContent += 'function useCounter(initialValue = 0) {\n';
+           output.textContent += '  const [count, setCount] = useState(initialValue);\n';
+           output.textContent += '  const increment = () => setCount(c => c + 1);\n';
+           output.textContent += '  const decrement = () => setCount(c => c - 1);\n';
+           output.textContent += '  return { count, increment, decrement };\n';
+           output.textContent += '}\n\n';
+           
+           output.textContent += '// 使用自定义Hook\n';
+           output.textContent += 'function Counter() {\n';
+           output.textContent += '  const { count, increment, decrement } = useCounter(10);\n';
+           output.textContent += '  return <div>{count}</div>;\n';
+           output.textContent += '}\n';
+         }, 500);
+       }
+
+       function demonstrateStateUpdates() {
+         const output = document.getElementById('hooksOutput');
+         output.textContent = '⚡ 状态更新演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 批量更新\n';
+           output.textContent += 'function handleClick() {\n';
+           output.textContent += '  setCount(c => c + 1);\n';
+           output.textContent += '  setCount(c => c + 1);\n';
+           output.textContent += '  // 只会触发一次重渲染\n';
+           output.textContent += '}\n\n';
+           
+           output.textContent += '// 对象状态更新\n';
+           output.textContent += 'const [user, setUser] = useState({name: "", age: 0});\n';
+           output.textContent += 'setUser(prev => ({...prev, name: "张三"}));\n\n';
+           
+           output.textContent += '// 数组状态更新\n';
+           output.textContent += 'const [items, setItems] = useState([]);\n';
+           output.textContent += 'setItems(prev => [...prev, newItem]);\n';
+         }, 500);
+       }
+
+       // 事件处理演示函数
+       function demonstrateEvents() {
+         const output = document.getElementById('eventsOutput');
+         output.textContent = '🎯 React事件处理演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 点击事件\n';
+           output.textContent += 'function Button() {\n';
+           output.textContent += '  const handleClick = (e) => {\n';
+           output.textContent += '    e.preventDefault();\n';
+           output.textContent += '    console.log("按钮被点击");\n';
+           output.textContent += '  };\n';
+           output.textContent += '  return <button onClick={handleClick}>点击</button>;\n';
+           output.textContent += '}\n\n';
+           
+           output.textContent += '// 传递参数\n';
+           output.textContent += 'const handleClick = (id) => (e) => {\n';
+           output.textContent += '  console.log("点击了项目:", id);\n';
+           output.textContent += '};\n';
+         }, 500);
+       }
+
+       function demonstrateForms() {
+         const output = document.getElementById('eventsOutput');
+         output.textContent = '📝 表单处理演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 受控组件\n';
+           output.textContent += 'const [value, setValue] = useState("");\n\n';
+           output.textContent += '<input\n';
+           output.textContent += '  type="text"\n';
+           output.textContent += '  value={value}\n';
+           output.textContent += '  onChange={(e) => setValue(e.target.value)}\n';
+           output.textContent += '/>\n\n';
+           
+           output.textContent += '// 表单提交\n';
+           output.textContent += 'const handleSubmit = (e) => {\n';
+           output.textContent += '  e.preventDefault();\n';
+           output.textContent += '  console.log("提交数据:", formData);\n';
+           output.textContent += '};\n';
+         }, 500);
+       }
+
+       function demonstrateValidation() {
+         const output = document.getElementById('eventsOutput');
+         output.textContent = '✅ 表单验证演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// 实时验证\n';
+           output.textContent += 'const [email, setEmail] = useState("");\n';
+           output.textContent += 'const [errors, setErrors] = useState({});\n\n';
+           
+           output.textContent += 'const validateEmail = (email) => {\n';
+           output.textContent += '  const re = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n';
+           output.textContent += '  return re.test(email);\n';
+           output.textContent += '};\n\n';
+           
+           output.textContent += 'const handleEmailChange = (e) => {\n';
+           output.textContent += '  const value = e.target.value;\n';
+           output.textContent += '  setEmail(value);\n';
+           output.textContent += '  if (!validateEmail(value)) {\n';
+           output.textContent += '    setErrors(prev => ({...prev, email: "邮箱格式不正确"}));\n';
+           output.textContent += '  }\n';
+           output.textContent += '};\n';
+         }, 500);
+       }
+
+       function demonstrateTodoApp() {
+         const output = document.getElementById('eventsOutput');
+         output.textContent = '📋 Todo应用演示...\n\n';
+         
+         setTimeout(() => {
+           output.textContent += '// Todo状态管理\n';
+           output.textContent += 'const [todos, setTodos] = useState([]);\n';
+           output.textContent += 'const [input, setInput] = useState("");\n\n';
+           
+           output.textContent += '// 添加Todo\n';
+           output.textContent += 'const addTodo = () => {\n';
+           output.textContent += '  if (input.trim()) {\n';
+           output.textContent += '    setTodos([...todos, {\n';
+           output.textContent += '      id: Date.now(),\n';
+           output.textContent += '      text: input,\n';
+           output.textContent += '      completed: false\n';
+           output.textContent += '    }]);\n';
+           output.textContent += '    setInput("");\n';
+           output.textContent += '  }\n';
+           output.textContent += '};\n\n';
+           
+           output.textContent += '// 切换完成状态\n';
+           output.textContent += 'const toggleTodo = (id) => {\n';
+           output.textContent += '  setTodos(todos.map(todo =>\n';
+           output.textContent += '    todo.id === id ? {...todo, completed: !todo.completed} : todo\n';
+           output.textContent += '  ));\n';
+           output.textContent += '};\n';
+         }, 500);
+       }
+
+       // Todo应用功能
+       function addTodoItem() {
+         const input = document.getElementById('todoInput');
+         const text = input.value.trim();
+         
+         if (text) {
+           const todo = {
+             id: todoIdCounter++,
+             text: text,
+             completed: false
+           };
+           
+           todos.push(todo);
+           input.value = '';
+           renderTodoList();
+         }
+       }
+
+       function handleTodoKeyPress(event) {
+         if (event.key === 'Enter') {
+           addTodoItem();
+         }
+       }
+
+       function toggleTodoItem(id) {
+         const todo = todos.find(t => t.id === id);
+         if (todo) {
+           todo.completed = !todo.completed;
+           renderTodoList();
+         }
+       }
+
+       function deleteTodoItem(id) {
+         const index = todos.findIndex(t => t.id === id);
+         if (index > -1) {
+           todos.splice(index, 1);
+           renderTodoList();
+         }
+       }
+
+       function renderTodoList() {
+         const todoList = document.getElementById('todoList');
+         todoList.innerHTML = '';
+         
+         todos.forEach(todo => {
+           const todoItem = document.createElement('div');
+           todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+           
+           todoItem.innerHTML = `
+             <span onclick="toggleTodoItem(${todo.id})" style="cursor: pointer; flex: 1;">
+               ${todo.text}
+             </span>
+             <button onclick="deleteTodoItem(${todo.id})" style="margin-left: 10px;">🗑️ 删除</button>
+           `;
+           
+           todoList.appendChild(todoItem);
+         });
+       }
+
+       // 页面加载完成后初始化
+       document.addEventListener('DOMContentLoaded', function() {
+         updateCounterDisplay();
+         renderTodoList();
+       });
+     </script>
+   </body>
+ </html>

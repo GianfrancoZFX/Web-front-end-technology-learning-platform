@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第六周 - JavaScript语法基础知识</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #f39c12;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      h2 {
+        color: #e74c3c;
+        margin-top: 40px;
+        padding-left: 15px;
+        border-left: 5px solid #f39c12;
+        background: linear-gradient(90deg, #fff8e1 0%, transparent 100%);
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-icon {
+        font-size: 1.5em;
+      }
+      .highlight {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 25px 0;
+        box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+      }
+      .concept-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #f39c12;
+        transition: all 0.3s ease;
+      }
+      .concept-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 25px;
+        border-radius: 15px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        position: relative;
+        box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+      }
+      .code-block::before {
+        content: "JavaScript";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: #f39c12;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+      .demo-area {
+        border: 3px solid #f39c12;
+        padding: 25px;
+        margin: 20px 0;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+        box-shadow: 0 5px 15px rgba(243, 156, 18, 0.2);
+      }
+      .demo-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .car-demo {
+        background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #4caf50;
+      }
+      .electric-car-demo {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #2196f3;
+      }
+      .interactive-demo {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #9c27b0;
+      }
+      button {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        margin: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+      }
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        background: linear-gradient(135deg, #e67e22, #d35400);
+      }
+      .output {
+        background: #2c3e50;
+        color: #ecf0f1;
+        border: none;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        min-height: 60px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      .syntax-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .syntax-item {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #f39c12;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .syntax-item h4 {
+        color: #2c3e50;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .feature-highlight {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: bold;
+      }
+      .progress-bar {
+        background: #ecf0f1;
+        border-radius: 10px;
+        height: 8px;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      .progress-fill {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+      }
+      .dom-target {
+        padding: 25px;
+        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        border-radius: 15px;
+        margin: 15px 0;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        border: 3px dashed #bdc3c7;
+      }
+      .knowledge-point {
+        background: #f8f9fa;
+        border-left: 4px solid #f39c12;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 10px 10px 0;
+      }
+      .knowledge-point strong {
+        color: #e67e22;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第六周 - JavaScript语法基础知识</h1>
+
+      <div class="highlight">
+        <strong>🎯 学习目标：</strong>掌握JavaScript的核心语法概念，包括变量、数据类型、函数、面向对象编程、事件处理和DOM操作，为后续的高级JavaScript学习打下坚实基础
+      </div>
+
+      <div class="concept-card">
+        <h3>🚀 JavaScript简介</h3>
+        <p>JavaScript是一种高级的、解释型的编程语言，是Web开发的核心技术之一。它最初被设计用于网页交互，现在已经发展成为一种通用的编程语言。</p>
+        <div class="syntax-grid">
+          <div class="syntax-item">
+            <h4>📝 变量声明</h4>
+            <div class="code-block">
+// ES6+ 推荐方式
+let name = "张三";        // 可变变量
+const age = 25;          // 常量
+var city = "北京";       // 传统方式(不推荐)
+            </div>
+          </div>
+          <div class="syntax-item">
+            <h4>🔢 数据类型</h4>
+            <div class="code-block">
+// 基本数据类型
+let str = "字符串";      // String
+let num = 42;           // Number
+let bool = true;        // Boolean
+let nothing = null;     // Null
+let undef;              // Undefined
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🏗️</span>面向对象编程 - 类与对象</h2>
+      <p>ES6引入了class语法，使JavaScript的面向对象编程更加直观和易于理解。</p>
+
+      <div class="code-block">
+class Car {
+  // 构造函数
+  constructor(brand, model, year) {
+    this.brand = brand;      // 品牌
+    this.model = model;      // 型号
+    this.year = year;        // 年份
+    this.isRunning = false;  // 运行状态
+    this.speed = 0;          // 当前速度
+  }
+
+  // 启动方法
+  start() {
+    this.isRunning = true;
+    return `🚗 ${this.brand} ${this.model} 启动成功！`;
+  }
+
+  // 停止方法
+  stop() {
+    this.isRunning = false;
+    this.speed = 0;
+    return `🛑 ${this.brand} ${this.model} 已停止`;
+  }
+
+  // 加速方法
+  accelerate(increment = 10) {
+    if (this.isRunning) {
+      this.speed += increment;
+      return `⚡ 加速中... 当前速度: ${this.speed} km/h`;
+    }
+    return "❌ 请先启动汽车！";
+  }
+
+  // 获取信息
+  getInfo() {
+    return {
+      brand: this.brand,
+      model: this.model,
+      year: this.year,
+      status: this.isRunning ? '运行中' : '停止',
+      speed: this.speed
+    };
+  }
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>🚗 汽车类交互演示</h3>
+        <div class="car-demo">
+          <div class="feature-highlight">汽车控制面板</div>
+          <button onclick="createCar()">🏭 创建汽车</button>
+          <button onclick="startCar()">🔑 启动汽车</button>
+          <button onclick="accelerateCar()">⚡ 加速</button>
+          <button onclick="stopCar()">🛑 停止汽车</button>
+          <button onclick="showCarInfo()">📊 显示信息</button>
+          <div class="output" id="carOutput">等待操作... 请先创建一辆汽车</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="speedProgress" style="width: 0%"></div>
+          </div>
+          <div style="text-align: center; margin-top: 10px; color: #7f8c8d;">速度指示器</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🔗</span>继承 - 扩展类的功能</h2>
+      <p>通过继承，我们可以创建更专业化的类，复用父类的功能并添加新特性。</p>
+
+      <div class="code-block">
+class ElectricCar extends Car {
+  constructor(brand, model, year, batteryCapacity) {
+    super(brand, model, year);  // 调用父类构造函数
+    this.batteryCapacity = batteryCapacity;  // 电池容量(kWh)
+    this.batteryLevel = 100;                 // 电量百分比
+    this.chargingStatus = false;             // 充电状态
+  }
+
+  // 充电方法
+  charge() {
+    this.chargingStatus = true;
+    const chargeInterval = setInterval(() => {
+      if (this.batteryLevel < 100) {
+        this.batteryLevel += 5;
+        this.updateChargeDisplay();
+      } else {
+        this.chargingStatus = false;
+        clearInterval(chargeInterval);
+        this.updateChargeDisplay("充电完成！");
+      }
+    }, 200);
+    return "🔌 开始充电...";
+  }
+
+  // 行驶方法
+  drive(distance) {
+    if (this.batteryLevel <= 0) {
+      return "🔋 电量不足，请充电！";
+    }
+    if (!this.isRunning) {
+      return "❌ 请先启动汽车！";
+    }
+    
+    const consumption = distance * 0.2; // 每公里消耗0.2%电量
+    this.batteryLevel = Math.max(0, this.batteryLevel - consumption);
+    return `🛣️ 行驶了 ${distance} 公里，剩余电量: ${this.batteryLevel.toFixed(1)}%`;
+  }
+
+  // 更新充电显示
+  updateChargeDisplay(message = null) {
+    const output = document.getElementById('electricCarOutput');
+    if (message) {
+      output.textContent = message;
+    } else {
+      output.textContent = `🔌 充电中... 当前电量: ${this.batteryLevel}%`;
+    }
+    this.updateBatteryProgress();
+  }
+
+  // 更新电池进度条
+  updateBatteryProgress() {
+    const progress = document.getElementById('batteryProgress');
+    if (progress) {
+      progress.style.width = this.batteryLevel + '%';
+      progress.style.background = this.batteryLevel > 20 ? 
+        'linear-gradient(135deg, #2ecc71, #27ae60)' : 
+        'linear-gradient(135deg, #e74c3c, #c0392b)';
+    }
+  }
+
+  // 重写获取信息方法
+  getInfo() {
+    const baseInfo = super.getInfo();
+    return {
+      ...baseInfo,
+      batteryCapacity: this.batteryCapacity,
+      batteryLevel: this.batteryLevel.toFixed(1),
+      chargingStatus: this.chargingStatus ? '充电中' : '未充电'
+    };
+  }
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>⚡ 电动汽车演示</h3>
+        <div class="electric-car-demo">
+          <div class="feature-highlight">电动汽车控制面板</div>
+          <button onclick="createElectricCar()">🏭 创建电动汽车</button>
+          <button onclick="chargeElectricCar()">🔌 开始充电</button>
+          <button onclick="driveElectricCar()">🛣️ 行驶20公里</button>
+          <button onclick="showElectricCarInfo()">📊 显示详细信息</button>
+          <div class="output" id="electricCarOutput">等待操作... 请先创建一辆电动汽车</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="batteryProgress" style="width: 100%; background: linear-gradient(135deg, #2ecc71, #27ae60);"></div>
+          </div>
+          <div style="text-align: center; margin-top: 10px; color: #7f8c8d;">电池电量指示器</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">⏰</span>异步编程 - 回调函数与定时器</h2>
+      <p>JavaScript是单线程语言，但通过异步编程可以处理耗时操作而不阻塞主线程。</p>
+
+      <div class="knowledge-point">
+        <strong>回调函数：</strong>作为参数传递给其他函数的函数，在特定条件满足时被调用。
+      </div>
+
+      <div class="code-block">
+// 基础回调函数示例
+function processData(data, callback) {
+  console.log('开始处理数据:', data);
+  
+  // 模拟异步操作
+  setTimeout(() => {
+    const result = data.toUpperCase();
+    console.log('数据处理完成:', result);
+    
+    // 调用回调函数
+    if (callback && typeof callback === 'function') {
+      callback(result);
+    }
+  }, 2000);
+}
+
+// 使用回调函数
+processData('hello world', (result) => {
+  console.log('回调函数执行，结果是:', result);
+  alert('处理完成: ' + result);
+});
+
+// 多层回调示例
+function delayedMessage(message, delay, callback) {
+  setTimeout(() => {
+    console.log(`⏰ ${delay}ms后: ${message}`);
+    if (callback) callback();
+  }, delay);
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>⏰ 回调函数与定时器演示</h3>
+        <div class="interactive-demo">
+          <div class="feature-highlight">异步操作控制台</div>
+          <button onclick="demonstrateCallback()">🚀 启动回调链</button>
+          <button onclick="demonstrateTimer()">⏱️ 定时器演示</button>
+          <button onclick="clearAllTimers()">🛑 清除所有定时器</button>
+          <div class="output" id="callbackOutput">点击按钮查看异步操作效果...</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🎨</span>DOM操作 - 动态网页交互</h2>
+      <p>DOM (Document Object Model) 操作是JavaScript与网页交互的核心技术。</p>
+
+      <div class="knowledge-point">
+        <strong>DOM操作核心概念：</strong>通过JavaScript动态修改HTML元素的内容、样式和行为。
+      </div>
+
+      <div class="code-block">
+// 获取元素的多种方式
+const elementById = document.getElementById('myId');
+const elementsByClass = document.getElementsByClassName('myClass');
+const elementsByTag = document.getElementsByTagName('div');
+const querySelector = document.querySelector('.my-selector');
+const querySelectorAll = document.querySelectorAll('.my-class');
+
+// 修改元素内容
+element.textContent = '新的文本内容';  // 纯文本
+element.innerHTML = '<strong>HTML内容</strong>';  // HTML内容
+
+// 修改元素样式
+element.style.color = '#e74c3c';
+element.style.fontSize = '20px';
+element.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+
+// 添加/移除CSS类
+element.classList.add('new-class');
+element.classList.remove('old-class');
+element.classList.toggle('active');
+
+// 事件监听
+element.addEventListener('click', function(event) {
+  console.log('元素被点击了!', event);
+});
+      </div>
+
+      <div class="demo-area">
+        <h3>🎨 DOM操作实战演示</h3>
+        <div class="dom-target" id="domTarget">
+          这是一个可以被JavaScript动态操作的元素<br>
+          <small>点击下方按钮查看效果</small>
+        </div>
+        <div style="text-align: center; margin: 20px 0;">
+          <button onclick="changeText()">📝 改变文本</button>
+          <button onclick="changeColor()">🎨 随机颜色</button>
+          <button onclick="changeSize()">📏 增大字体</button>
+          <button onclick="addAnimation()">✨ 添加动画</button>
+          <button onclick="resetElement()">🔄 重置元素</button>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3>🎓 JavaScript学习路径</h3>
+        <div class="syntax-grid">
+          <div class="syntax-item">
+            <h4>🔤 基础语法</h4>
+            <ul>
+              <li>变量声明 (let, const, var)</li>
+              <li>数据类型 (String, Number, Boolean)</li>
+              <li>运算符与表达式</li>
+              <li>条件语句与循环</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🏗️ 面向对象</h4>
+            <ul>
+              <li>类与对象 (class, constructor)</li>
+              <li>继承 (extends, super)</li>
+              <li>封装与多态</li>
+              <li>静态方法与属性</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>⚡ 异步编程</h4>
+            <ul>
+              <li>回调函数 (Callback)</li>
+              <li>Promise 对象</li>
+              <li>async/await 语法</li>
+              <li>事件循环机制</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🎨 DOM操作</h4>
+            <ul>
+              <li>元素选择与操作</li>
+              <li>事件处理机制</li>
+              <li>样式动态修改</li>
+              <li>表单数据处理</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🎉 学习总结：</strong>本周学习了JavaScript的核心语法概念，包括面向对象编程、继承、回调函数和DOM操作。这些是前端开发的基础技能，为后续学习异步编程、框架使用等高级主题奠定了基础。下周我们将深入学习Promise、async/await等异步编程技术。
+      </div>
+    </div>
+
+    <script>
+      // 全局变量存储实例
+      let myCar = null;
+      let myElectricCar = null;
+      let timers = [];
+
+      // Car类定义
+      class Car {
+        constructor(brand, model, year) {
+          this.brand = brand;
+          this.model = model;
+          this.year = year;
+          this.isRunning = false;
+          this.speed = 0;
+        }
+
+        start() {
+          this.isRunning = true;
+          return `🚗 ${this.brand} ${this.model} 启动成功！`;
+        }
+
+        stop() {
+          this.isRunning = false;
+          this.speed = 0;
+          this.updateSpeedProgress();
+          return `🛑 ${this.brand} ${this.model} 已停止`;
+        }
+
+        accelerate(increment = 20) {
+          if (this.isRunning) {
+            this.speed = Math.min(200, this.speed + increment);
+            this.updateSpeedProgress();
+            return `⚡ 加速中... 当前速度: ${this.speed} km/h`;
+          }
+          return "❌ 请先启动汽车！";
+        }
+
+        updateSpeedProgress() {
+          const progress = document.getElementById('speedProgress');
+          if (progress) {
+            const percentage = (this.speed / 200) * 100;
+            progress.style.width = percentage + '%';
+          }
+        }
+
+        getInfo() {
+          return {
+            brand: this.brand,
+            model: this.model,
+            year: this.year,
+            status: this.isRunning ? '运行中' : '停止',
+            speed: this.speed
+          };
+        }
+      }
+
+      // ElectricCar类定义
+      class ElectricCar extends Car {
+        constructor(brand, model, year, batteryCapacity) {
+          super(brand, model, year);
+          this.batteryCapacity = batteryCapacity;
+          this.batteryLevel = 100;
+          this.chargingStatus = false;
+        }
+
+        charge() {
+          if (this.chargingStatus) {
+            return "🔌 已在充电中...";
+          }
+          
+          this.chargingStatus = true;
+          const chargeInterval = setInterval(() => {
+            if (this.batteryLevel < 100) {
+              this.batteryLevel = Math.min(100, this.batteryLevel + 5);
+              this.updateChargeDisplay();
+            } else {
+              this.chargingStatus = false;
+              clearInterval(chargeInterval);
+              this.updateChargeDisplay("🔋 充电完成！电量已满");
+            }
+          }, 200);
+          
+          timers.push(chargeInterval);
+          return "🔌 开始充电...";
+        }
+
+        drive(distance) {
+          if (this.batteryLevel <= 0) {
+            return "🔋 电量不足，请充电！";
+          }
+          if (!this.isRunning) {
+            return "❌ 请先启动汽车！";
+          }
+          
+          const consumption = distance * 0.3;
+          this.batteryLevel = Math.max(0, this.batteryLevel - consumption);
+          this.updateBatteryProgress();
+          return `🛣️ 行驶了 ${distance} 公里，剩余电量: ${this.batteryLevel.toFixed(1)}%`;
+        }
+
+        updateChargeDisplay(message = null) {
+          const output = document.getElementById('electricCarOutput');
+          if (message) {
+            output.textContent = message;
+          } else {
+            output.textContent = `🔌 充电中... 当前电量: ${this.batteryLevel.toFixed(1)}%`;
+          }
+          this.updateBatteryProgress();
+        }
+
+        updateBatteryProgress() {
+          const progress = document.getElementById('batteryProgress');
+          if (progress) {
+            progress.style.width = this.batteryLevel + '%';
+            progress.style.background = this.batteryLevel > 20 ? 
+              'linear-gradient(135deg, #2ecc71, #27ae60)' : 
+              'linear-gradient(135deg, #e74c3c, #c0392b)';
+          }
+        }
+
+        getInfo() {
+          const baseInfo = super.getInfo();
+          return {
+            ...baseInfo,
+            batteryCapacity: this.batteryCapacity,
+            batteryLevel: this.batteryLevel.toFixed(1),
+            chargingStatus: this.chargingStatus ? '充电中' : '未充电'
+          };
+        }
+      }
+
+      // 汽车操作函数
+      function createCar() {
+        myCar = new Car("丰田", "卡罗拉", 2024);
+        document.getElementById('carOutput').textContent = "🏭 汽车创建成功：" + JSON.stringify(myCar.getInfo(), null, 2);
+      }
+
+      function startCar() {
+        if (myCar) {
+          const result = myCar.start();
+          document.getElementById('carOutput').textContent = result;
+        } else {
+          document.getElementById('carOutput').textContent = "❌ 请先创建汽车！";
+        }
+      }
+
+      function accelerateCar() {
+        if (myCar) {
+          const result = myCar.accelerate();
+          document.getElementById('carOutput').textContent = result;
+        } else {
+          document.getElementById('carOutput').textContent = "❌ 请先创建汽车！";
+        }
+      }
+
+      function stopCar() {
+        if (myCar) {
+          const result = myCar.stop();
+          document.getElementById('carOutput').textContent = result;
+        } else {
+          document.getElementById('carOutput').textContent = "❌ 请先创建汽车！";
+        }
+      }
+
+      function showCarInfo() {
+        if (myCar) {
+          document.getElementById('carOutput').textContent = "📊 汽车信息：\n" + JSON.stringify(myCar.getInfo(), null, 2);
+        } else {
+          document.getElementById('carOutput').textContent = "❌ 请先创建汽车！";
+        }
+      }
+
+      // 电动汽车操作函数
+      function createElectricCar() {
+        myElectricCar = new ElectricCar("特斯拉", "Model 3", 2024, 75);
+        myElectricCar.updateBatteryProgress();
+        document.getElementById('electricCarOutput').textContent = "🏭 电动汽车创建成功：" + JSON.stringify(myElectricCar.getInfo(), null, 2);
+      }
+
+      function chargeElectricCar() {
+        if (myElectricCar) {
+          const result = myElectricCar.charge();
+          document.getElementById('electricCarOutput').textContent = result;
+        } else {
+          document.getElementById('electricCarOutput').textContent = "❌ 请先创建电动汽车！";
+        }
+      }
+
+      function driveElectricCar() {
+        if (myElectricCar) {
+          const result = myElectricCar.drive(20);
+          document.getElementById('electricCarOutput').textContent = result;
+        } else {
+          document.getElementById('electricCarOutput').textContent = "❌ 请先创建电动汽车！";
+        }
+      }
+
+      function showElectricCarInfo() {
+        if (myElectricCar) {
+          document.getElementById('electricCarOutput').textContent = "📊 电动汽车信息：\n" + JSON.stringify(myElectricCar.getInfo(), null, 2);
+        } else {
+          document.getElementById('electricCarOutput').textContent = "❌ 请先创建电动汽车！";
+        }
+      }
+
+      // 回调函数演示
+      function demonstrateCallback() {
+        const output = document.getElementById('callbackOutput');
+        output.textContent = "🚀 启动回调链...\n";
+        
+        // 第一个回调
+        setTimeout(() => {
+          output.textContent += "⏰ 1秒后: 第一个回调执行\n";
+          
+          // 第二个回调
+          setTimeout(() => {
+            output.textContent += "⏰ 2秒后: 第二个回调执行\n";
+            
+            // 第三个回调
+            setTimeout(() => {
+              output.textContent += "⏰ 3秒后: 回调链完成！✅";
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }
+
+      function demonstrateTimer() {
+        const output = document.getElementById('callbackOutput');
+        let count = 0;
+        output.textContent = "⏱️ 定时器启动，每秒更新一次...\n";
+        
+        const timer = setInterval(() => {
+          count++;
+          output.textContent += `⏰ 第${count}秒: 定时器执行\n`;
+          
+          if (count >= 5) {
+            clearInterval(timer);
+            output.textContent += "🛑 定时器自动停止";
+          }
+        }, 1000);
+        
+        timers.push(timer);
+      }
+
+      function clearAllTimers() {
+        timers.forEach(timer => clearInterval(timer));
+        timers = [];
+        document.getElementById('callbackOutput').textContent = "🛑 所有定时器已清除";
+      }
+
+      // DOM操作函数
+      function changeText() {
+        const target = document.getElementById('domTarget');
+        const messages = [
+          "🎉 文本已被JavaScript改变！",
+          "✨ 这是动态内容更新",
+          "🚀 JavaScript DOM操作演示",
+          "🎨 实时内容修改展示"
+        ];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        target.innerHTML = `${randomMessage}<br><small>DOM操作成功</small>`;
+      }
+
+      function changeColor() {
+        const target = document.getElementById('domTarget');
+        const colors = [
+          'linear-gradient(135deg, #667eea, #764ba2)',
+          'linear-gradient(135deg, #f093fb, #f5576c)',
+          'linear-gradient(135deg, #4facfe, #00f2fe)',
+          'linear-gradient(135deg, #43e97b, #38f9d7)',
+          'linear-gradient(135deg, #fa709a, #fee140)'
+        ];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        target.style.background = randomColor;
+        target.style.color = 'white';
+      }
+
+      function changeSize() {
+        const target = document.getElementById('domTarget');
+        const currentSize = parseInt(target.style.fontSize) || 18;
+        const newSize = Math.min(currentSize + 4, 32);
+        target.style.fontSize = newSize + 'px';
+        target.style.fontWeight = 'bold';
+      }
+
+      function addAnimation() {
+        const target = document.getElementById('domTarget');
+        target.style.transition = 'all 0.5s ease';
+        target.style.transform = 'scale(1.1) rotate(5deg)';
+        target.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+        
+        setTimeout(() => {
+          target.style.transform = 'scale(1) rotate(0deg)';
+        }, 1000);
+      }
+
+      function resetElement() {
+        const target = document.getElementById('domTarget');
+        target.innerHTML = '这是一个可以被JavaScript动态操作的元素<br><small>点击下方按钮查看效果</small>';
+        target.style = 'padding: 25px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); border-radius: 15px; margin: 15px 0; text-align: center; font-size: 18px; font-weight: bold; transition: all 0.3s ease; border: 3px dashed #bdc3c7;';
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS进阶知识实例 - 中国传统建筑艺术</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .architecture-showcase {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 盒模型演示 - 故宫建筑结构 */
+        .forbidden-city {
+            background-color: #d4af37;
+            padding: 30px;
+            margin: 30px auto;
+            border: 8px solid #8b0000;
+            width: 300px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 0 0 15px #ff6b6b;
+            position: relative;
+        }
+
+        .forbidden-city::before {
+            content: "护城河 (Margin)";
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .forbidden-city::after {
+            content: "城墙 (Border)";
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #8b0000;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        /* 文档流演示 - 传统建筑群 */
+        .building-complex {
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 3px solid #34495e;
+        }
+
+        .traditional-building {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            margin: 10px;
+            display: inline-block;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .traditional-building:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Display属性演示 */
+        .display-demo {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .block-building {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 15px;
+            margin: 8px 0;
+            display: block;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .inline-element {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            display: inline;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .inline-block-pavilion {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 15px;
+            margin: 8px;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .inline-block-pavilion:hover {
+            transform: scale(1.05);
+        }
+
+        /* 定位演示 - 天坛建筑群 */
+        .temple-of-heaven {
+            position: relative;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            height: 300px;
+            border: 3px solid #d35400;
+            margin: 25px 0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .main-hall {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            padding: 20px;
+            color: white;
+            position: relative;
+            top: 30px;
+            left: 50px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+        }
+
+        .side-pavilion {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            padding: 15px;
+            color: white;
+            position: absolute;
+            top: 80px;
+            right: 30px;
+            font-weight: bold;
+            border-radius: 8px;
+            width: 150px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .floating-cloud {
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            padding: 10px 20px;
+            color: #2c3e50;
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Flexbox演示 - 园林布局 */
+        .garden-layout {
+            display: flex;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            padding: 20px;
+            gap: 15px;
+            margin: 25px 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+        }
+
+        .garden-element {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 20px;
+            flex: 1;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .garden-element:hover {
+            transform: translateY(-5px);
+            flex: 1.2;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-cloud">🏯 传统建筑</div>
+
+    <div class="container">
+        <h1>CSS进阶知识实例 - 中国传统建筑艺术</h1>
+
+        <div class="architecture-showcase">
+            🏛️ 探索中国传统建筑的CSS布局之美 🏛️
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示CSS盒模型、文档流、display属性、定位方式和Flexbox布局
+        </div>
+
+        <h2 style="color: #e74c3c; margin-top: 40px; padding-left: 15px; border-left: 5px solid #e74c3c;">🏰 CSS盒模型 -
+            故宫建筑结构</h2>
+        <div class="forbidden-city">
+            紫禁城大殿<br>
+            (Content: 内容区域)<br>
+            Padding: 殿内空间<br>
+            Border: 宫殿围墙<br>
+            Margin: 护城河
+        </div>
+
+        <h2 style="color: #e74c3c; margin-top: 40px; padding-left: 15px; border-left: 5px solid #e74c3c;">🏘️ 文档流 -
+            传统建筑群落</h2>
+        <div class="building-complex">
+            <div class="traditional-building">正殿</div>
+            <div class="traditional-building">东厢房</div>
+            <div class="traditional-building">西厢房</div>
+            <div class="traditional-building">后院</div>
+            <div class="traditional-building">花园</div>
+        </div>
+
+        <h2 style="color: #e74c3c; margin-top: 40px; padding-left: 15px; border-left: 5px solid #e74c3c;">📐 Display属性演示
+        </h2>
+        <div class="display-demo">
+            <h4>Block元素 - 独占一行的建筑</h4>
+            <div class="block-building">天安门城楼 (display: block)</div>
+            <div class="block-building">人民大会堂 (display: block)</div>
+
+            <h4>Inline元素 - 行内排列的装饰</h4>
+            <span class="inline-element">🏮</span>
+            <span class="inline-element">🎋</span>
+            <span class="inline-element">🌸</span>
+            <span class="inline-element">🍃</span>
+
+            <h4>Inline-block元素 - 灵活排列的亭台楼阁</h4>
+            <div class="inline-block-pavilion">观景亭</div>
+            <div class="inline-block-pavilion">听雨楼</div>
+            <div class="inline-block-pavilion">望月台</div>
+        </div>
+
+        <h2 style="color: #e74c3c; margin-top: 40px; padding-left: 15px; border-left: 5px solid #e74c3c;">🏯 CSS定位 -
+            天坛建筑群</h2>
+        <div class="temple-of-heaven">
+            <div class="main-hall">
+                祈年殿<br>
+                (relative定位)
+            </div>
+            <div class="side-pavilion">
+                配殿<br>
+                (absolute定位)
+            </div>
+        </div>
+
+        <h2 style="color: #e74c3c; margin-top: 40px; padding-left: 15px; border-left: 5px solid #e74c3c;">🌿 Flexbox布局 -
+            苏州园林</h2>
+        <div class="garden-layout">
+            <div class="garden-element">🏞️<br>假山</div>
+            <div class="garden-element">🌊<br>池塘</div>
+            <div class="garden-element">🌸<br>花圃</div>
+            <div class="garden-element">🏛️<br>亭台</div>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🎨 中国建筑文化知识</h3>
+            <p><strong>斗拱结构：</strong>中国古代建筑特有的结构形式，既有结构功能，又有装饰作用。</p>
+            <p><strong>四合院布局：</strong>体现了中国传统的家庭伦理和空间美学，正房、厢房、倒座房围合成院。</p>
+            <p><strong>园林艺术：</strong>"虽由人作，宛自天开"，追求人工与自然的完美结合。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过中国传统建筑展示了CSS的盒模型、定位、布局等进阶知识，
+            包括margin、padding、border的作用，static、relative、absolute、fixed定位的区别，
+            以及block、inline、inline-block、flex等display属性的应用。
+        </div>
+    </div>
+</body>
+
+</html>

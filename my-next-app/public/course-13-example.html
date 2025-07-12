@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next.js 高级应用：WakaTime 统计与 Cloudflare 部署 - 古代天文观测台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .section h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #ffed4e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .demo-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a2e;
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 300px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .deployment-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.warning {
+            background: #fbbf24;
+        }
+
+        .status-indicator.error {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #ffd700;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-info {
+            color: #60a5fa;
+        }
+
+        .log-success {
+            color: #4ade80;
+        }
+
+        .log-warning {
+            color: #fbbf24;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .metric-chart {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 46, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #e0e0e0;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffd700;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-message {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            margin: 10px 0;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin: 10px 0;
+        }
+
+        .warning-message {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🌟 古代天文观测台</h1>
+            <p>Next.js 高级应用：WakaTime 统计与 Cloudflare 部署</p>
+            <p>通过古代天文观测的智慧，学习现代Web应用的高级部署与监控技术</p>
+        </div>
+
+        <!-- WakaTime 统计演示 -->
+        <div class="section">
+            <h2>📊 观测时间统计 (WakaTime Integration)</h2>
+            <p>就像古代天文学家记录观测时间一样，WakaTime帮助我们追踪编程时间和效率。</p>
+
+            <div class="demo-container">
+                <div class="control-panel">
+                    <button class="btn primary" onclick="fetchWakaTimeData()">获取观测数据</button>
+                    <button class="btn" onclick="generateReport()">生成报告</button>
+                    <button class="btn" onclick="exportData()">导出数据</button>
+                    <button class="btn danger" onclick="clearData()">清除数据</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-time">0</div>
+                        <div class="stat-label">总观测时间 (小时)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="daily-average">0</div>
+                        <div class="stat-label">日均观测 (小时)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="active-days">0</div>
+                        <div class="stat-label">活跃天数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="top-language">-</div>
+                        <div class="stat-label">主要技术</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>📈 每日观测时间趋势</h3>
+                    <div class="metric-chart" id="time-chart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🛠️ 技术使用分布</h3>
+                    <div id="language-chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cloudflare 部署演示 -->
+        <div class="section">
+            <h2>☁️ 云端部署管理 (Cloudflare Deployment)</h2>
+            <p>如同将观测成果传播到各地，Cloudflare帮助我们将应用快速部署到全球边缘节点。</p>
+
+            <div class="demo-container">
+                <div class="control-panel">
+                    <button class="btn primary" onclick="startDeployment()">开始部署</button>
+                    <button class="btn" onclick="checkDeploymentStatus()">检查状态</button>
+                    <button class="btn" onclick="rollbackDeployment()">回滚版本</button>
+                    <button class="btn danger" onclick="stopDeployment()">停止部署</button>
+                </div>
+
+                <div class="deployment-status">
+                    <div class="status-indicator" id="deployment-indicator"></div>
+                    <span id="deployment-status-text">等待部署</span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="deployment-progress" style="width: 0%"></div>
+                </div>
+
+                <div class="log-container" id="deployment-logs">
+                    <div class="log-entry log-info">[INFO] 部署系统已就绪</div>
+                    <div class="log-entry log-info">[INFO] 等待用户操作...</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="build-time">0</div>
+                        <div class="stat-label">构建时间 (秒)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="deploy-time">0</div>
+                        <div class="stat-label">部署时间 (秒)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="edge-locations">0</div>
+                        <div class="stat-label">边缘节点</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="cache-hit-rate">0%</div>
+                        <div class="stat-label">缓存命中率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 性能监控演示 -->
+        <div class="section">
+            <h2>⚡ 性能监控 (Performance Monitoring)</h2>
+            <p>古代天文学家观测天象变化，现代开发者监控应用性能。</p>
+
+            <div class="demo-container">
+                <div class="control-panel">
+                    <button class="btn primary" onclick="startMonitoring()">开始监控</button>
+                    <button class="btn" onclick="generatePerformanceReport()">性能报告</button>
+                    <button class="btn" onclick="optimizePerformance()">性能优化</button>
+                    <button class="btn danger" onclick="stopMonitoring()">停止监控</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('metrics')">核心指标</button>
+                    <button class="tab" onclick="switchTab('errors')">错误监控</button>
+                    <button class="tab" onclick="switchTab('analytics')">用户分析</button>
+                </div>
+
+                <div class="tab-content active" id="metrics-tab">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="response-time">0</div>
+                            <div class="stat-label">响应时间 (ms)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="throughput">0</div>
+                            <div class="stat-label">吞吐量 (req/s)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="error-rate">0%</div>
+                            <div class="stat-label">错误率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="uptime">99.9%</div>
+                            <div class="stat-label">可用性</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>📊 实时性能指标</h3>
+                        <div class="metric-chart" id="performance-chart"></div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="errors-tab">
+                    <div class="log-container" id="error-logs">
+                        <div class="log-entry log-info">[INFO] 错误监控系统已启动</div>
+                        <div class="log-entry log-success">[SUCCESS] 系统运行正常</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="analytics-tab">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="active-users">0</div>
+                            <div class="stat-label">活跃用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="page-views">0</div>
+                            <div class="stat-label">页面浏览量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="bounce-rate">0%</div>
+                            <div class="stat-label">跳出率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="session-duration">0</div>
+                            <div class="stat-label">会话时长 (分钟)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 高级功能演示 -->
+        <div class="section">
+            <h2>🚀 高级功能特性</h2>
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showFeatureDetail('edge-computing')">
+                    <h3>🌐 边缘计算</h3>
+                    <p>利用Cloudflare Workers在边缘节点执行代码，减少延迟，提升用户体验。</p>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('serverless')">
+                    <h3>⚡ 无服务器架构</h3>
+                    <p>基于Serverless Functions构建可扩展的后端服务，按需付费，自动扩缩容。</p>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('cdn')">
+                    <h3>🚀 全球CDN</h3>
+                    <p>通过Cloudflare的全球CDN网络，实现静态资源的快速分发和缓存优化。</p>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('security')">
+                    <h3>🛡️ 安全防护</h3>
+                    <p>集成DDoS防护、WAF规则、SSL/TLS加密等安全功能，保障应用安全。</p>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('analytics')">
+                    <h3>📈 深度分析</h3>
+                    <p>结合WakaTime和Cloudflare Analytics，获得开发效率和应用性能的全面洞察。</p>
+                </div>
+
+                <div class="feature-card" onclick="showFeatureDetail('automation')">
+                    <h3>🤖 自动化部署</h3>
+                    <p>通过GitHub Actions和Cloudflare API实现CI/CD流水线，自动化构建和部署。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="feature-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">功能详情</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // 全局变量
+        let wakaTimeData = {
+            totalTime: 0,
+            dailyAverage: 0,
+            activeDays: 0,
+            topLanguage: 'JavaScript',
+            dailyStats: [],
+            languages: []
+        };
+
+        let deploymentStatus = {
+            isDeploying: false,
+            progress: 0,
+            status: 'idle',
+            buildTime: 0,
+            deployTime: 0,
+            edgeLocations: 200,
+            cacheHitRate: 95
+        };
+
+        let monitoringData = {
+            isMonitoring: false,
+            responseTime: 0,
+            throughput: 0,
+            errorRate: 0,
+            uptime: 99.9,
+            activeUsers: 0,
+            pageViews: 0,
+            bounceRate: 0,
+            sessionDuration: 0
+        };
+
+        // 初始化星空背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // WakaTime 数据获取
+        function fetchWakaTimeData() {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.innerHTML = '<div class="loading"></div> 获取中...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                // 模拟API响应
+                wakaTimeData = {
+                    totalTime: Math.floor(Math.random() * 500) + 100,
+                    dailyAverage: Math.floor(Math.random() * 8) + 2,
+                    activeDays: Math.floor(Math.random() * 30) + 20,
+                    topLanguage: ['JavaScript', 'TypeScript', 'Python', 'React'][Math.floor(Math.random() * 4)],
+                    dailyStats: generateDailyStats(),
+                    languages: generateLanguageStats()
+                };
+
+                updateWakaTimeDisplay();
+                renderTimeChart();
+                renderLanguageChart();
+
+                button.textContent = originalText;
+                button.disabled = false;
+
+                showSuccessMessage('WakaTime数据获取成功！');
+            }, 2000);
+        }
+
+        function generateDailyStats() {
+            const stats = [];
+            for (let i = 0; i < 30; i++) {
+                stats.push({
+                    date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    hours: Math.random() * 10 + 1
+                });
+            }
+            return stats;
+        }
+
+        function generateLanguageStats() {
+            const languages = ['JavaScript', 'TypeScript', 'CSS', 'HTML', 'Python'];
+            return languages.map(lang => ({
+                name: lang,
+                hours: Math.random() * 50 + 10,
+                percentage: Math.random() * 30 + 10
+            }));
+        }
+
+        function updateWakaTimeDisplay() {
+            document.getElementById('total-time').textContent = wakaTimeData.totalTime;
+            document.getElementById('daily-average').textContent = wakaTimeData.dailyAverage.toFixed(1);
+            document.getElementById('active-days').textContent = wakaTimeData.activeDays;
+            document.getElementById('top-language').textContent = wakaTimeData.topLanguage;
+        }
+
+        function renderTimeChart() {
+            const chart = document.getElementById('time-chart');
+            chart.innerHTML = '';
+
+            const maxHours = Math.max(...wakaTimeData.dailyStats.map(d => d.hours));
+
+            wakaTimeData.dailyStats.forEach((day, index) => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.left = (index * (100 / wakaTimeData.dailyStats.length)) + '%';
+                bar.style.width = (100 / wakaTimeData.dailyStats.length) - 1 + '%';
+                bar.style.height = (day.hours / maxHours) * 100 + '%';
+
+                bar.addEventListener('mouseenter', (e) => {
+                    showTooltip(e, `${day.date}: ${day.hours.toFixed(1)}小时`);
+                });
+
+                bar.addEventListener('mouseleave', hideTooltip);
+
+                chart.appendChild(bar);
+            });
+        }
+
+        function renderLanguageChart() {
+            const container = document.getElementById('language-chart');
+            const total = wakaTimeData.languages.reduce((sum, lang) => sum + lang.hours, 0);
+
+            container.innerHTML = wakaTimeData.languages.map(lang => {
+                const percentage = (lang.hours / total) * 100;
+                return `
+                    <div style="display: flex; align-items: center; margin: 10px 0;">
+                        <div style="width: 100px; font-size: 14px;">${lang.name}</div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.1); height: 20px; border-radius: 10px; margin: 0 10px; overflow: hidden;">
+                            <div style="width: ${percentage}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 10px;"></div>
+                        </div>
+                        <div style="width: 60px; text-align: right; font-size: 12px;">${lang.hours.toFixed(1)}h</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 部署管理
+        function startDeployment() {
+            if (deploymentStatus.isDeploying) {
+                showWarningMessage('部署正在进行中，请等待完成');
+                return;
+            }
+
+            deploymentStatus.isDeploying = true;
+            deploymentStatus.progress = 0;
+            deploymentStatus.status = 'building';
+
+            updateDeploymentStatus('正在构建...', 'warning');
+            addDeploymentLog('开始构建应用...', 'info');
+
+            const buildInterval = setInterval(() => {
+                deploymentStatus.progress += Math.random() * 10;
+
+                if (deploymentStatus.progress >= 50 && deploymentStatus.status === 'building') {
+                    deploymentStatus.status = 'deploying';
+                    updateDeploymentStatus('正在部署...', 'warning');
+                    addDeploymentLog('构建完成，开始部署...', 'success');
+                }
+
+                if (deploymentStatus.progress >= 100) {
+                    deploymentStatus.progress = 100;
+                    deploymentStatus.status = 'deployed';
+                    deploymentStatus.isDeploying = false;
+
+                    updateDeploymentStatus('部署成功', 'success');
+                    addDeploymentLog('部署完成！应用已上线', 'success');
+
+                    // 更新统计数据
+                    deploymentStatus.buildTime = Math.floor(Math.random() * 60) + 30;
+                    deploymentStatus.deployTime = Math.floor(Math.random() * 30) + 10;
+                    updateDeploymentStats();
+
+                    clearInterval(buildInterval);
+                    showSuccessMessage('应用部署成功！');
+                }
+
+                updateProgressBar(deploymentStatus.progress);
+            }, 500);
+        }
+
+        function updateDeploymentStatus(text, type) {
+            document.getElementById('deployment-status-text').textContent = text;
+            const indicator = document.getElementById('deployment-indicator');
+            indicator.className = `status-indicator ${type}`;
+        }
+
+        function updateProgressBar(progress) {
+            document.getElementById('deployment-progress').style.width = progress + '%';
+        }
+
+        function addDeploymentLog(message, type) {
+            const logs = document.getElementById('deployment-logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function updateDeploymentStats() {
+            document.getElementById('build-time').textContent = deploymentStatus.buildTime;
+            document.getElementById('deploy-time').textContent = deploymentStatus.deployTime;
+            document.getElementById('edge-locations').textContent = deploymentStatus.edgeLocations;
+            document.getElementById('cache-hit-rate').textContent = deploymentStatus.cacheHitRate + '%';
+        }
+
+        function checkDeploymentStatus() {
+            if (deploymentStatus.isDeploying) {
+                showWarningMessage(`部署进行中... 进度: ${Math.floor(deploymentStatus.progress)}%`);
+            } else if (deploymentStatus.status === 'deployed') {
+                showSuccessMessage('应用运行正常，所有服务可用');
+            } else {
+                showWarningMessage('暂无活跃部署');
+            }
+        }
+
+        function rollbackDeployment() {
+            if (deploymentStatus.isDeploying) {
+                showErrorMessage('无法在部署过程中执行回滚');
+                return;
+            }
+
+            addDeploymentLog('开始回滚到上一版本...', 'warning');
+            setTimeout(() => {
+                addDeploymentLog('回滚完成', 'success');
+                showSuccessMessage('已回滚到上一版本');
+            }, 2000);
+        }
+
+        function stopDeployment() {
+            if (!deploymentStatus.isDeploying) {
+                showWarningMessage('当前没有正在进行的部署');
+                return;
+            }
+
+            deploymentStatus.isDeploying = false;
+            deploymentStatus.status = 'stopped';
+            updateDeploymentStatus('部署已停止', 'error');
+            addDeploymentLog('部署被用户停止', 'error');
+            showErrorMessage('部署已停止');
+        }
+
+        // 性能监控
+        function startMonitoring() {
+            if (monitoringData.isMonitoring) {
+                showWarningMessage('监控已在运行中');
+                return;
+            }
+
+            monitoringData.isMonitoring = true;
+            showSuccessMessage('性能监控已启动');
+
+            const monitoringInterval = setInterval(() => {
+                if (!monitoringData.isMonitoring) {
+                    clearInterval(monitoringInterval);
+                    return;
+                }
+
+                // 更新实时数据
+                monitoringData.responseTime = Math.floor(Math.random() * 200) + 50;
+                monitoringData.throughput = Math.floor(Math.random() * 1000) + 100;
+                monitoringData.errorRate = Math.random() * 2;
+                monitoringData.activeUsers = Math.floor(Math.random() * 500) + 50;
+                monitoringData.pageViews = Math.floor(Math.random() * 10000) + 1000;
+                monitoringData.bounceRate = Math.random() * 30 + 20;
+                monitoringData.sessionDuration = Math.random() * 10 + 2;
+
+                updateMonitoringDisplay();
+
+                // 随机生成错误日志
+                if (Math.random() < 0.1) {
+                    addErrorLog('检测到轻微性能波动', 'warning');
+                }
+            }, 2000);
+        }
+
+        function updateMonitoringDisplay() {
+            document.getElementById('response-time').textContent = monitoringData.responseTime;
+            document.getElementById('throughput').textContent = monitoringData.throughput;
+            document.getElementById('error-rate').textContent = monitoringData.errorRate.toFixed(2) + '%';
+            document.getElementById('uptime').textContent = monitoringData.uptime + '%';
+            document.getElementById('active-users').textContent = monitoringData.activeUsers;
+            document.getElementById('page-views').textContent = monitoringData.pageViews.toLocaleString();
+            document.getElementById('bounce-rate').textContent = monitoringData.bounceRate.toFixed(1) + '%';
+            document.getElementById('session-duration').textContent = monitoringData.sessionDuration.toFixed(1);
+        }
+
+        function addErrorLog(message, type) {
+            const logs = document.getElementById('error-logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function generatePerformanceReport() {
+            showSuccessMessage('性能报告已生成并发送到您的邮箱');
+        }
+
+        function optimizePerformance() {
+            showSuccessMessage('性能优化建议已应用，预计响应时间减少15%');
+        }
+
+        function stopMonitoring() {
+            monitoringData.isMonitoring = false;
+            showWarningMessage('性能监控已停止');
+        }
+
+        // 标签页切换
+        function switchTab(tabName) {
+            // 移除所有活跃状态
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // 激活选中的标签页
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // 功能详情模态框
+        function showFeatureDetail(feature) {
+            const modal = document.getElementById('feature-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            const features = {
+                'edge-computing': {
+                    title: '🌐 边缘计算',
+                    content: `
+                        <h4>Cloudflare Workers 边缘计算</h4>
+                        <p>在全球200+数据中心运行JavaScript代码，实现超低延迟响应。</p>
+                        
+                        <div class="code-block">
+// Cloudflare Worker 示例
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    
+    // 边缘缓存逻辑
+    if (url.pathname === '/api/data') {
+      const cache = caches.default;
+      const cacheKey = new Request(url.toString());
+      
+      let response = await cache.match(cacheKey);
+      if (!response) {
+        response = await fetch(request);
+        await cache.put(cacheKey, response.clone());
+      }
+      
+      return response;
+    }
+    
+    return fetch(request);
+  }
+}
+                        </div>
+                        
+                        <h4>优势特点：</h4>
+                        <ul>
+                            <li>全球分布式执行</li>
+                            <li>零冷启动时间</li>
+                            <li>自动扩缩容</li>
+                            <li>内置安全防护</li>
+                        </ul>
+                    `
+                },
+                'serverless': {
+                    title: '⚡ 无服务器架构',
+                    content: `
+                        <h4>Serverless Functions 架构</h4>
+                        <p>基于事件驱动的无服务器计算模式，按需执行，按使用付费。</p>
+                        
+                        <div class="code-block">
+// Next.js API Route 示例
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const data = await processData(req.body);
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end('Method Not Allowed');
+  }
+}
+                        </div>
+                        
+                        <h4>架构优势：</h4>
+                        <ul>
+                            <li>无需服务器管理</li>
+                            <li>自动扩缩容</li>
+                            <li>成本效益高</li>
+                            <li>高可用性</li>
+                        </ul>
+                    `
+                },
+                'cdn': {
+                    title: '🚀 全球CDN',
+                    content: `
+                        <h4>Cloudflare CDN 网络</h4>
+                        <p>利用全球边缘网络加速静态资源分发，提升用户访问体验。</p>
+                        
+                        <div class="code-block">
+// next.config.js CDN 配置
+module.exports = {
+  images: {
+    domains: ['cdn.example.com'],
+    loader: 'cloudflare',
+    path: 'https://cdn.example.com/'
+  },
+  
+  async headers() {
+    return [
+      {
+        source: '/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      }
+    ];
+  }
+};
+                        </div>
+                        
+                        <h4>性能提升：</h4>
+                        <ul>
+                            <li>全球缓存节点</li>
+                            <li>智能路由优化</li>
+                            <li>压缩和优化</li>
+                            <li>HTTP/3 支持</li>
+                        </ul>
+                    `
+                },
+                'security': {
+                    title: '🛡️ 安全防护',
+                    content: `
+                        <h4>多层安全防护体系</h4>
+                        <p>集成DDoS防护、WAF、SSL/TLS等安全功能，全方位保护应用安全。</p>
+                        
+                        <div class="code-block">
+// 安全配置示例
+const securityHeaders = {
+  'Content-Security-Policy': "default-src 'self'",
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Strict-Transport-Security': 'max-age=31536000'
+};
+
+export default function handler(req, res) {
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+  
+  // 业务逻辑
+}
+                        </div>
+                        
+                        <h4>安全特性：</h4>
+                        <ul>
+                            <li>DDoS 攻击防护</li>
+                            <li>Web 应用防火墙</li>
+                            <li>SSL/TLS 加密</li>
+                            <li>访问控制规则</li>
+                        </ul>
+                    `
+                },
+                'analytics': {
+                    title: '📈 深度分析',
+                    content: `
+                        <h4>全方位数据分析</h4>
+                        <p>结合开发效率和应用性能数据，提供深度洞察和优化建议。</p>
+                        
+                        <div class="code-block">
+// 分析数据收集
+const analytics = {
+  // WakaTime 开发数据
+  development: {
+    codingTime: '8.5h',
+    productivity: '85%',
+    languages: ['TypeScript', 'React']
+  },
+  
+  // Cloudflare 性能数据
+  performance: {
+    responseTime: '120ms',
+    cacheHitRate: '95%',
+    bandwidth: '2.3GB'
+  },
+  
+  // 用户行为数据
+  userBehavior: {
+    pageViews: 15420,
+    uniqueVisitors: 3240,
+    bounceRate: '25%'
+  }
+};
+                        </div>
+                        
+                        <h4>分析维度：</h4>
+                        <ul>
+                            <li>开发效率追踪</li>
+                            <li>性能指标监控</li>
+                            <li>用户行为分析</li>
+                            <li>成本效益评估</li>
+                        </ul>
+                    `
+                },
+                'automation': {
+                    title: '🤖 自动化部署',
+                    content: `
+                        <h4>CI/CD 自动化流水线</h4>
+                        <p>通过GitHub Actions和Cloudflare API实现从代码提交到生产部署的全自动化。</p>
+                        
+                        <div class="code-block">
+# .github/workflows/deploy.yml
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: pages publish dist
+                        </div>
+                        
+                        <h4>自动化特性：</h4>
+                        <ul>
+                            <li>代码质量检查</li>
+                            <li>自动化测试</li>
+                            <li>构建优化</li>
+                            <li>零停机部署</li>
+                        </ul>
+                    `
+                }
+            };
+
+            const feature = features[feature] || { title: '功能详情', content: '暂无详细信息' };
+            title.textContent = feature.title;
+            body.innerHTML = feature.content;
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('feature-modal').classList.remove('show');
+        }
+
+        // 工具函数
+        function generateReport() {
+            showSuccessMessage('WakaTime 报告已生成并保存到本地');
+        }
+
+        function exportData() {
+            showSuccessMessage('数据已导出为 CSV 格式');
+        }
+
+        function clearData() {
+            wakaTimeData = {
+                totalTime: 0,
+                dailyAverage: 0,
+                activeDays: 0,
+                topLanguage: '-',
+                dailyStats: [],
+                languages: []
+            };
+
+            updateWakaTimeDisplay();
+            document.getElementById('time-chart').innerHTML = '';
+            document.getElementById('language-chart').innerHTML = '';
+
+            showWarningMessage('所有数据已清除');
+        }
+
+        function showTooltip(event, text) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 30 + 'px';
+            tooltip.style.opacity = '1';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').style.opacity = '0';
+        }
+
+        function showSuccessMessage(message) {
+            showMessage(message, 'success');
+        }
+
+        function showWarningMessage(message) {
+            showMessage(message, 'warning');
+        }
+
+        function showErrorMessage(message) {
+            showMessage(message, 'error');
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `${type}-message`;
+            messageDiv.textContent = message;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '20px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.zIndex = '10000';
+            messageDiv.style.maxWidth = '300px';
+
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            createStars();
+            updateDeploymentStats();
+
+            // 点击模态框外部关闭
+            document.getElementById('feature-modal').addEventListener('click', function (event) {
+                if (event.target === this) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React框架实例 - 古代书院管理系统</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            color: #2d3436;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2d3436;
+            text-align: center;
+            border-bottom: 3px solid #0984e3;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .academy-header {
+            background: linear-gradient(45deg, #0984e3, #74b9ff, #00b894, #00cec9);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .component-demo {
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .state-demo {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .props-demo {
+            background: linear-gradient(135deg, #e17055, #d63031);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .lifecycle-demo {
+            background: linear-gradient(135deg, #fdcb6e, #e84393);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .hooks-demo {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .react-app {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            min-height: 300px;
+        }
+
+        .student-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .student-card.selected {
+            border: 2px solid #0984e3;
+            background: rgba(116, 185, 255, 0.1);
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: scale(1.02);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #fdcb6e, #e84393);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+
+        .btn.purple {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+        }
+
+        .control-panel {
+            background: #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .code-display {
+            background: #2d3436;
+            color: #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #0984e3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #0984e3;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #0984e3;
+            font-size: 1.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fdcb6e;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .lifecycle-stage {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .lifecycle-stage:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .lifecycle-stage.active {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid #fdcb6e;
+            transform: scale(1.05);
+        }
+
+        .hook-example {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hook-example:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .react-keyword {
+            color: #61dafb;
+            font-weight: bold;
+        }
+
+        .jsx-tag {
+            color: #e06c75;
+        }
+
+        .jsx-attr {
+            color: #d19a66;
+        }
+
+        .jsx-string {
+            color: #98c379;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>React框架实例 - 古代书院管理系统</h1>
+
+        <div class="academy-header">
+            🏫 探索古代书院教育与现代React组件化开发 🏫
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示React的组件化开发、状态管理、属性传递、生命周期和Hooks的使用
+        </div>
+
+        <h2 class="section-title">🧩 组件化开发 - 书院组织结构</h2>
+        <div class="component-demo">
+            <h4>🏛️ React组件层次结构</h4>
+            <div class="react-app" id="componentApp">
+                <!-- React组件将在这里渲染 -->
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="showFunctionComponent()">函数组件</button>
+                <button class="btn success" onclick="showClassComponent()">类组件</button>
+                <button class="btn warning" onclick="showComponentTree()">组件树</button>
+                <button class="btn purple" onclick="showJSXExample()">JSX语法</button>
+            </div>
+            <div class="code-display" id="componentCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('componentCode')">查看组件代码</button>
+        </div>
+
+        <h2 class="section-title">🔄 状态管理 - 书院动态信息</h2>
+        <div class="state-demo">
+            <h4>📊 React状态管理演示</h4>
+            <div class="react-app" id="stateApp">
+                <!-- React状态管理组件将在这里渲染 -->
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="demonstrateState()">状态演示</button>
+                <button class="btn success" onclick="showStateUpdate()">状态更新</button>
+                <button class="btn warning" onclick="showStateLifting()">状态提升</button>
+                <button class="btn danger" onclick="resetState()">重置状态</button>
+            </div>
+            <div class="code-display" id="stateCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('stateCode')">查看状态代码</button>
+        </div>
+
+        <h2 class="section-title">📤 属性传递 - 师生信息交流</h2>
+        <div class="props-demo">
+            <h4>📋 Props属性传递系统</h4>
+            <div class="react-app" id="propsApp">
+                <!-- React Props演示组件将在这里渲染 -->
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="showPropsFlow()">属性流动</button>
+                <button class="btn success" onclick="showDefaultProps()">默认属性</button>
+                <button class="btn warning" onclick="showPropTypes()">属性验证</button>
+                <button class="btn purple" onclick="showChildrenProps()">子组件属性</button>
+            </div>
+            <div class="code-display" id="propsCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('propsCode')">查看属性代码</button>
+        </div>
+
+        <h2 class="section-title">🔄 生命周期 - 学期管理流程</h2>
+        <div class="lifecycle-demo">
+            <h4>⏰ React组件生命周期</h4>
+            <div class="stats-grid">
+                <div class="lifecycle-stage" onclick="showLifecycleStage('mounting')">
+                    <div class="stat-number">🌱</div>
+                    <div>挂载阶段</div>
+                </div>
+                <div class="lifecycle-stage" onclick="showLifecycleStage('updating')">
+                    <div class="stat-number">🔄</div>
+                    <div>更新阶段</div>
+                </div>
+                <div class="lifecycle-stage" onclick="showLifecycleStage('unmounting')">
+                    <div class="stat-number">🍂</div>
+                    <div>卸载阶段</div>
+                </div>
+                <div class="lifecycle-stage" onclick="showLifecycleStage('error')">
+                    <div class="stat-number">⚠️</div>
+                    <div>错误处理</div>
+                </div>
+            </div>
+            <div class="react-app" id="lifecycleApp">
+                <!-- 生命周期演示组件将在这里渲染 -->
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="mountComponent()">挂载组件</button>
+                <button class="btn warning" onclick="updateComponent()">更新组件</button>
+                <button class="btn danger" onclick="unmountComponent()">卸载组件</button>
+            </div>
+            <div class="code-display" id="lifecycleCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('lifecycleCode')">查看生命周期代码</button>
+        </div>
+
+        <h2 class="section-title">🎣 React Hooks - 现代书院管理</h2>
+        <div class="hooks-demo">
+            <h4>🔧 React Hooks演示</h4>
+            <div class="hook-example" onclick="showHookExample('useState')">
+                useState - 状态钩子 🔄
+            </div>
+            <div class="hook-example" onclick="showHookExample('useEffect')">
+                useEffect - 副作用钩子 ⚡
+            </div>
+            <div class="hook-example" onclick="showHookExample('useContext')">
+                useContext - 上下文钩子 🌐
+            </div>
+            <div class="hook-example" onclick="showHookExample('useReducer')">
+                useReducer - 复杂状态钩子 🏗️
+            </div>
+            <div class="hook-example" onclick="showHookExample('useMemo')">
+                useMemo - 记忆化钩子 💾
+            </div>
+            <div class="hook-example" onclick="showHookExample('useCallback')">
+                useCallback - 回调钩子 📞
+            </div>
+            <div class="react-app" id="hooksApp">
+                <!-- Hooks演示组件将在这里渲染 -->
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="demonstrateHooks()">Hooks演示</button>
+                <button class="btn success" onclick="showCustomHook()">自定义Hook</button>
+                <button class="btn warning" onclick="showHookRules()">Hook规则</button>
+            </div>
+            <div class="code-display" id="hooksCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('hooksCode')">查看Hooks代码</button>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🏫 中国古代书院文化</h3>
+            <p><strong>书院制度：</strong>中国古代重要的教育机构，如岳麓书院、白鹿洞书院等。</p>
+            <p><strong>师生关系：</strong>强调师道尊严和因材施教，体现了良好的教育传统。</p>
+            <p><strong>学术自由：</strong>书院提供相对自由的学术环境，促进思想交流和创新。</p>
+            <p><strong>知行合一：</strong>注重理论与实践结合，培养全面发展的人才。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过古代书院管理系统展示了React的核心概念：
+            <br>• <strong>组件化：</strong>将UI拆分为独立、可复用的组件
+            <br>• <strong>JSX语法：</strong>在JavaScript中编写类似HTML的语法
+            <br>• <strong>状态管理：</strong>使用state管理组件的动态数据
+            <br>• <strong>属性传递：</strong>通过props在组件间传递数据
+            <br>• <strong>生命周期：</strong>组件从创建到销毁的完整过程
+            <br>• <strong>Hooks：</strong>函数组件中使用状态和其他React特性
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useContext, useReducer, useMemo, useCallback, createContext } = React;
+
+        // 书院上下文
+        const AcademyContext = createContext();
+
+        // 学生组件
+        function Student({ name, age, course, isSelected, onSelect }) {
+            return (
+                <div
+                    className={`student-card ${isSelected ? 'selected' : ''}`}
+                    onClick={() => onSelect(name)}
+                >
+                    <h4>👨‍🎓 {name}</h4>
+                    <p>年龄: {age}岁</p>
+                    <p>课程: {course}</p>
+                    <p>状态: {isSelected ? '已选中' : '未选中'}</p>
+                </div>
+            );
+        }
+
+        // 课程组件
+        function Course({ title, teacher, students, duration }) {
+            return (
+                <div className="course-card">
+                    <h4>📚 {title}</h4>
+                    <p>授课老师: {teacher}</p>
+                    <p>学生人数: {students}人</p>
+                    <p>课程时长: {duration}</p>
+                </div>
+            );
+        }
+
+        // 书院管理组件
+        function AcademyManager() {
+            const [students, setStudents] = useState([
+                { id: 1, name: '李白', age: 20, course: '诗词创作' },
+                { id: 2, name: '杜甫', age: 22, course: '诗词创作' },
+                { id: 3, name: '苏轼', age: 21, course: '散文写作' },
+                { id: 4, name: '辛弃疾', age: 23, course: '词曲创作' }
+            ]);
+
+            const [selectedStudent, setSelectedStudent] = useState(null);
+            const [academyStats, setAcademyStats] = useState({
+                totalStudents: 4,
+                totalCourses: 3,
+                totalTeachers: 2
+            });
+
+            const handleStudentSelect = (studentName) => {
+                setSelectedStudent(selectedStudent === studentName ? null : studentName);
+            };
+
+            const addStudent = () => {
+                const newStudent = {
+                    id: students.length + 1,
+                    name: `学生${students.length + 1}`,
+                    age: Math.floor(Math.random() * 5) + 18,
+                    course: ['诗词创作', '散文写作', '词曲创作'][Math.floor(Math.random() * 3)]
+                };
+                setStudents([...students, newStudent]);
+                setAcademyStats(prev => ({ ...prev, totalStudents: prev.totalStudents + 1 }));
+            };
+
+            return (
+                <AcademyContext.Provider value={{ academyStats }}>
+                    <div>
+                        <h3>🏫 书院学生管理</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '10px' }}>
+                            {students.map(student => (
+                                <Student
+                                    key={student.id}
+                                    name={student.name}
+                                    age={student.age}
+                                    course={student.course}
+                                    isSelected={selectedStudent === student.name}
+                                    onSelect={handleStudentSelect}
+                                />
+                            ))}
+                        </div>
+                        <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                            <button className="btn success" onClick={addStudent}>
+                                添加学生
+                            </button>
+                            {selectedStudent && (
+                                <p>当前选中: {selectedStudent}</p>
+                            )}
+                        </div>
+                        <AcademyStats />
+                    </div>
+                </AcademyContext.Provider>
+            );
+        }
+
+        // 书院统计组件
+        function AcademyStats() {
+            const { academyStats } = useContext(AcademyContext);
+
+            return (
+                <div className="stats-grid">
+                    <div className="stat-card">
+                        <div className="stat-number">{academyStats.totalStudents}</div>
+                        <div>学生总数</div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-number">{academyStats.totalCourses}</div>
+                        <div>课程总数</div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-number">{academyStats.totalTeachers}</div>
+                        <div>教师总数</div>
+                    </div>
+                </div>
+            );
+        }
+
+        // 生命周期演示组件
+        class LifecycleDemo extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    count: 0,
+                    logs: ['组件构造函数调用']
+                };
+                this.addLog('constructor: 组件初始化');
+            }
+
+            componentDidMount() {
+                this.addLog('componentDidMount: 组件已挂载');
+            }
+
+            componentDidUpdate(prevProps, prevState) {
+                this.addLog('componentDidUpdate: 组件已更新');
+            }
+
+            componentWillUnmount() {
+                this.addLog('componentWillUnmount: 组件即将卸载');
+            }
+
+            addLog = (message) => {
+                this.setState(prevState => ({
+                    logs: [...prevState.logs, `${new Date().toLocaleTimeString()}: ${message}`]
+                }));
+            }
+
+            handleIncrement = () => {
+                this.setState(prevState => ({ count: prevState.count + 1 }));
+            }
+
+            render() {
+                return (
+                    <div>
+                        <h4>📊 生命周期日志</h4>
+                        <p>计数器: {this.state.count}</p>
+                        <button className="btn" onClick={this.handleIncrement}>
+                            增加计数
+                        </button>
+                        <div style={{ background: 'rgba(0,0,0,0.1)', padding: '10px', borderRadius: '5px', margin: '10px 0', maxHeight: '200px', overflow: 'auto' }}>
+                            {this.state.logs.map((log, index) => (
+                                <div key={index} style={{ fontSize: '0.9em', margin: '2px 0' }}>
+                                    {log}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        // Hooks演示组件
+        function HooksDemo() {
+            const [count, setCount] = useState(0);
+            const [name, setName] = useState('');
+            const [todos, setTodos] = useState([]);
+
+            // useEffect演示
+            useEffect(() => {
+                document.title = `书院管理 - 计数: ${count}`;
+            }, [count]);
+
+            // useMemo演示
+            const expensiveValue = useMemo(() => {
+                console.log('计算昂贵的值...');
+                return count * 2;
+            }, [count]);
+
+            // useCallback演示
+            const handleAddTodo = useCallback(() => {
+                if (name.trim()) {
+                    setTodos(prev => [...prev, { id: Date.now(), text: name }]);
+                    setName('');
+                }
+            }, [name]);
+
+            return (
+                <div>
+                    <h4>🎣 Hooks演示</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div>
+                            <h5>useState & useEffect</h5>
+                            <p>计数: {count}</p>
+                            <p>计算值: {expensiveValue}</p>
+                            <button className="btn" onClick={() => setCount(count + 1)}>
+                                增加
+                            </button>
+                        </div>
+                        <div>
+                            <h5>useCallback & 待办事项</h5>
+                            <input
+                                className="input-field"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="输入待办事项"
+                                onKeyPress={(e) => e.key === 'Enter' && handleAddTodo()}
+                            />
+                            <button className="btn success" onClick={handleAddTodo}>
+                                添加
+                            </button>
+                            <div style={{ maxHeight: '150px', overflow: 'auto', margin: '10px 0' }}>
+                                {todos.map(todo => (
+                                    <div key={todo.id} style={{ padding: '5px', background: 'rgba(255,255,255,0.1)', margin: '2px 0', borderRadius: '3px' }}>
+                                        {todo.text}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // 渲染函数
+        function renderComponent(containerId, component) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                ReactDOM.render(component, container);
+            }
+        }
+
+        // 初始化渲染
+        document.addEventListener('DOMContentLoaded', function () {
+            renderComponent('componentApp', <AcademyManager />);
+            renderComponent('stateApp', <AcademyManager />);
+            renderComponent('propsApp', <AcademyManager />);
+            renderComponent('lifecycleApp', <LifecycleDemo />);
+            renderComponent('hooksApp', <HooksDemo />);
+        });
+    </script>
+
+    <script>
+        // 非React的JavaScript函数
+        function showFunctionComponent() {
+            const result = document.getElementById('componentCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// React函数组件示例
+function Student({ name, age, course, isSelected, onSelect }) {
+    return (
+        <div 
+            className={\`student-card \${isSelected ? 'selected' : ''}\`}
+            onClick={() => onSelect(name)}
+        >
+            <h4>👨‍🎓 {name}</h4>
+            <p>年龄: {age}岁</p>
+            <p>课程: {course}</p>
+            <p>状态: {isSelected ? '已选中' : '未选中'}</p>
+        </div>
+    );
+}
+
+// 使用组件
+function App() {
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    
+    return (
+        <div>
+            <Student 
+                name="李白" 
+                age={20} 
+                course="诗词创作"
+                isSelected={selectedStudent === '李白'}
+                onSelect={setSelectedStudent}
+            />
+        </div>
+    );
+}
+            `;
+        }
+
+        function showClassComponent() {
+            const result = document.getElementById('componentCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// React类组件示例
+class AcademyManager extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            students: [],
+            selectedStudent: null
+        };
+    }
+    
+    handleStudentSelect = (studentName) => {
+        this.setState({
+            selectedStudent: this.state.selectedStudent === studentName ? null : studentName
+        });
+    }
+    
+    addStudent = () => {
+        const newStudent = {
+            id: this.state.students.length + 1,
+            name: \`学生\${this.state.students.length + 1}\`,
+            age: Math.floor(Math.random() * 5) + 18,
+            course: '诗词创作'
+        };
+        
+        this.setState({
+            students: [...this.state.students, newStudent]
+        });
+    }
+    
+    render() {
+        return (
+            <div>
+                <h3>书院学生管理</h3>
+                {this.state.students.map(student => (
+                    <Student
+                        key={student.id}
+                        name={student.name}
+                        age={student.age}
+                        course={student.course}
+                        isSelected={this.state.selectedStudent === student.name}
+                        onSelect={this.handleStudentSelect}
+                    />
+                ))}
+                <button onClick={this.addStudent}>添加学生</button>
+            </div>
+        );
+    }
+}
+            `;
+        }
+
+        function showComponentTree() {
+            const result = document.getElementById('componentCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// React组件树结构
+App
+├── AcademyManager
+│   ├── Student (李白)
+│   ├── Student (杜甫)
+│   ├── Student (苏轼)
+│   └── Student (辛弃疾)
+├── CourseManager
+│   ├── Course (诗词创作)
+│   ├── Course (散文写作)
+│   └── Course (词曲创作)
+└── AcademyStats
+    ├── StatCard (学生总数)
+    ├── StatCard (课程总数)
+    └── StatCard (教师总数)
+
+// 组件组合示例
+function App() {
+    return (
+        <div className="academy-app">
+            <Header title="古代书院管理系统" />
+            <main>
+                <AcademyManager />
+                <CourseManager />
+            </main>
+            <Footer />
+        </div>
+    );
+}
+
+// 组件复用
+function StatCard({ title, value, icon }) {
+    return (
+        <div className="stat-card">
+            <div className="stat-icon">{icon}</div>
+            <div className="stat-number">{value}</div>
+            <div className="stat-title">{title}</div>
+        </div>
+    );
+}
+
+// 在多个地方使用相同组件
+<StatCard title="学生" value={25} icon="👨‍🎓" />
+<StatCard title="教师" value={5} icon="👨‍🏫" />
+<StatCard title="课程" value={8} icon="📚" />
+            `;
+        }
+
+        function showJSXExample() {
+            const result = document.getElementById('componentCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// JSX语法示例
+
+// 1. JSX元素
+const element = <h1>欢迎来到古代书院</h1>;
+
+// 2. JSX表达式
+const name = '李白';
+const greeting = <h1>欢迎, {name}!</h1>;
+
+// 3. JSX属性
+const student = (
+    <div className="student-card" id="student-1">
+        <img src="/images/student.jpg" alt="学生照片" />
+        <h3>{name}</h3>
+    </div>
+);
+
+// 4. JSX子元素
+const studentList = (
+    <div className="student-list">
+        <h2>学生名单</h2>
+        <ul>
+            <li>李白 - 诗词创作</li>
+            <li>杜甫 - 诗词创作</li>
+            <li>苏轼 - 散文写作</li>
+        </ul>
+    </div>
+);
+
+// 5. JSX条件渲染
+function StudentCard({ student, isSelected }) {
+    return (
+        <div className="student-card">
+            <h3>{student.name}</h3>
+            {isSelected && <span className="selected-badge">已选中</span>}
+            {student.age >= 20 ? (
+                <span className="adult">成年学生</span>
+            ) : (
+                <span className="minor">未成年学生</span>
+            )}
+        </div>
+    );
+}
+
+// 6. JSX列表渲染
+function StudentList({ students }) {
+    return (
+        <div>
+            {students.map(student => (
+                <StudentCard 
+                    key={student.id} 
+                    student={student} 
+                    isSelected={student.selected}
+                />
+            ))}
+        </div>
+    );
+}
+
+// 7. JSX事件处理
+function Button() {
+    const handleClick = (e) => {
+        e.preventDefault();
+        console.log('按钮被点击了!');
+    };
+    
+    return (
+        <button 
+            onClick={handleClick}
+            onMouseEnter={() => console.log('鼠标进入')}
+            onMouseLeave={() => console.log('鼠标离开')}
+        >
+            点击我
+        </button>
+    );
+}
+            `;
+        }
+
+        function demonstrateState() {
+            console.log('演示React状态管理');
+        }
+
+        function showStateUpdate() {
+            const result = document.getElementById('stateCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// React状态更新示例
+
+// 1. useState Hook
+function Counter() {
+    const [count, setCount] = useState(0);
+    
+    const increment = () => {
+        setCount(count + 1);  // 直接设置新值
+    };
+    
+    const incrementByTwo = () => {
+        setCount(prevCount => prevCount + 2);  // 使用函数更新
+    };
+    
+    return (
+        <div>
+            <p>计数: {count}</p>
+            <button onClick={increment}>+1</button>
+            <button onClick={incrementByTwo}>+2</button>
+        </div>
+    );
+}
+
+// 2. 类组件状态
+class StudentManager extends React.Component {
+    state = {
+        students: [],
+        loading: false
+    };
+    
+    addStudent = (newStudent) => {
+        this.setState({
+            students: [...this.state.students, newStudent]
+        });
+    };
+    
+    removeStudent = (studentId) => {
+        this.setState({
+            students: this.state.students.filter(s => s.id !== studentId)
+        });
+    };
+    
+    toggleLoading = () => {
+        this.setState(prevState => ({
+            loading: !prevState.loading
+        }));
+    };
+}
+
+// 3. 复杂状态管理
+function AcademyManager() {
+    const [academy, setAcademy] = useState({
+        name: '岳麓书院',
+        students: [],
+        courses: [],
+        teachers: []
+    });
+    
+    const addStudent = (student) => {
+        setAcademy(prevAcademy => ({
+            ...prevAcademy,
+            students: [...prevAcademy.students, student]
+        }));
+    };
+    
+    const updateStudentCourse = (studentId, courseId) => {
+        setAcademy(prevAcademy => ({
+            ...prevAcademy,
+            students: prevAcademy.students.map(student =>
+                student.id === studentId
+                    ? { ...student, courseId }
+                    : student
+            )
+        }));
+    };
+}
+
+// 4. 状态批量更新
+function BatchUpdate() {
+    const [count, setCount] = useState(0);
+    const [name, setName] = useState('');
+    
+    const handleMultipleUpdates = () => {
+        // React会自动批量处理这些更新
+        setCount(c => c + 1);
+        setName('新名字');
+        setCount(c => c + 1);
+    };
+}
+            `;
+        }
+
+        function showStateLifting() {
+            const result = document.getElementById('stateCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// 状态提升示例
+
+// 子组件
+function StudentCard({ student, onSelect, isSelected }) {
+    return (
+        <div 
+            className={\`student-card \${isSelected ? 'selected' : ''}\`}
+            onClick={() => onSelect(student.id)}
+        >
+            <h4>{student.name}</h4>
+            <p>{student.course}</p>
+        </div>
+    );
+}
+
+function CourseInfo({ selectedStudentId, students }) {
+    const selectedStudent = students.find(s => s.id === selectedStudentId);
+    
+    if (!selectedStudent) {
+        return <p>请选择一个学生</p>;
+    }
+    
+    return (
+        <div>
+            <h3>学生信息</h3>
+            <p>姓名: {selectedStudent.name}</p>
+            <p>课程: {selectedStudent.course}</p>
+            <p>年龄: {selectedStudent.age}</p>
+        </div>
+    );
+}
+
+// 父组件 - 状态提升到这里
+function AcademyApp() {
+    const [students] = useState([
+        { id: 1, name: '李白', course: '诗词创作', age: 20 },
+        { id: 2, name: '杜甫', course: '诗词创作', age: 22 }
+    ]);
+    
+    const [selectedStudentId, setSelectedStudentId] = useState(null);
+    
+    return (
+        <div>
+            <div className="student-list">
+                {students.map(student => (
+                    <StudentCard
+                        key={student.id}
+                        student={student}
+                        onSelect={setSelectedStudentId}
+                        isSelected={selectedStudentId === student.id}
+                    />
+                ))}
+            </div>
+            <CourseInfo 
+                selectedStudentId={selectedStudentId}
+                students={students}
+            />
+        </div>
+    );
+}
+
+// 状态提升的好处:
+// 1. 多个组件可以共享同一状态
+// 2. 状态变化时，所有相关组件都会更新
+// 3. 数据流向清晰，便于调试
+// 4. 避免状态不一致的问题
+            `;
+        }
+
+        function resetState() {
+            // 重新渲染组件以重置状态
+            renderComponent('stateApp', React.createElement(AcademyManager));
+        }
+
+        function showPropsFlow() {
+            const result = document.getElementById('propsCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// Props属性传递示例
+
+// 1. 基础属性传递
+function Student({ name, age, course }) {
+    return (
+        <div className="student-card">
+            <h4>{name}</h4>
+            <p>年龄: {age}</p>
+            <p>课程: {course}</p>
+        </div>
+    );
+}
+
+// 使用组件
+<Student name="李白" age={20} course="诗词创作" />
+
+// 2. 对象属性传递
+function StudentCard({ student }) {
+    return (
+        <div>
+            <h4>{student.name}</h4>
+            <p>{student.age}岁</p>
+            <p>{student.course}</p>
+        </div>
+    );
+}
+
+const student = { name: '杜甫', age: 22, course: '诗词创作' };
+<StudentCard student={student} />
+
+// 3. 函数属性传递
+function Button({ onClick, children }) {
+    return (
+        <button onClick={onClick}>
+            {children}
+        </button>
+    );
+}
+
+<Button onClick={() => console.log('点击了')}>点击我</Button>
+
+// 4. 属性解构
+function StudentInfo({ name, age, course, ...otherProps }) {
+    return (
+        <div {...otherProps}>
+            <h4>{name}</h4>
+            <p>{age}岁 - {course}</p>
+        </div>
+    );
+}
+
+// 5. 属性传播
+function StudentCard(props) {
+    return (
+        <div className="card">
+            <StudentInfo {...props} />
+        </div>
+    );
+}
+
+// 6. 条件属性
+function Student({ name, isSelected, onSelect }) {
+    return (
+        <div 
+            className={isSelected ? 'selected' : ''}
+            onClick={onSelect && (() => onSelect(name))}
+        >
+            {name}
+        </div>
+    );
+}
+            `;
+        }
+
+        function showDefaultProps() {
+            const result = document.getElementById('propsCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// 默认属性示例
+
+// 1. 函数组件默认参数
+function Student({ 
+    name = '未知学生', 
+    age = 18, 
+    course = '基础课程',
+    isActive = true 
+}) {
+    return (
+        <div className={\`student \${isActive ? 'active' : 'inactive'}\`}>
+            <h4>{name}</h4>
+            <p>年龄: {age}</p>
+            <p>课程: {course}</p>
+        </div>
+    );
+}
+
+// 2. 类组件默认属性
+class StudentCard extends React.Component {
+    static defaultProps = {
+        name: '未知学生',
+        age: 18,
+        course: '基础课程',
+        avatar: '/default-avatar.png'
+    };
+    
+    render() {
+        const { name, age, course, avatar } = this.props;
+        return (
+            <div className="student-card">
+                <img src={avatar} alt={name} />
+                <h4>{name}</h4>
+                <p>{age}岁 - {course}</p>
+            </div>
+        );
+    }
+}
+
+// 3. 使用默认属性
+<Student />  // 使用所有默认值
+<Student name="李白" />  // 只覆盖name，其他使用默认值
+<Student name="杜甫" age={22} />  // 覆盖name和age
+
+// 4. 复杂默认属性
+function CourseCard({ 
+    course = {
+        title: '默认课程',
+        teacher: '待定',
+        duration: '1学期',
+        students: []
+    },
+    showStats = true
+}) {
+    return (
+        <div className="course-card">
+            <h3>{course.title}</h3>
+            <p>教师: {course.teacher}</p>
+            <p>时长: {course.duration}</p>
+            {showStats && (
+                <p>学生数: {course.students.length}</p>
+            )}
+        </div>
+    );
+}
+
+// 5. 条件默认值
+function StudentStatus({ student, showDetails = false }) {
+    const status = student?.status || '未知状态';
+    const details = student?.details || {};
+    
+    return (
+        <div>
+            <span>状态: {status}</span>
+            {showDetails && details.lastLogin && (
+                <span>最后登录: {details.lastLogin}</span>
+            )}
+        </div>
+    );
+}
+            `;
+        }
+
+        function showPropTypes() {
+            const result = document.getElementById('propsCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// PropTypes属性验证示例
+// 注意: 需要引入 prop-types 库
+
+import PropTypes from 'prop-types';
+
+// 1. 基础类型验证
+function Student({ name, age, isActive, courses }) {
+    return (
+        <div>
+            <h4>{name}</h4>
+            <p>年龄: {age}</p>
+            <p>状态: {isActive ? '活跃' : '非活跃'}</p>
+            <p>课程数: {courses.length}</p>
+        </div>
+    );
+}
+
+Student.propTypes = {
+    name: PropTypes.string.isRequired,      // 必需的字符串
+    age: PropTypes.number,                  // 可选的数字
+    isActive: PropTypes.bool,               // 可选的布尔值
+    courses: PropTypes.array                // 可选的数组
+};
+
+// 2. 复杂类型验证
+function CourseCard({ course, onEnroll, students }) {
+    return (
+        <div>
+            <h3>{course.title}</h3>
+            <p>教师: {course.teacher.name}</p>
+            <button onClick={() => onEnroll(course.id)}>
+                报名课程
+            </button>
+        </div>
+    );
+}
+
+CourseCard.propTypes = {
+    course: PropTypes.shape({               // 对象形状验证
+        id: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        teacher: PropTypes.shape({
+            id: PropTypes.number,
+            name: PropTypes.string.isRequired
+        }).isRequired
+    }).isRequired,
+    onEnroll: PropTypes.func.isRequired,    // 必需的函数
+    students: PropTypes.arrayOf(            // 特定类型的数组
+        PropTypes.shape({
+            id: PropTypes.number,
+            name: PropTypes.string
+        })
+    )
+};
+
+// 3. 枚举值验证
+function StatusBadge({ status, size }) {
+    return (
+        <span className={\`badge badge-\${status} badge-\${size}\`}>
+            {status}
+        </span>
+    );
+}
+
+StatusBadge.propTypes = {
+    status: PropTypes.oneOf(['active', 'inactive', 'pending']).isRequired,
+    size: PropTypes.oneOf(['small', 'medium', 'large'])
+};
+
+// 4. 自定义验证
+function AgeInput({ age }) {
+    return <input type="number" value={age} />;
+}
+
+AgeInput.propTypes = {
+    age: function(props, propName, componentName) {
+        const age = props[propName];
+        if (age < 0 || age > 150) {
+            return new Error(
+                \`Invalid prop \${propName} supplied to \${componentName}. \` +
+                \`Age must be between 0 and 150.\`
+            );
+        }
+    }
+};
+
+// 5. 类组件PropTypes
+class StudentList extends React.Component {
+    static propTypes = {
+        students: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                name: PropTypes.string.isRequired,
+                age: PropTypes.number
+            })
+        ).isRequired,
+        onStudentSelect: PropTypes.func,
+        maxDisplay: PropTypes.number
+    };
+    
+    static defaultProps = {
+        maxDisplay: 10
+    };
+    
+    render() {
+        // 组件实现...
+    }
+}
+            `;
+        }
+
+        function showChildrenProps() {
+            const result = document.getElementById('propsCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// Children属性示例
+
+// 1. 基础children使用
+function Card({ children, title }) {
+    return (
+        <div className="card">
+            <h3>{title}</h3>
+            <div className="card-content">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+// 使用方式
+<Card title="学生信息">
+    <p>姓名: 李白</p>
+    <p>年龄: 20岁</p>
+    <p>课程: 诗词创作</p>
+</Card>
+
+// 2. 多个children
+function Layout({ header, sidebar, children }) {
+    return (
+        <div className="layout">
+            <header>{header}</header>
+            <div className="main">
+                <aside>{sidebar}</aside>
+                <main>{children}</main>
+            </div>
+        </div>
+    );
+}
+
+<Layout
+    header={<h1>书院管理系统</h1>}
+    sidebar={<nav>导航菜单</nav>}
+>
+    <div>主要内容区域</div>
+</Layout>
+
+// 3. children操作
+function StudentList({ children }) {
+    const studentCount = React.Children.count(children);
+    
+    return (
+        <div>
+            <h3>学生列表 (共{studentCount}人)</h3>
+            <div className="student-grid">
+                {React.Children.map(children, (child, index) => (
+                    <div key={index} className="student-item">
+                        {child}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// 4. 条件渲染children
+function Modal({ isOpen, children, onClose }) {
+    if (!isOpen) return null;
+    
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <button className="close-btn" onClick={onClose}>×</button>
+                {children}
+            </div>
+        </div>
+    );
+}
+
+// 5. children作为函数 (Render Props)
+function DataProvider({ children, data, loading }) {
+    return (
+        <div>
+            {typeof children === 'function' 
+                ? children({ data, loading })
+                : children
+            }
+        </div>
+    );
+}
+
+// 使用render props
+<DataProvider data={students} loading={false}>
+    {({ data, loading }) => (
+        loading ? (
+            <div>加载中...</div>
+        ) : (
+            <div>
+                {data.map(student => (
+                    <StudentCard key={student.id} student={student} />
+                ))}
+            </div>
+        )
+    )}
+</DataProvider>
+
+// 6. children克隆和修改
+function ButtonGroup({ children, size = 'medium' }) {
+    return (
+        <div className="button-group">
+            {React.Children.map(children, child => {
+                if (React.isValidElement(child)) {
+                    return React.cloneElement(child, {
+                        size: size,
+                        className: \`\${child.props.className || ''} btn-\${size}\`
+                    });
+                }
+                return child;
+            })}
+        </div>
+    );
+}
+            `;
+        }
+
+        function showLifecycleStage(stage) {
+            // 移除所有active类
+            document.querySelectorAll('.lifecycle-stage').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // 添加active类到当前阶段
+            event.target.closest('.lifecycle-stage').classList.add('active');
+
+            const result = document.getElementById('lifecycleCode');
+            result.style.display = 'block';
+
+            const stageInfo = {
+                mounting: `
+// 挂载阶段生命周期
+class StudentCard extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            student: null,
+            loading: true
+        };
+        console.log('1. constructor: 组件构造函数');
+    }
+    
+    static getDerivedStateFromProps(props, state) {
+        console.log('2. getDerivedStateFromProps: 从props派生state');
+        // 返回新的state或null
+        return {
+            student: props.student
+        };
+    }
+    
+    componentDidMount() {
+        console.log('3. componentDidMount: 组件已挂载到DOM');
+        // 可以进行API调用、设置定时器等
+        this.setState({ loading: false });
+    }
+    
+    render() {
+        console.log('4. render: 渲染组件');
+        const { student, loading } = this.state;
+        
+        if (loading) {
+            return <div>加载中...</div>;
+        }
+        
+        return (
+            <div className="student-card">
+                <h4>{student?.name || '未知学生'}</h4>
+                <p>年龄: {student?.age}岁</p>
+                <p>课程: {student?.course}</p>
+            </div>
+        );
+    }
+}
+                `,
+                updating: `
+// 更新阶段生命周期
+class StudentCard extends React.Component {
+    static getDerivedStateFromProps(props, state) {
+        console.log('1. getDerivedStateFromProps: 更新时从props派生state');
+        return null;
+    }
+    
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log('2. shouldComponentUpdate: 决定是否更新');
+        // 返回true或false决定是否重新渲染
+        return nextProps.student.id !== this.props.student.id;
+    }
+    
+    render() {
+        console.log('3. render: 重新渲染组件');
+        return (
+            <div className="student-card">
+                <h4>{this.props.student.name}</h4>
+                <p>更新时间: {new Date().toLocaleTimeString()}</p>
+            </div>
+        );
+    }
+    
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        console.log('4. getSnapshotBeforeUpdate: 更新前获取快照');
+        // 返回值会传递给componentDidUpdate
+        return { scrollPosition: window.scrollY };
+    }
+    
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('5. componentDidUpdate: 组件更新完成');
+        console.log('快照数据:', snapshot);
+    }
+}
+                `,
+                unmounting: `
+// 卸载阶段生命周期
+class StudentCard extends React.Component {
+    componentWillUnmount() {
+        console.log('componentWillUnmount: 组件即将卸载');
+        // 清理工作：清除定时器、取消网络请求、清理订阅等
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+        
+        // 移除事件监听器
+        window.removeEventListener('resize', this.handleResize);
+    }
+    
+    componentDidMount() {
+        // 设置需要清理的资源
+        this.timer = setInterval(() => {
+            console.log('定时器运行中...');
+        }, 1000);
+        
+        window.addEventListener('resize', this.handleResize);
+    }
+    
+    handleResize = () => {
+        console.log('窗口大小改变');
+    }
+    
+    render() {
+        return (
+            <div className="student-card">
+                <h4>学生卡片</h4>
+                <p>组件将在卸载时清理所有资源</p>
+            </div>
+        );
+    }
+}
+                `,
+                error: `
+// 错误处理生命周期
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    
+    static getDerivedStateFromError(error) {
+        console.log('getDerivedStateFromError: 捕获错误并更新state');
+        // 更新state以显示错误UI
+        return { hasError: true, error };
+    }
+    
+    componentDidCatch(error, errorInfo) {
+        console.log('componentDidCatch: 记录错误信息');
+        console.error('错误详情:', error);
+        console.error('错误信息:', errorInfo);
+        
+        // 可以将错误信息发送到错误报告服务
+        // logErrorToService(error, errorInfo);
+    }
+    
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="error-boundary">
+                    <h3>⚠️ 出现错误</h3>
+                    <p>组件渲染时发生错误</p>
+                    <details>
+                        <summary>错误详情</summary>
+                        <pre>{this.state.error?.toString()}</pre>
+                    </details>
+                    <button onClick={() => this.setState({ hasError: false, error: null })}>
+                        重试
+                    </button>
+                </div>
+            );
+        }
+        
+        return this.props.children;
+    }
+}
+
+// 使用错误边界
+function App() {
+    return (
+        <ErrorBoundary>
+            <StudentCard student={student} />
+        </ErrorBoundary>
+    );
+}
+                `
+            };
+
+            result.innerHTML = stageInfo[stage] || '请选择一个生命周期阶段';
+        }
+
+        function mountComponent() {
+            renderComponent('lifecycleApp', React.createElement(LifecycleDemo));
+        }
+
+        function updateComponent() {
+            // 触发组件更新
+            const container = document.getElementById('lifecycleApp');
+            if (container && container._reactInternalInstance) {
+                // 强制更新
+                container._reactInternalInstance.forceUpdate();
+            }
+        }
+
+        function unmountComponent() {
+            const container = document.getElementById('lifecycleApp');
+            if (container) {
+                ReactDOM.unmountComponentAtNode(container);
+                container.innerHTML = '<p>组件已卸载</p>';
+            }
+        }
+
+        function showHookExample(hookName) {
+            const result = document.getElementById('hooksCode');
+            result.style.display = 'block';
+
+            const hookExamples = {
+                useState: `
+// useState Hook示例
+function Counter() {
+    const [count, setCount] = useState(0);
+    const [name, setName] = useState('李白');
+    
+    return (
+        <div>
+            <h4>计数器: {count}</h4>
+            <button onClick={() => setCount(count + 1)}>增加</button>
+            <button onClick={() => setCount(count - 1)}>减少</button>
+            <button onClick={() => setCount(0)}>重置</button>
+            
+            <h4>姓名: {name}</h4>
+            <input 
+                value={name} 
+                onChange={(e) => setName(e.target.value)}
+                placeholder="输入姓名"
+            />
+        </div>
+    );
+}
+
+// 复杂状态管理
+function StudentForm() {
+    const [student, setStudent] = useState({
+        name: '',
+        age: 18,
+        course: '诗词创作',
+        isActive: true
+    });
+    
+    const updateStudent = (field, value) => {
+        setStudent(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+    
+    return (
+        <form>
+            <input 
+                value={student.name}
+                onChange={(e) => updateStudent('name', e.target.value)}
+                placeholder="学生姓名"
+            />
+            <input 
+                type="number"
+                value={student.age}
+                onChange={(e) => updateStudent('age', parseInt(e.target.value))}
+            />
+            <select 
+                value={student.course}
+                onChange={(e) => updateStudent('course', e.target.value)}
+            >
+                <option value="诗词创作">诗词创作</option>
+                <option value="散文写作">散文写作</option>
+                <option value="词曲创作">词曲创作</option>
+            </select>
+        </form>
+    );
+}
+                `,
+                useEffect: `
+// useEffect Hook示例
+function StudentProfile({ studentId }) {
+    const [student, setStudent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    
+    // 1. 组件挂载时执行
+    useEffect(() => {
+        console.log('组件挂载，设置标题');
+        document.title = '学生档案';
+        
+        // 清理函数
+        return () => {
+            console.log('组件卸载，恢复标题');
+            document.title = '书院管理系统';
+        };
+    }, []); // 空依赖数组，只在挂载和卸载时执行
+    
+    // 2. 依赖变化时执行
+    useEffect(() => {
+        console.log('学生ID变化，重新获取数据');
+        setLoading(true);
+        
+        // 模拟API调用
+        const fetchStudent = async () => {
+            try {
+                const response = await fetch(\`/api/students/\${studentId}\`);
+                const data = await response.json();
+                setStudent(data);
+            } catch (error) {
+                console.error('获取学生信息失败:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        if (studentId) {
+            fetchStudent();
+        }
+    }, [studentId]); // 依赖studentId
+    
+    // 3. 每次渲染后执行
+    useEffect(() => {
+        console.log('组件渲染完成');
+    }); // 无依赖数组
+    
+    if (loading) return <div>加载中...</div>;
+    if (!student) return <div>未找到学生</div>;
+    
+    return (
+        <div>
+            <h3>{student.name}</h3>
+            <p>年龄: {student.age}</p>
+            <p>课程: {student.course}</p>
+        </div>
+    );
+}
+
+// 定时器示例
+function Timer() {
+    const [seconds, setSeconds] = useState(0);
+    
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds(prev => prev + 1);
+        }, 1000);
+        
+        // 清理定时器
+        return () => clearInterval(interval);
+    }, []);
+    
+    return <div>运行时间: {seconds}秒</div>;
+}
+                `,
+                useContext: `
+// useContext Hook示例
+const ThemeContext = createContext();
+const UserContext = createContext();
+
+// 主题提供者
+function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState('light');
+    
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
+    
+    return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+}
+
+// 用户提供者
+function UserProvider({ children }) {
+    const [user, setUser] = useState({
+        name: '李白',
+        role: '学生',
+        academy: '岳麓书院'
+    });
+    
+    return (
+        <UserContext.Provider value={{ user, setUser }}>
+            {children}
+        </UserContext.Provider>
+    );
+}
+
+// 使用Context的组件
+function Header() {
+    const { theme, toggleTheme } = useContext(ThemeContext);
+    const { user } = useContext(UserContext);
+    
+    return (
+        <header className={\`header header-\${theme}\`}>
+            <h1>欢迎, {user.name}</h1>
+            <p>角色: {user.role} | 书院: {user.academy}</p>
+            <button onClick={toggleTheme}>
+                切换到{theme === 'light' ? '深色' : '浅色'}主题
+            </button>
+        </header>
+    );
+}
+
+function StudentCard() {
+    const { theme } = useContext(ThemeContext);
+    const { user } = useContext(UserContext);
+    
+    return (
+        <div className={\`card card-\${theme}\`}>
+            <h3>{user.name}的学习档案</h3>
+            <p>当前主题: {theme}</p>
+        </div>
+    );
+}
+
+// 应用根组件
+function App() {
+    return (
+        <ThemeProvider>
+            <UserProvider>
+                <Header />
+                <StudentCard />
+            </UserProvider>
+        </ThemeProvider>
+    );
+}
+                `,
+                useReducer: `
+// useReducer Hook示例
+const initialState = {
+    students: [],
+    loading: false,
+    error: null,
+    selectedStudent: null
+};
+
+function studentReducer(state, action) {
+    switch (action.type) {
+        case 'FETCH_START':
+            return {
+                ...state,
+                loading: true,
+                error: null
+            };
+            
+        case 'FETCH_SUCCESS':
+            return {
+                ...state,
+                loading: false,
+                students: action.payload
+            };
+            
+        case 'FETCH_ERROR':
+            return {
+                ...state,
+                loading: false,
+                error: action.payload
+            };
+            
+        case 'ADD_STUDENT':
+            return {
+                ...state,
+                students: [...state.students, action.payload]
+            };
+            
+        case 'REMOVE_STUDENT':
+            return {
+                ...state,
+                students: state.students.filter(s => s.id !== action.payload)
+            };
+            
+        case 'SELECT_STUDENT':
+            return {
+                ...state,
+                selectedStudent: action.payload
+            };
+            
+        case 'UPDATE_STUDENT':
+            return {
+                ...state,
+                students: state.students.map(student =>
+                    student.id === action.payload.id
+                        ? { ...student, ...action.payload.updates }
+                        : student
+                )
+            };
+            
+        default:
+            return state;
+    }
+}
+
+function StudentManager() {
+    const [state, dispatch] = useReducer(studentReducer, initialState);
+    
+    const addStudent = (student) => {
+        dispatch({
+            type: 'ADD_STUDENT',
+            payload: {
+                id: Date.now(),
+                ...student
+            }
+        });
+    };
+    
+    const removeStudent = (id) => {
+        dispatch({ type: 'REMOVE_STUDENT', payload: id });
+    };
+    
+    const selectStudent = (student) => {
+        dispatch({ type: 'SELECT_STUDENT', payload: student });
+    };
+    
+    return (
+        <div>
+            <h3>学生管理 (useReducer)</h3>
+            
+            {state.loading && <div>加载中...</div>}
+            {state.error && <div>错误: {state.error}</div>}
+            
+            <div>
+                {state.students.map(student => (
+                    <div 
+                        key={student.id}
+                        className={\`student-item \${state.selectedStudent?.id === student.id ? 'selected' : ''}\`}
+                        onClick={() => selectStudent(student)}
+                    >
+                        <h4>{student.name}</h4>
+                        <p>{student.course}</p>
+                        <button onClick={(e) => {
+                            e.stopPropagation();
+                            removeStudent(student.id);
+                        }}>
+                            删除
+                        </button>
+                    </div>
+                ))}
+            </div>
+            
+            <button onClick={() => addStudent({
+                name: \`学生\${state.students.length + 1}\`,
+                course: '诗词创作',
+                age: 20
+            })}>
+                添加学生
+            </button>
+        </div>
+    );
+}
+                `,
+                useMemo: `
+// useMemo Hook示例
+function StudentStatistics({ students }) {
+    // 昂贵的计算，只在students变化时重新计算
+    const statistics = useMemo(() => {
+        console.log('重新计算统计数据...');
+        
+        const totalStudents = students.length;
+        const averageAge = students.reduce((sum, s) => sum + s.age, 0) / totalStudents;
+        const courseDistribution = students.reduce((acc, student) => {
+            acc[student.course] = (acc[student.course] || 0) + 1;
+            return acc;
+        }, {});
+        
+        const topCourse = Object.entries(courseDistribution)
+            .sort(([,a], [,b]) => b - a)[0];
+        
+        return {
+            totalStudents,
+            averageAge: averageAge.toFixed(1),
+            courseDistribution,
+            topCourse: topCourse ? topCourse[0] : '无'
+        };
+    }, [students]); // 依赖students数组
+    
+    // 格式化显示文本，依赖statistics
+    const displayText = useMemo(() => {
+        return \`共有\${statistics.totalStudents}名学生，平均年龄\${statistics.averageAge}岁\`;
+    }, [statistics]);
+    
+    return (
+        <div className="statistics">
+            <h3>学生统计</h3>
+            <p>{displayText}</p>
+            <p>最受欢迎课程: {statistics.topCourse}</p>
+            
+            <h4>课程分布:</h4>
+            <ul>
+                {Object.entries(statistics.courseDistribution).map(([course, count]) => (
+                    <li key={course}>{course}: {count}人</li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+// 复杂计算示例
+function FibonacciCalculator() {
+    const [number, setNumber] = useState(10);
+    const [multiplier, setMultiplier] = useState(1);
+    
+    // 斐波那契计算（昂贵操作）
+    const fibonacci = useMemo(() => {
+        console.log('计算斐波那契数列...');
+        
+        const fib = (n) => {
+            if (n <= 1) return n;
+            return fib(n - 1) + fib(n - 2);
+        };
+        
+        return fib(number);
+    }, [number]); // 只在number变化时重新计算
+    
+    // 简单计算（不需要useMemo）
+    const result = fibonacci * multiplier;
+    
+    return (
+        <div>
+            <h3>斐波那契计算器</h3>
+            <input 
+                type="number" 
+                value={number}
+                onChange={(e) => setNumber(parseInt(e.target.value))}
+                max="40"
+            />
+            <input 
+                type="number" 
+                value={multiplier}
+                onChange={(e) => setMultiplier(parseInt(e.target.value))}
+            />
+            <p>第{number}个斐波那契数: {fibonacci}</p>
+            <p>乘以{multiplier}的结果: {result}</p>
+        </div>
+    );
+}
+                `,
+                useCallback: `
+// useCallback Hook示例
+function StudentList({ students, onStudentUpdate }) {
+    const [filter, setFilter] = useState('');
+    const [sortBy, setSortBy] = useState('name');
+    
+    // 过滤学生列表
+    const filteredStudents = useMemo(() => {
+        return students.filter(student => 
+            student.name.toLowerCase().includes(filter.toLowerCase()) ||
+            student.course.toLowerCase().includes(filter.toLowerCase())
+        );
+    }, [students, filter]);
+    
+    // 排序函数 - 使用useCallback避免子组件不必要的重渲染
+    const handleSort = useCallback((field) => {
+        setSortBy(field);
+    }, []); // 无依赖，函数永远不变
+    
+    // 删除学生 - 使用useCallback
+    const handleDelete = useCallback((studentId) => {
+        onStudentUpdate(prev => prev.filter(s => s.id !== studentId));
+    }, [onStudentUpdate]);
+    
+    // 更新学生信息 - 使用useCallback
+    const handleUpdate = useCallback((studentId, updates) => {
+        onStudentUpdate(prev => 
+            prev.map(student => 
+                student.id === studentId 
+                    ? { ...student, ...updates }
+                    : student
+            )
+        );
+    }, [onStudentUpdate]);
+    
+    // 排序后的学生列表
+    const sortedStudents = useMemo(() => {
+        return [...filteredStudents].sort((a, b) => {
+            if (sortBy === 'age') {
+                return a.age - b.age;
+            }
+            return a[sortBy].localeCompare(b[sortBy]);
+        });
+    }, [filteredStudents, sortBy]);
+    
+    return (
+        <div>
+            <div className="controls">
+                <input 
+                    type="text"
+                    placeholder="搜索学生..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                />
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    <option value="name">按姓名排序</option>
+                    <option value="age">按年龄排序</option>
+                    <option value="course">按课程排序</option>
+                </select>
+            </div>
+            
+            <div className="student-list">
+                {sortedStudents.map(student => (
+                    <StudentItem
+                        key={student.id}
+                        student={student}
+                        onDelete={handleDelete}
+                        onUpdate={handleUpdate}
+                        onSort={handleSort}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// 子组件 - 使用React.memo优化
+const StudentItem = React.memo(function StudentItem({ 
+    student, 
+    onDelete, 
+    onUpdate, 
+    onSort 
+}) {
+    console.log(\`渲染学生: \${student.name}\`);
+    
+    const handleNameChange = useCallback((newName) => {
+        onUpdate(student.id, { name: newName });
+    }, [student.id, onUpdate]);
+    
+    return (
+        <div className="student-item">
+            <input 
+                value={student.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+            />
+            <span>{student.age}岁</span>
+            <span>{student.course}</span>
+            <button onClick={() => onDelete(student.id)}>
+                删除
+            </button>
+        </div>
+    );
+});
+
+// 父组件
+function App() {
+    const [students, setStudents] = useState([
+        { id: 1, name: '李白', age: 20, course: '诗词创作' },
+        { id: 2, name: '杜甫', age: 22, course: '诗词创作' }
+    ]);
+    
+    // 使用useCallback包装更新函数
+    const handleStudentUpdate = useCallback((updateFn) => {
+        setStudents(updateFn);
+    }, []);
+    
+    return (
+        <StudentList 
+            students={students}
+            onStudentUpdate={handleStudentUpdate}
+        />
+    );
+}
+                `
+            };
+
+            result.innerHTML = hookExamples[hookName] || '请选择一个Hook';
+        }
+
+        function demonstrateHooks() {
+            console.log('演示React Hooks');
+        }
+
+        function showCustomHook() {
+            const result = document.getElementById('hooksCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// 自定义Hook示例
+
+// 1. 数据获取Hook
+function useStudentData(studentId) {
+    const [student, setStudent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
+    useEffect(() => {
+        if (!studentId) return;
+        
+        setLoading(true);
+        setError(null);
+        
+        // 模拟API调用
+        const fetchStudent = async () => {
+            try {
+                const response = await fetch(\`/api/students/\${studentId}\`);
+                if (!response.ok) throw new Error('获取失败');
+                const data = await response.json();
+                setStudent(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchStudent();
+    }, [studentId]);
+    
+    return { student, loading, error };
+}
+
+// 使用自定义Hook
+function StudentProfile({ studentId }) {
+    const { student, loading, error } = useStudentData(studentId);
+    
+    if (loading) return <div>加载中...</div>;
+    if (error) return <div>错误: {error}</div>;
+    if (!student) return <div>未找到学生</div>;
+    
+    return (
+        <div>
+            <h3>{student.name}</h3>
+            <p>年龄: {student.age}</p>
+            <p>课程: {student.course}</p>
+        </div>
+    );
+}
+
+// 2. 本地存储Hook
+function useLocalStorage(key, initialValue) {
+    const [storedValue, setStoredValue] = useState(() => {
+        try {
+            const item = window.localStorage.getItem(key);
+            return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+            console.error('读取localStorage失败:', error);
+            return initialValue;
+        }
+    });
+    
+    const setValue = useCallback((value) => {
+        try {
+            setStoredValue(value);
+            window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.error('写入localStorage失败:', error);
+        }
+    }, [key]);
+    
+    return [storedValue, setValue];
+}
+
+// 使用本地存储Hook
+function UserPreferences() {
+    const [theme, setTheme] = useLocalStorage('theme', 'light');
+    const [language, setLanguage] = useLocalStorage('language', 'zh');
+    
+    return (
+        <div>
+            <h3>用户偏好设置</h3>
+            <label>
+                主题:
+                <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                </select>
+            </label>
+            <label>
+                语言:
+                <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+        </div>
+    );
+}
+
+// 3. 窗口大小Hook
+function useWindowSize() {
+    const [windowSize, setWindowSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
+    
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight
+            });
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    
+    return windowSize;
+}
+
+// 使用窗口大小Hook
+function ResponsiveComponent() {
+    const { width, height } = useWindowSize();
+    
+    return (
+        <div>
+            <h3>响应式组件</h3>
+            <p>窗口大小: {width} x {height}</p>
+            <p>设备类型: {width < 768 ? '移动设备' : '桌面设备'}</p>
+        </div>
+    );
+}
+
+// 4. 防抖Hook
+function useDebounce(value, delay) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+        
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+    
+    return debouncedValue;
+}
+
+// 使用防抖Hook
+function SearchComponent() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
+    const [results, setResults] = useState([]);
+    
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            // 执行搜索
+            console.log('搜索:', debouncedSearchTerm);
+            // 模拟搜索API调用
+        }
+    }, [debouncedSearchTerm]);
+    
+    return (
+        <div>
+            <input 
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="搜索学生..."
+            />
+            <p>搜索词: {debouncedSearchTerm}</p>
+        </div>
+    );
+}
+            `;
+        }
+
+        function showHookRules() {
+            const result = document.getElementById('hooksCode');
+            result.style.display = 'block';
+            result.innerHTML = `
+// React Hooks使用规则
+
+// ✅ 正确的Hook使用
+function GoodComponent() {
+    // 1. 只在函数组件顶层调用Hook
+    const [count, setCount] = useState(0);
+    const [name, setName] = useState('');
+    
+    // 2. Hook调用顺序保持一致
+    useEffect(() => {
+        document.title = \`计数: \${count}\`;
+    }, [count]);
+    
+    const memoizedValue = useMemo(() => {
+        return count * 2;
+    }, [count]);
+    
+    return (
+        <div>
+            <h3>{name}</h3>
+            <p>计数: {count}</p>
+            <p>双倍: {memoizedValue}</p>
+            <button onClick={() => setCount(count + 1)}>增加</button>
+        </div>
+    );
+}
+
+// ❌ 错误的Hook使用
+function BadComponent({ shouldShowCount }) {
+    const [name, setName] = useState('');
+    
+    // ❌ 错误：在条件语句中调用Hook
+    if (shouldShowCount) {
+        const [count, setCount] = useState(0); // 这是错误的！
+    }
+    
+    // ❌ 错误：在循环中调用Hook
+    for (let i = 0; i < 3; i++) {
+        const [value, setValue] = useState(i); // 这是错误的！
+    }
+    
+    // ❌ 错误：在嵌套函数中调用Hook
+    const handleClick = () => {
+        const [clicked, setClicked] = useState(false); // 这是错误的！
+    };
+    
+    return <div>{name}</div>;
+}
+
+// ✅ 正确的条件逻辑
+function ConditionalComponent({ shouldShowCount }) {
+    const [name, setName] = useState('');
+    const [count, setCount] = useState(0); // 总是调用
+    
+    return (
+        <div>
+            <h3>{name}</h3>
+            {shouldShowCount && ( // 条件渲染在JSX中
+                <div>
+                    <p>计数: {count}</p>
+                    <button onClick={() => setCount(count + 1)}>增加</button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Hook规则总结:
+// 1. 只在React函数组件或自定义Hook中调用Hook
+// 2. 只在函数顶层调用Hook，不要在循环、条件或嵌套函数中调用
+// 3. Hook的调用顺序必须保持一致
+// 4. 自定义Hook必须以"use"开头
+
+// ✅ 正确的自定义Hook
+function useCounter(initialValue = 0) {
+    const [count, setCount] = useState(initialValue);
+    
+    const increment = useCallback(() => {
+        setCount(prev => prev + 1);
+    }, []);
+    
+    const decrement = useCallback(() => {
+        setCount(prev => prev - 1);
+    }, []);
+    
+    const reset = useCallback(() => {
+        setCount(initialValue);
+    }, [initialValue]);
+    
+    return { count, increment, decrement, reset };
+}
+
+// ❌ 错误：不是Hook但以use开头
+function useNotAHook() {
+    // 这不是Hook，因为没有调用其他Hook
+    return "这不是Hook";
+}
+
+// ✅ 正确：普通函数
+function createHelper() {
+    return "这是普通函数";
+}
+
+// Hook依赖数组规则:
+// 1. 包含所有在effect中使用的组件作用域内的值
+// 2. 不要撒谎关于依赖
+
+// ❌ 错误：缺少依赖
+function BadEffect({ userId }) {
+    const [user, setUser] = useState(null);
+    
+    useEffect(() => {
+        fetchUser(userId).then(setUser); // 使用了userId但没有在依赖中声明
+    }, []); // 错误：缺少userId依赖
+    
+    return <div>{user?.name}</div>;
+}
+
+// ✅ 正确：包含所有依赖
+function GoodEffect({ userId }) {
+    const [user, setUser] = useState(null);
+    
+    useEffect(() => {
+        fetchUser(userId).then(setUser);
+    }, [userId]); // 正确：包含userId依赖
+    
+    return <div>{user?.name}</div>;
+}
+            `;
+        }
+
+        function toggleCode(codeId) {
+            const codeElement = document.getElementById(codeId);
+            if (codeElement) {
+                codeElement.style.display = codeElement.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript类型系统实例 - 古代图书馆管理系统</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #8e44ad;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .library-header {
+            background: linear-gradient(45deg, #8e44ad, #9b59b6, #3498db, #2980b9);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .type-demo {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .interface-demo {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .generic-demo {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .enum-demo {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .class-demo {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .code-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+
+        .type-example {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-example:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .type-result {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .control-panel {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn.purple {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #8e44ad;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #8e44ad;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #8e44ad;
+            font-size: 1.5em;
+        }
+
+        .book-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .book-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .book-card.selected {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: #f1c40f;
+        }
+
+        .type-checker {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .type-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin: 5px 0;
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        .type-output {
+            background: #27ae60;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            min-height: 50px;
+        }
+
+        .type-error {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .library-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .type-annotation {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .keyword {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .string-literal {
+            color: #27ae60;
+        }
+
+        .number-literal {
+            color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>TypeScript类型系统实例 - 古代图书馆管理系统</h1>
+
+        <div class="library-header">
+            📚 探索古代藏书阁的智慧与现代TypeScript类型系统 📚
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示TypeScript的类型注解、接口定义、泛型编程、枚举类型和类的使用
+        </div>
+
+        <h2 class="section-title">🏷️ 基础类型系统 - 图书分类</h2>
+        <div class="type-demo">
+            <h4>📖 图书基础类型定义</h4>
+            <div class="type-example" onclick="showTypeExample('basic')">
+                点击查看基础类型示例
+            </div>
+            <div class="type-result" id="basicTypeResult"></div>
+            <div class="control-panel">
+                <button class="btn" onclick="testBasicTypes()">测试基础类型</button>
+                <button class="btn success" onclick="validateTypes()">类型验证</button>
+                <button class="btn warning" onclick="showTypeErrors()">显示类型错误</button>
+            </div>
+            <div class="code-display" id="basicTypeCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('basicTypeCode')">查看基础类型代码</button>
+        </div>
+
+        <h2 class="section-title">🏛️ 接口定义 - 图书馆规范</h2>
+        <div class="interface-demo">
+            <h4>📋 图书馆接口规范</h4>
+            <div class="library-stats">
+                <div class="stat-card" onclick="showInterface('book')">
+                    <div class="stat-number">📚</div>
+                    <div>图书接口</div>
+                </div>
+                <div class="stat-card" onclick="showInterface('reader')">
+                    <div class="stat-number">👤</div>
+                    <div>读者接口</div>
+                </div>
+                <div class="stat-card" onclick="showInterface('librarian')">
+                    <div class="stat-number">👨‍🏫</div>
+                    <div>管理员接口</div>
+                </div>
+                <div class="stat-card" onclick="showInterface('library')">
+                    <div class="stat-number">🏛️</div>
+                    <div>图书馆接口</div>
+                </div>
+            </div>
+            <div class="type-result" id="interfaceResult"></div>
+            <div class="control-panel">
+                <button class="btn" onclick="createBookInstance()">创建图书实例</button>
+                <button class="btn success" onclick="validateInterface()">接口验证</button>
+                <button class="btn danger" onclick="showInterfaceError()">接口错误示例</button>
+            </div>
+            <div class="code-display" id="interfaceCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('interfaceCode')">查看接口代码</button>
+        </div>
+
+        <h2 class="section-title">🔄 泛型编程 - 通用图书管理</h2>
+        <div class="generic-demo">
+            <h4>🔧 泛型图书管理系统</h4>
+            <div class="type-checker">
+                <div>泛型类型检查器：</div>
+                <input type="text" class="type-input" id="genericInput" placeholder="输入泛型表达式，如：Array<Book>"
+                    onkeypress="handleGenericEnter(event)">
+                <div class="type-output" id="genericOutput">等待输入泛型表达式...</div>
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="testGenericArray()">泛型数组</button>
+                <button class="btn success" onclick="testGenericFunction()">泛型函数</button>
+                <button class="btn warning" onclick="testGenericClass()">泛型类</button>
+                <button class="btn purple" onclick="testGenericConstraints()">泛型约束</button>
+            </div>
+            <div class="type-result" id="genericResult"></div>
+            <div class="code-display" id="genericCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('genericCode')">查看泛型代码</button>
+        </div>
+
+        <h2 class="section-title">📊 枚举类型 - 图书状态管理</h2>
+        <div class="enum-demo">
+            <h4>📈 图书状态枚举</h4>
+            <div class="library-stats">
+                <div class="stat-card" onclick="showEnumValue('available')">
+                    <div class="stat-number">✅</div>
+                    <div>可借阅</div>
+                </div>
+                <div class="stat-card" onclick="showEnumValue('borrowed')">
+                    <div class="stat-number">📤</div>
+                    <div>已借出</div>
+                </div>
+                <div class="stat-card" onclick="showEnumValue('reserved')">
+                    <div class="stat-number">🔒</div>
+                    <div>已预约</div>
+                </div>
+                <div class="stat-card" onclick="showEnumValue('maintenance')">
+                    <div class="stat-number">🔧</div>
+                    <div>维护中</div>
+                </div>
+            </div>
+            <div class="type-result" id="enumResult"></div>
+            <div class="control-panel">
+                <button class="btn" onclick="testStringEnum()">字符串枚举</button>
+                <button class="btn success" onclick="testNumericEnum()">数字枚举</button>
+                <button class="btn warning" onclick="testConstEnum()">常量枚举</button>
+            </div>
+            <div class="code-display" id="enumCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('enumCode')">查看枚举代码</button>
+        </div>
+
+        <h2 class="section-title">🏗️ 类与继承 - 图书馆组织架构</h2>
+        <div class="class-demo">
+            <h4>🏛️ 图书馆类层次结构</h4>
+            <div class="type-result" id="classResult"></div>
+            <div class="control-panel">
+                <button class="btn" onclick="createLibraryClass()">创建图书馆类</button>
+                <button class="btn success" onclick="testInheritance()">测试继承</button>
+                <button class="btn warning" onclick="testAbstractClass()">抽象类</button>
+                <button class="btn purple" onclick="testAccessModifiers()">访问修饰符</button>
+            </div>
+            <div class="code-display" id="classCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleCode('classCode')">查看类代码</button>
+        </div>
+
+        <div class="cultural-info">
+            <h3>📚 中国古代图书馆文化</h3>
+            <p><strong>藏书阁：</strong>古代皇家和私人藏书的重要场所，如文渊阁、四库全书等。</p>
+            <p><strong>分类体系：</strong>古代图书按经、史、子、集四部分类，体现了系统化的知识管理。</p>
+            <p><strong>目录学：</strong>中国古代发达的目录学传统，为图书管理提供了科学方法。</p>
+            <p><strong>书院制度：</strong>古代教育机构的图书管理，促进了知识的传承和发展。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过古代图书馆管理系统展示了TypeScript的核心特性：
+            <br>• <strong>类型注解：</strong>为变量、函数参数和返回值添加类型信息
+            <br>• <strong>接口定义：</strong>定义对象的结构和契约，确保类型安全
+            <br>• <strong>泛型编程：</strong>编写可重用的组件，支持多种类型
+            <br>• <strong>枚举类型：</strong>定义命名常量集合，提高代码可读性
+            <br>• <strong>类与继承：</strong>面向对象编程，支持封装、继承和多态
+            <br>• <strong>类型检查：</strong>编译时类型验证，减少运行时错误
+        </div>
+    </div>
+
+    <script>
+        // 模拟TypeScript类型系统
+        const TypeSystem = {
+            // 基础类型
+            basicTypes: {
+                string: 'string',
+                number: 'number',
+                boolean: 'boolean',
+                array: 'Array<T>',
+                object: 'object',
+                null: 'null',
+                undefined: 'undefined',
+                any: 'any',
+                void: 'void',
+                never: 'never'
+            },
+
+            // 接口定义
+            interfaces: {
+                Book: {
+                    id: 'number',
+                    title: 'string',
+                    author: 'string',
+                    category: 'BookCategory',
+                    status: 'BookStatus',
+                    publishYear: 'number',
+                    isbn?: 'string'
+                },
+                Reader: {
+                    id: 'number',
+                    name: 'string',
+                    email: 'string',
+                    borrowedBooks: 'Book[]',
+                    membershipType: 'MembershipType'
+                },
+                Librarian: {
+                    id: 'number',
+                    name: 'string',
+                    department: 'string',
+                    permissions: 'Permission[]'
+                },
+                Library: {
+                    name: 'string',
+                    books: 'Book[]',
+                    readers: 'Reader[]',
+                    librarians: 'Librarian[]'
+                }
+            },
+
+            // 枚举类型
+            enums: {
+                BookStatus: {
+                    Available: 'available',
+                    Borrowed: 'borrowed',
+                    Reserved: 'reserved',
+                    Maintenance: 'maintenance'
+                },
+                BookCategory: {
+                    Classic: 'classic',
+                    History: 'history',
+                    Philosophy: 'philosophy',
+                    Literature: 'literature',
+                    Science: 'science'
+                },
+                MembershipType: {
+                    Student: 'student',
+                    Teacher: 'teacher',
+                    Researcher: 'researcher',
+                    Public: 'public'
+                }
+            }
+        };
+
+        function showTypeExample(type) {
+            const result = document.getElementById('basicTypeResult');
+
+            if (type === 'basic') {
+                result.innerHTML = `
+<div class="type-annotation">// 基础类型示例</div>
+<div><span class="keyword">let</span> bookTitle: <span class="type-annotation">string</span> = <span class="string-literal">"论语"</span>;</div>
+<div><span class="keyword">let</span> pageCount: <span class="type-annotation">number</span> = <span class="number-literal">256</span>;</div>
+<div><span class="keyword">let</span> isAvailable: <span class="type-annotation">boolean</span> = <span class="keyword">true</span>;</div>
+<div><span class="keyword">let</span> authors: <span class="type-annotation">string[]</span> = [<span class="string-literal">"孔子"</span>, <span class="string-literal">"弟子"</span>];</div>
+<div><span class="keyword">let</span> publishDate: <span class="type-annotation">Date</span> = <span class="keyword">new</span> Date();</div>
+                `;
+            }
+        }
+
+        function testBasicTypes() {
+            const result = document.getElementById('basicTypeResult');
+            result.innerHTML = `<div class="loading-spinner"></div>正在测试基础类型...`;
+
+            setTimeout(() => {
+                result.innerHTML = `
+✅ 类型测试通过：
+• string: "史记" ✓
+• number: 2000 ✓
+• boolean: true ✓
+• Array<string>: ["司马迁"] ✓
+• Date: ${new Date().toLocaleDateString()} ✓
+                `;
+            }, 1000);
+        }
+
+        function validateTypes() {
+            const result = document.getElementById('basicTypeResult');
+            result.innerHTML = `
+<div class="type-annotation">类型验证结果：</div>
+<div style="color: #27ae60;">✅ 所有类型注解正确</div>
+<div style="color: #27ae60;">✅ 类型推断成功</div>
+<div style="color: #27ae60;">✅ 类型兼容性检查通过</div>
+            `;
+        }
+
+        function showTypeErrors() {
+            const result = document.getElementById('basicTypeResult');
+            result.innerHTML = `
+<div class="type-error">❌ 类型错误示例：</div>
+<div class="type-error">Type 'string' is not assignable to type 'number'</div>
+<div class="type-error">Property 'title' is missing in type '{}'</div>
+<div class="type-error">Argument of type 'undefined' is not assignable to parameter of type 'string'</div>
+            `;
+        }
+
+        function toggleCode(codeId) {
+            const codeDisplay = document.getElementById(codeId);
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+
+            const codeContent = {
+                basicTypeCode: `
+// TypeScript基础类型示例
+
+// 原始类型
+let bookTitle: string = "诗经";
+let chapterCount: number = 305;
+let isClassic: boolean = true;
+let publishYear: number = -1000; // 公元前1000年
+
+// 数组类型
+let authors: string[] = ["佚名", "孔子编订"];
+let ratings: Array<number> = [9.5, 9.8, 9.2];
+
+// 对象类型
+let book: {
+    title: string;
+    author: string;
+    pages: number;
+} = {
+    title: "道德经",
+    author: "老子",
+    pages: 81
+};
+
+// 联合类型
+let status: "available" | "borrowed" | "reserved" = "available";
+
+// 可选属性
+let bookInfo: {
+    title: string;
+    subtitle?: string; // 可选属性
+    isbn?: string;
+} = {
+    title: "孙子兵法"
+};
+
+// 函数类型
+let searchBooks: (query: string) => Book[] = function(query) {
+    return books.filter(book => book.title.includes(query));
+};
+
+// 类型别名
+type BookID = number;
+type BookCollection = Book[];
+
+// 字面量类型
+let category: "经" | "史" | "子" | "集" = "经";
+                `,
+                interfaceCode: `
+// TypeScript接口定义示例
+
+// 基础接口
+interface Book {
+    readonly id: number;        // 只读属性
+    title: string;
+    author: string;
+    category: BookCategory;
+    status: BookStatus;
+    publishYear: number;
+    isbn?: string;              // 可选属性
+    tags?: string[];
+}
+
+// 读者接口
+interface Reader {
+    id: number;
+    name: string;
+    email: string;
+    borrowedBooks: Book[];
+    membershipType: MembershipType;
+    borrowBook(book: Book): boolean;
+    returnBook(bookId: number): boolean;
+}
+
+// 管理员接口
+interface Librarian extends Reader {
+    department: string;
+    permissions: Permission[];
+    addBook(book: Book): void;
+    removeBook(bookId: number): void;
+    updateBookStatus(bookId: number, status: BookStatus): void;
+}
+
+// 图书馆接口
+interface Library {
+    name: string;
+    address: string;
+    books: Map<number, Book>;
+    readers: Map<number, Reader>;
+    librarians: Librarian[];
+    
+    // 方法签名
+    searchBooks(query: string): Book[];
+    registerReader(reader: Omit<Reader, 'id'>): number;
+    borrowBook(readerId: number, bookId: number): boolean;
+    returnBook(readerId: number, bookId: number): boolean;
+}
+
+// 接口继承
+interface DigitalBook extends Book {
+    fileFormat: 'PDF' | 'EPUB' | 'MOBI';
+    fileSize: number;
+    downloadUrl: string;
+}
+
+// 函数接口
+interface SearchFunction {
+    (query: string, category?: BookCategory): Book[];
+}
+
+// 索引签名
+interface BookCatalog {
+    [category: string]: Book[];
+}
+                `,
+                genericCode: `
+// TypeScript泛型编程示例
+
+// 泛型函数
+function findById<T extends { id: number }>(items: T[], id: number): T | undefined {
+    return items.find(item => item.id === id);
+}
+
+// 使用泛型函数
+const book = findById<Book>(books, 1);
+const reader = findById<Reader>(readers, 100);
+
+// 泛型接口
+interface Repository<T> {
+    items: T[];
+    add(item: T): void;
+    remove(id: number): boolean;
+    findById(id: number): T | undefined;
+    findAll(): T[];
+}
+
+// 泛型类
+class LibraryRepository<T extends { id: number }> implements Repository<T> {
+    items: T[] = [];
+    
+    add(item: T): void {
+        this.items.push(item);
+    }
+    
+    remove(id: number): boolean {
+        const index = this.items.findIndex(item => item.id === id);
+        if (index > -1) {
+            this.items.splice(index, 1);
+            return true;
+        }
+        return false;
+    }
+    
+    findById(id: number): T | undefined {
+        return this.items.find(item => item.id === id);
+    }
+    
+    findAll(): T[] {
+        return [...this.items];
+    }
+}
+
+// 泛型约束
+interface Searchable {
+    title: string;
+    author: string;
+}
+
+function searchItems<T extends Searchable>(items: T[], query: string): T[] {
+    return items.filter(item => 
+        item.title.includes(query) || item.author.includes(query)
+    );
+}
+
+// 条件类型
+type ApiResponse<T> = T extends string 
+    ? { message: T } 
+    : T extends number 
+    ? { code: T } 
+    : { data: T };
+
+// 映射类型
+type PartialBook = Partial<Book>;           // 所有属性可选
+type RequiredBook = Required<Book>;         // 所有属性必需
+type BookTitles = Pick<Book, 'title' | 'author'>;  // 选择特定属性
+type BookWithoutId = Omit<Book, 'id'>;     // 排除特定属性
+
+// 工具类型
+type BookKeys = keyof Book;                 // 获取所有键
+type BookValues = Book[keyof Book];         // 获取所有值类型
+                `,
+                enumCode: `
+// TypeScript枚举类型示例
+
+// 数字枚举
+enum BookStatus {
+    Available,      // 0
+    Borrowed,       // 1
+    Reserved,       // 2
+    Maintenance     // 3
+}
+
+// 字符串枚举
+enum BookCategory {
+    Classic = "classic",
+    History = "history",
+    Philosophy = "philosophy",
+    Literature = "literature",
+    Science = "science"
+}
+
+// 异构枚举（混合类型）
+enum MembershipType {
+    Student = "student",
+    Teacher = "teacher",
+    VIP = 1,
+    Premium = 2
+}
+
+// 常量枚举
+const enum Permission {
+    Read = "read",
+    Write = "write",
+    Delete = "delete",
+    Admin = "admin"
+}
+
+// 计算枚举成员
+enum FileSize {
+    KB = 1024,
+    MB = KB * 1024,
+    GB = MB * 1024
+}
+
+// 枚举的使用
+function updateBookStatus(bookId: number, status: BookStatus): void {
+    console.log(\`更新图书 \${bookId} 状态为: \${BookStatus[status]}\`);
+}
+
+// 反向映射（仅数字枚举）
+console.log(BookStatus.Available);  // 0
+console.log(BookStatus[0]);         // "Available"
+
+// 枚举作为类型
+function categorizeBook(book: Book, category: BookCategory): void {
+    book.category = category;
+}
+
+// 枚举值检查
+function isValidStatus(status: string): status is keyof typeof BookStatus {
+    return status in BookStatus;
+}
+
+// 枚举遍历
+function getAllStatuses(): string[] {
+    return Object.keys(BookStatus).filter(key => isNaN(Number(key)));
+}
+                `,
+                classCode: `
+// TypeScript类与继承示例
+
+// 抽象基类
+abstract class LibraryItem {
+    protected readonly id: number;
+    protected title: string;
+    protected createdAt: Date;
+    
+    constructor(id: number, title: string) {
+        this.id = id;
+        this.title = title;
+        this.createdAt = new Date();
+    }
+    
+    // 抽象方法
+    abstract getInfo(): string;
+    
+    // 具体方法
+    getId(): number {
+        return this.id;
+    }
+    
+    getTitle(): string {
+        return this.title;
+    }
+}
+
+// 图书类
+class Book extends LibraryItem {
+    private author: string;
+    private isbn: string;
+    private status: BookStatus;
+    
+    constructor(id: number, title: string, author: string, isbn: string) {
+        super(id, title);
+        this.author = author;
+        this.isbn = isbn;
+        this.status = BookStatus.Available;
+    }
+    
+    // 实现抽象方法
+    getInfo(): string {
+        return \`《\${this.title}》 - \${this.author}\`;
+    }
+    
+    // Getter和Setter
+    get bookStatus(): BookStatus {
+        return this.status;
+    }
+    
+    set bookStatus(status: BookStatus) {
+        this.status = status;
+    }
+    
+    // 静态方法
+    static createFromData(data: any): Book {
+        return new Book(data.id, data.title, data.author, data.isbn);
+    }
+}
+
+// 人员基类
+class Person {
+    protected name: string;
+    protected email: string;
+    
+    constructor(name: string, email: string) {
+        this.name = name;
+        this.email = email;
+    }
+    
+    getName(): string {
+        return this.name;
+    }
+}
+
+// 读者类
+class Reader extends Person {
+    private borrowedBooks: Book[] = [];
+    private membershipType: MembershipType;
+    
+    constructor(name: string, email: string, membershipType: MembershipType) {
+        super(name, email);
+        this.membershipType = membershipType;
+    }
+    
+    borrowBook(book: Book): boolean {
+        if (book.bookStatus === BookStatus.Available) {
+            this.borrowedBooks.push(book);
+            book.bookStatus = BookStatus.Borrowed;
+            return true;
+        }
+        return false;
+    }
+    
+    returnBook(book: Book): boolean {
+        const index = this.borrowedBooks.indexOf(book);
+        if (index > -1) {
+            this.borrowedBooks.splice(index, 1);
+            book.bookStatus = BookStatus.Available;
+            return true;
+        }
+        return false;
+    }
+}
+
+// 管理员类
+class Librarian extends Reader {
+    private department: string;
+    private permissions: Permission[];
+    
+    constructor(name: string, email: string, department: string) {
+        super(name, email, MembershipType.Teacher);
+        this.department = department;
+        this.permissions = [Permission.Read, Permission.Write];
+    }
+    
+    addBook(book: Book): void {
+        if (this.hasPermission(Permission.Write)) {
+            console.log(\`管理员 \${this.name} 添加了图书: \${book.getInfo()}\`);
+        }
+    }
+    
+    private hasPermission(permission: Permission): boolean {
+        return this.permissions.includes(permission);
+    }
+}
+
+// 图书馆类
+class Library {
+    private books: Map<number, Book> = new Map();
+    private readers: Map<number, Reader> = new Map();
+    private librarians: Librarian[] = [];
+    
+    addBook(book: Book): void {
+        this.books.set(book.getId(), book);
+    }
+    
+    findBook(id: number): Book | undefined {
+        return this.books.get(id);
+    }
+    
+    searchBooks(query: string): Book[] {
+        return Array.from(this.books.values())
+            .filter(book => book.getTitle().includes(query));
+    }
+}
+                `
+            };
+
+            if (codeContent[codeId]) {
+                codeDisplay.innerHTML = codeContent[codeId];
+            }
+        }
+
+        function showInterface(type) {
+            const result = document.getElementById('interfaceResult');
+            const interfaces = {
+                book: `
+interface Book {
+    readonly id: number;
+    title: string;
+    author: string;
+    category: BookCategory;
+    status: BookStatus;
+    publishYear: number;
+    isbn?: string;
+}
+                `,
+                reader: `
+interface Reader {
+    id: number;
+    name: string;
+    email: string;
+    borrowedBooks: Book[];
+    membershipType: MembershipType;
+    borrowBook(book: Book): boolean;
+    returnBook(bookId: number): boolean;
+}
+                `,
+                librarian: `
+interface Librarian extends Reader {
+    department: string;
+    permissions: Permission[];
+    addBook(book: Book): void;
+    removeBook(bookId: number): void;
+    updateBookStatus(bookId: number, status: BookStatus): void;
+}
+                `,
+                library: `
+interface Library {
+    name: string;
+    books: Map<number, Book>;
+    readers: Map<number, Reader>;
+    librarians: Librarian[];
+    searchBooks(query: string): Book[];
+    registerReader(reader: Omit<Reader, 'id'>): number;
+    borrowBook(readerId: number, bookId: number): boolean;
+}
+                `
+            };
+
+            result.innerHTML = interfaces[type] || '接口未找到';
+        }
+
+        function createBookInstance() {
+            const result = document.getElementById('interfaceResult');
+            result.innerHTML = `
+<div class="loading-spinner"></div>正在创建图书实例...
+            `;
+
+            setTimeout(() => {
+                result.innerHTML = `
+✅ 图书实例创建成功：
+
+const book: Book = {
+    id: 1,
+    title: "论语",
+    author: "孔子",
+    category: BookCategory.Classic,
+    status: BookStatus.Available,
+    publishYear: -500,
+    isbn: "978-7-01-000001-0"
+};
+                `;
+            }, 1000);
+        }
+
+        function validateInterface() {
+            const result = document.getElementById('interfaceResult');
+            result.innerHTML = `
+✅ 接口验证通过：
+• 所有必需属性已定义
+• 类型匹配正确
+• 方法签名有效
+• 继承关系正确
+            `;
+        }
+
+        function showInterfaceError() {
+            const result = document.getElementById('interfaceResult');
+            result.innerHTML = `
+<div class="type-error">❌ 接口错误示例：</div>
+<div class="type-error">Property 'title' is missing in type</div>
+<div class="type-error">Type 'string' is not assignable to type 'BookStatus'</div>
+<div class="type-error">Cannot assign to 'id' because it is a read-only property</div>
+            `;
+        }
+
+        function handleGenericEnter(event) {
+            if (event.key === 'Enter') {
+                checkGenericType();
+            }
+        }
+
+        function checkGenericType() {
+            const input = document.getElementById('genericInput');
+            const output = document.getElementById('genericOutput');
+            const expression = input.value.trim();
+
+            if (!expression) return;
+
+            output.innerHTML = `<div class="loading-spinner"></div>正在分析泛型类型...`;
+
+            setTimeout(() => {
+                const responses = {
+                    'Array<Book>': '✅ 有效的泛型数组类型：Book[]',
+                    'Promise<Book>': '✅ 有效的Promise泛型：异步返回Book',
+                    'Map<number, Book>': '✅ 有效的Map泛型：数字键，Book值',
+                    'Repository<Book>': '✅ 有效的自定义泛型：Book仓库',
+                    'T extends Book': '✅ 有效的泛型约束：T必须继承Book'
+                };
+
+                output.innerHTML = responses[expression] || `⚠️ 未识别的泛型表达式：${expression}`;
+            }, 800);
+        }
+
+        function testGenericArray() {
+            const result = document.getElementById('genericResult');
+            result.innerHTML = `
+泛型数组测试：
+• Array<Book> ✅
+• Array<Reader> ✅
+• Array<string> ✅
+• 类型安全保证 ✅
+            `;
+        }
+
+        function testGenericFunction() {
+            const result = document.getElementById('genericResult');
+            result.innerHTML = `
+泛型函数测试：
+function findById<T>(items: T[], id: number): T | undefined
+
+• findById<Book>(books, 1) ✅
+• findById<Reader>(readers, 100) ✅
+• 类型推断正确 ✅
+            `;
+        }
+
+        function testGenericClass() {
+            const result = document.getElementById('genericResult');
+            result.innerHTML = `
+泛型类测试：
+class Repository<T extends { id: number }>
+
+• new Repository<Book>() ✅
+• new Repository<Reader>() ✅
+• 约束检查通过 ✅
+            `;
+        }
+
+        function testGenericConstraints() {
+            const result = document.getElementById('genericResult');
+            result.innerHTML = `
+泛型约束测试：
+• T extends Book ✅
+• T extends { id: number } ✅
+• keyof T ✅
+• T[K] ✅
+            `;
+        }
+
+        function showEnumValue(status) {
+            const result = document.getElementById('enumResult');
+            const statusInfo = {
+                available: { value: 'BookStatus.Available', desc: '图书可供借阅' },
+                borrowed: { value: 'BookStatus.Borrowed', desc: '图书已被借出' },
+                reserved: { value: 'BookStatus.Reserved', desc: '图书已被预约' },
+                maintenance: { value: 'BookStatus.Maintenance', desc: '图书正在维护' }
+            };
+
+            const info = statusInfo[status];
+            result.innerHTML = `
+枚举值：${info.value}
+描述：${info.desc}
+数字值：${Object.keys(statusInfo).indexOf(status)}
+            `;
+        }
+
+        function testStringEnum() {
+            const result = document.getElementById('enumResult');
+            result.innerHTML = `
+字符串枚举测试：
+enum BookCategory {
+    Classic = "classic",
+    History = "history",
+    Philosophy = "philosophy"
+}
+
+✅ 类型安全
+✅ 可读性强
+✅ 无反向映射
+            `;
+        }
+
+        function testNumericEnum() {
+            const result = document.getElementById('enumResult');
+            result.innerHTML = `
+数字枚举测试：
+enum BookStatus {
+    Available,    // 0
+    Borrowed,     // 1
+    Reserved      // 2
+}
+
+✅ 自动递增
+✅ 反向映射
+✅ 性能优化
+            `;
+        }
+
+        function testConstEnum() {
+            const result = document.getElementById('enumResult');
+            result.innerHTML = `
+常量枚举测试：
+const enum Permission {
+    Read = "read",
+    Write = "write"
+}
+
+✅ 编译时内联
+✅ 零运行时开销
+✅ 更好的性能
+            `;
+        }
+
+        function createLibraryClass() {
+            const result = document.getElementById('classResult');
+            result.innerHTML = `
+<div class="loading-spinner"></div>正在创建图书馆类...
+            `;
+
+            setTimeout(() => {
+                result.innerHTML = `
+✅ 图书馆类创建成功：
+
+class Library {
+    private books: Map<number, Book> = new Map();
+    private readers: Map<number, Reader> = new Map();
+    
+    addBook(book: Book): void { ... }
+    findBook(id: number): Book | undefined { ... }
+    searchBooks(query: string): Book[] { ... }
+}
+
+const library = new Library();
+                `;
+            }, 1000);
+        }
+
+        function testInheritance() {
+            const result = document.getElementById('classResult');
+            result.innerHTML = `
+继承测试：
+
+abstract class LibraryItem { ... }
+class Book extends LibraryItem { ... }
+class Reader extends Person { ... }
+class Librarian extends Reader { ... }
+
+✅ 继承链正确
+✅ 方法重写有效
+✅ super调用成功
+            `;
+        }
+
+        function testAbstractClass() {
+            const result = document.getElementById('classResult');
+            result.innerHTML = `
+抽象类测试：
+
+abstract class LibraryItem {
+    abstract getInfo(): string;  // 必须实现
+    getId(): number { ... }      // 可直接使用
+}
+
+✅ 抽象方法强制实现
+✅ 具体方法可继承
+✅ 无法直接实例化
+            `;
+        }
+
+        function testAccessModifiers() {
+            const result = document.getElementById('classResult');
+            result.innerHTML = `
+访问修饰符测试：
+
+class Book {
+    public title: string;        // 公开
+    private author: string;      // 私有
+    protected id: number;        // 受保护
+    readonly isbn: string;       // 只读
+}
+
+✅ 封装性保证
+✅ 访问控制有效
+✅ 只读属性保护
+            `;
+        }
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('TypeScript类型系统页面已加载');
+
+            // 模拟一些初始数据
+            const sampleBooks = [
+                { id: 1, title: "论语", author: "孔子", category: "classic" },
+                { id: 2, title: "史记", author: "司马迁", category: "history" },
+                { id: 3, title: "道德经", author: "老子", category: "philosophy" }
+            ];
+
+            console.log('示例图书数据:', sampleBooks);
+        });
+    </script>
+</body>
+
+</html>

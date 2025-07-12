@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript异步编程实例 - 古代丝绸之路贸易</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .silk-road-header {
+            background: linear-gradient(45deg, #f39c12, #e67e22, #d35400, #e74c3c);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .trade-route {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .caravan {
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            animation: moveCaravan 10s linear infinite;
+        }
+
+        @keyframes moveCaravan {
+            0% {
+                left: -100px;
+            }
+
+            100% {
+                left: calc(100% + 50px);
+            }
+        }
+
+        .city {
+            display: inline-block;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px;
+            margin: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .city:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .city.visited {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .city.loading {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .promise-demo {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .promise-chain {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .promise-step {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 5px;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .promise-step.active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .promise-step.completed {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .promise-step.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .async-demo {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .merchant-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .control-panel {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .event-loop-demo {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .execution-stack {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stack-column {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 200px;
+        }
+
+        .stack-item {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #e74c3c;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #e74c3c;
+            font-size: 1.5em;
+        }
+
+        .code-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>JavaScript异步编程实例 - 古代丝绸之路贸易</h1>
+
+        <div class="silk-road-header">
+            🐪 探索丝绸之路的异步贸易与JavaScript异步编程 🐪
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示JavaScript的异步编程概念：Promise、async/await、事件循环和异步操作
+        </div>
+
+        <h2 class="section-title">🛤️ 回调函数 - 商队传统贸易路线</h2>
+        <div class="trade-route">
+            <div class="caravan">🐪🐪🐪</div>
+            <h4>📍 贸易城市路线</h4>
+            <div>
+                <div class="city" onclick="visitCity(this, '长安', 1000)">长安 🏛️</div>
+                <div class="city" onclick="visitCity(this, '敦煌', 1500)">敦煌 🏜️</div>
+                <div class="city" onclick="visitCity(this, '撒马尔罕', 2000)">撒马尔罕 🕌</div>
+                <div class="city" onclick="visitCity(this, '巴格达', 2500)">巴格达 🏰</div>
+                <div class="city" onclick="visitCity(this, '君士坦丁堡', 3000)">君士坦丁堡 ⛪</div>
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="startTradeRoute()">开始贸易之旅</button>
+                <button class="btn danger" onclick="resetRoute()">重置路线</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🤝 Promise链式调用 - 商品交易流程</h2>
+        <div class="promise-demo">
+            <h4>💰 丝绸贸易Promise链</h4>
+            <div class="promise-chain">
+                <div class="promise-step" id="step1">🏭<br>采购丝绸</div>
+                <div class="promise-step" id="step2">📦<br>包装货物</div>
+                <div class="promise-step" id="step3">🐪<br>运输货物</div>
+                <div class="promise-step" id="step4">🏪<br>到达市场</div>
+                <div class="promise-step" id="step5">💰<br>完成交易</div>
+            </div>
+            <div class="control-panel">
+                <button class="btn success" onclick="startPromiseChain()">开始Promise交易</button>
+                <button class="btn warning" onclick="simulateError()">模拟交易失败</button>
+                <button class="btn" onclick="resetPromiseChain()">重置交易</button>
+            </div>
+            <div class="code-display" id="promiseCode" style="display: none;"></div>
+            <button class="btn" onclick="togglePromiseCode()">查看Promise代码</button>
+        </div>
+
+        <h2 class="section-title">⚡ Async/Await - 现代商人的高效贸易</h2>
+        <div class="async-demo">
+            <h4>🚀 使用async/await的现代贸易方式</h4>
+            <div class="merchant-status" id="merchantStatus">
+                商人状态: 准备就绪 ✅
+            </div>
+            <div class="control-panel">
+                <button class="btn success" onclick="modernTrade()">开始现代贸易</button>
+                <button class="btn warning" onclick="parallelTrade()">并行贸易</button>
+                <button class="btn danger" onclick="errorHandling()">错误处理演示</button>
+            </div>
+            <div class="code-display" id="asyncCode" style="display: none;"></div>
+            <button class="btn" onclick="toggleAsyncCode()">查看Async/Await代码</button>
+        </div>
+
+        <h2 class="section-title">🔄 事件循环 - 贸易中心的运作机制</h2>
+        <div class="event-loop-demo">
+            <h4>⚙️ JavaScript事件循环可视化</h4>
+            <div class="execution-stack">
+                <div class="stack-column">
+                    <h5>📚 调用栈 (Call Stack)</h5>
+                    <div id="callStack"></div>
+                </div>
+                <div class="stack-column">
+                    <h5>⏰ 任务队列 (Task Queue)</h5>
+                    <div id="taskQueue"></div>
+                </div>
+                <div class="stack-column">
+                    <h5>🚀 微任务队列 (Microtask Queue)</h5>
+                    <div id="microtaskQueue"></div>
+                </div>
+            </div>
+            <div class="control-panel">
+                <button class="btn" onclick="demonstrateEventLoop()">演示事件循环</button>
+                <button class="btn danger" onclick="clearEventLoop()">清空队列</button>
+            </div>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🌏 丝绸之路历史文化</h3>
+            <p><strong>丝绸之路：</strong>连接东西方的古代贸易路线，促进了文化、技术和商品的交流。</p>
+            <p><strong>张骞出使：</strong>汉朝张骞开辟了中国与西域的贸易通道，奠定了丝绸之路的基础。</p>
+            <p><strong>商队贸易：</strong>商人们组成商队，携带丝绸、茶叶、瓷器等商品进行长途贸易。</p>
+            <p><strong>文化交融：</strong>丝绸之路不仅是贸易通道，更是东西方文明交流的桥梁。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过丝绸之路贸易场景展示了JavaScript异步编程的核心概念：
+            <br>• <strong>回调函数：</strong>传统的异步处理方式，容易产生回调地狱
+            <br>• <strong>Promise：</strong>更优雅的异步处理，支持链式调用和错误处理
+            <br>• <strong>async/await：</strong>基于Promise的语法糖，让异步代码看起来像同步代码
+            <br>• <strong>事件循环：</strong>JavaScript运行时的核心机制，管理异步任务的执行
+            <br>• <strong>任务队列：</strong>宏任务和微任务的执行顺序和优先级
+        </div>
+    </div>
+
+    <script>
+        // 回调函数演示 - 传统贸易路线
+        function visitCity(cityElement, cityName, delay) {
+            cityElement.classList.add('loading');
+            cityElement.innerHTML = `<div class="loading-spinner"></div>${cityName}`;
+
+            setTimeout(() => {
+                cityElement.classList.remove('loading');
+                cityElement.classList.add('visited');
+                cityElement.innerHTML = `${cityName} ✅`;
+                console.log(`商队到达了${cityName}`);
+            }, delay);
+        }
+
+        function startTradeRoute() {
+            const cities = document.querySelectorAll('.city');
+            let delay = 1000;
+
+            cities.forEach((city, index) => {
+                setTimeout(() => {
+                    city.click();
+                }, delay * index);
+            });
+        }
+
+        function resetRoute() {
+            const cities = document.querySelectorAll('.city');
+            cities.forEach(city => {
+                city.classList.remove('visited', 'loading');
+                const cityName = city.textContent.split(' ')[0];
+                const emoji = city.textContent.split(' ')[1];
+                city.innerHTML = `${cityName} ${emoji}`;
+            });
+        }
+
+        // Promise链式调用演示
+        function createTradePromise(stepId, stepName, delay, shouldFail = false) {
+            return new Promise((resolve, reject) => {
+                const step = document.getElementById(stepId);
+                step.classList.add('active');
+
+                setTimeout(() => {
+                    step.classList.remove('active');
+                    if (shouldFail) {
+                        step.classList.add('error');
+                        reject(new Error(`${stepName}失败`));
+                    } else {
+                        step.classList.add('completed');
+                        resolve(`${stepName}完成`);
+                    }
+                }, delay);
+            });
+        }
+
+        function startPromiseChain() {
+            resetPromiseChain();
+
+            createTradePromise('step1', '采购丝绸', 1000)
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step2', '包装货物', 800);
+                })
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step3', '运输货物', 1500);
+                })
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step4', '到达市场', 1000);
+                })
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step5', '完成交易', 800);
+                })
+                .then(result => {
+                    console.log(result);
+                    alert('🎉 丝绸贸易成功完成！');
+                })
+                .catch(error => {
+                    console.error(error.message);
+                    alert(`❌ 贸易失败: ${error.message}`);
+                });
+        }
+
+        function simulateError() {
+            resetPromiseChain();
+
+            createTradePromise('step1', '采购丝绸', 1000)
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step2', '包装货物', 800);
+                })
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step3', '运输货物', 1000, true); // 模拟失败
+                })
+                .then(result => {
+                    console.log(result);
+                    return createTradePromise('step4', '到达市场', 1000);
+                })
+                .catch(error => {
+                    console.error(error.message);
+                    alert(`❌ 贸易中断: ${error.message}`);
+                });
+        }
+
+        function resetPromiseChain() {
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active', 'completed', 'error');
+            }
+        }
+
+        function togglePromiseCode() {
+            const codeDisplay = document.getElementById('promiseCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Promise链式调用示例
+function tradeWithPromises() {
+    return purchaseSilk()
+        .then(silk => packageGoods(silk))
+        .then(package => transportGoods(package))
+        .then(goods => reachMarket(goods))
+        .then(market => completeTrade(market))
+        .catch(error => {
+            console.error('贸易失败:', error);
+            throw error;
+        });
+}
+
+// 创建Promise的工厂函数
+function createTradeStep(stepName, delay) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (Math.random() > 0.1) { // 90%成功率
+                resolve(\`\${stepName}成功\`);
+            } else {
+                reject(new Error(\`\${stepName}失败\`));
+            }
+        }, delay);
+    });
+}
+            `;
+        }
+
+        // Async/Await演示
+        async function modernTrade() {
+            const status = document.getElementById('merchantStatus');
+
+            try {
+                status.innerHTML = '<div class="loading-spinner"></div>现代商人开始贸易...';
+
+                await delay(1000);
+                status.innerHTML = '📦 正在采购商品...';
+
+                await delay(1500);
+                status.innerHTML = '🚛 正在运输商品...';
+
+                await delay(2000);
+                status.innerHTML = '🏪 到达目标市场...';
+
+                await delay(1000);
+                status.innerHTML = '💰 交易成功完成！ ✅';
+
+                alert('🎉 现代贸易成功！');
+            } catch (error) {
+                status.innerHTML = `❌ 贸易失败: ${error.message}`;
+            }
+        }
+
+        async function parallelTrade() {
+            const status = document.getElementById('merchantStatus');
+
+            try {
+                status.innerHTML = '<div class="loading-spinner"></div>并行处理多个贸易...';
+
+                const trades = [
+                    tradeGoods('丝绸', 2000),
+                    tradeGoods('茶叶', 1500),
+                    tradeGoods('瓷器', 2500)
+                ];
+
+                const results = await Promise.all(trades);
+                status.innerHTML = `✅ 所有贸易完成: ${results.join(', ')}`;
+                alert('🎉 并行贸易全部成功！');
+            } catch (error) {
+                status.innerHTML = `❌ 并行贸易失败: ${error.message}`;
+            }
+        }
+
+        async function errorHandling() {
+            const status = document.getElementById('merchantStatus');
+
+            try {
+                status.innerHTML = '<div class="loading-spinner"></div>尝试高风险贸易...';
+                await riskyTrade();
+                status.innerHTML = '✅ 高风险贸易成功！';
+            } catch (error) {
+                status.innerHTML = `❌ 捕获错误: ${error.message}`;
+                console.error('贸易错误:', error);
+            } finally {
+                setTimeout(() => {
+                    status.innerHTML = '商人状态: 准备就绪 ✅';
+                }, 3000);
+            }
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function tradeGoods(goodsName, time) {
+            await delay(time);
+            return `${goodsName}交易完成`;
+        }
+
+        async function riskyTrade() {
+            await delay(1500);
+            if (Math.random() < 0.7) {
+                throw new Error('遭遇沙尘暴，货物损失');
+            }
+            return '高风险贸易成功';
+        }
+
+        function toggleAsyncCode() {
+            const codeDisplay = document.getElementById('asyncCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// Async/Await示例
+async function modernTradeExample() {
+    try {
+        // 顺序执行
+        const silk = await purchaseSilk();
+        const package = await packageGoods(silk);
+        const transport = await transportGoods(package);
+        const result = await completeTrade(transport);
+        
+        return result;
+    } catch (error) {
+        console.error('贸易失败:', error);
+        throw error;
+    }
+}
+
+// 并行执行多个异步操作
+async function parallelTradeExample() {
+    try {
+        const trades = await Promise.all([
+            tradeGoods('丝绸', 2000),
+            tradeGoods('茶叶', 1500),
+            tradeGoods('瓷器', 2500)
+        ]);
+        
+        return trades;
+    } catch (error) {
+        console.error('并行贸易失败:', error);
+    }
+}
+
+// 错误处理
+async function safeTradeExample() {
+    try {
+        const result = await riskyTrade();
+        return result;
+    } catch (error) {
+        console.error('捕获错误:', error);
+        return '使用备用方案';
+    } finally {
+        console.log('清理资源');
+    }
+}
+            `;
+        }
+
+        // 事件循环演示
+        function demonstrateEventLoop() {
+            clearEventLoop();
+
+            // 添加同步任务到调用栈
+            addToCallStack('console.log("开始")');
+
+            // 添加宏任务
+            setTimeout(() => {
+                addToTaskQueue('setTimeout回调');
+            }, 0);
+
+            // 添加微任务
+            Promise.resolve().then(() => {
+                addToMicrotaskQueue('Promise.then');
+            });
+
+            // 模拟执行过程
+            setTimeout(() => {
+                executeFromCallStack();
+            }, 500);
+
+            setTimeout(() => {
+                executeFromMicrotaskQueue();
+            }, 1000);
+
+            setTimeout(() => {
+                executeFromTaskQueue();
+            }, 1500);
+
+            addToCallStack('console.log("结束")');
+        }
+
+        function addToCallStack(task) {
+            const callStack = document.getElementById('callStack');
+            const item = document.createElement('div');
+            item.className = 'stack-item';
+            item.textContent = task;
+            callStack.appendChild(item);
+        }
+
+        function addToTaskQueue(task) {
+            const taskQueue = document.getElementById('taskQueue');
+            const item = document.createElement('div');
+            item.className = 'stack-item';
+            item.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+            item.textContent = task;
+            taskQueue.appendChild(item);
+        }
+
+        function addToMicrotaskQueue(task) {
+            const microtaskQueue = document.getElementById('microtaskQueue');
+            const item = document.createElement('div');
+            item.className = 'stack-item';
+            item.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+            item.textContent = task;
+            microtaskQueue.appendChild(item);
+        }
+
+        function executeFromCallStack() {
+            const callStack = document.getElementById('callStack');
+            const items = callStack.children;
+            if (items.length > 0) {
+                items[0].style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                setTimeout(() => {
+                    if (items[0]) callStack.removeChild(items[0]);
+                }, 300);
+            }
+        }
+
+        function executeFromMicrotaskQueue() {
+            const microtaskQueue = document.getElementById('microtaskQueue');
+            const items = microtaskQueue.children;
+            if (items.length > 0) {
+                items[0].style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                setTimeout(() => {
+                    if (items[0]) microtaskQueue.removeChild(items[0]);
+                }, 300);
+            }
+        }
+
+        function executeFromTaskQueue() {
+            const taskQueue = document.getElementById('taskQueue');
+            const items = taskQueue.children;
+            if (items.length > 0) {
+                items[0].style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                setTimeout(() => {
+                    if (items[0]) taskQueue.removeChild(items[0]);
+                }, 300);
+            }
+        }
+
+        function clearEventLoop() {
+            document.getElementById('callStack').innerHTML = '';
+            document.getElementById('taskQueue').innerHTML = '';
+            document.getElementById('microtaskQueue').innerHTML = '';
+        }
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('JavaScript异步编程页面已加载');
+            console.log('丝绸之路贸易模拟器准备就绪');
+        });
+    </script>
+</body>
+
+</html>

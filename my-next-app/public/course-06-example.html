@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript语法基础实例 - 中国古代数学智慧</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .math-header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .interactive-demo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .calculator {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .calc-display {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            text-align: right;
+            margin-bottom: 15px;
+            min-height: 40px;
+            border: 2px solid #27ae60;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calc-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .calc-btn.operator {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .calc-btn.equals {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .abacus {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .abacus-frame {
+            background: #654321;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .abacus-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .abacus-bead {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #d35400;
+        }
+
+        .abacus-bead:hover {
+            transform: scale(1.2);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5);
+        }
+
+        .abacus-bead.active {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #a93226;
+        }
+
+        .fibonacci-demo {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .fib-sequence {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .fib-number {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .fib-number:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .control-panel {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .knowledge-point {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .cultural-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #e74c3c;
+            margin-top: 40px;
+            padding-left: 15px;
+            border-left: 5px solid #e74c3c;
+            font-size: 1.5em;
+        }
+
+        .code-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .variable-demo {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .variable-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>JavaScript语法基础实例 - 中国古代数学智慧</h1>
+
+        <div class="math-header">
+            🧮 探索古代数学家的智慧与现代JavaScript编程 🧮
+        </div>
+
+        <div class="knowledge-point">
+            <strong>学习重点：</strong>本页面展示JavaScript的变量声明、数据类型、函数定义、事件处理和基本算法
+        </div>
+
+        <h2 class="section-title">📊 变量与数据类型 - 古代计数系统</h2>
+        <div class="variable-demo">
+            <h4>🔢 不同进制的数字表示</h4>
+            <div class="variable-box" id="numberDisplay">点击按钮查看不同进制表示</div>
+            <div class="control-panel">
+                <button class="btn" onclick="showNumberSystems()">显示进制转换</button>
+                <button class="btn danger" onclick="clearDisplay()">清除显示</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🧮 函数与算法 - 中国古代算盘</h2>
+        <div class="abacus">
+            <h4>📿 互动式算盘 (点击珠子进行计算)</h4>
+            <div class="abacus-frame">
+                <div class="abacus-row">
+                    <div class="abacus-bead" onclick="toggleBead(this, 5)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 5)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 5)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 5)"></div>
+                </div>
+                <hr style="border: 2px solid #8b4513; margin: 10px 0;">
+                <div class="abacus-row">
+                    <div class="abacus-bead" onclick="toggleBead(this, 1)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 1)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 1)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 1)"></div>
+                    <div class="abacus-bead" onclick="toggleBead(this, 1)"></div>
+                </div>
+            </div>
+            <div id="abacusResult">当前计算结果: 0</div>
+        </div>
+
+        <h2 class="section-title">🔢 循环与递归 - 斐波那契数列</h2>
+        <div class="fibonacci-demo">
+            <h4>🌀 斐波那契数列生成器</h4>
+            <div class="control-panel">
+                <button class="btn success" onclick="generateFibonacci()">生成斐波那契数列</button>
+                <button class="btn" onclick="showFibonacciCode()">查看算法代码</button>
+                <button class="btn danger" onclick="clearFibonacci()">清除数列</button>
+            </div>
+            <div class="fib-sequence" id="fibSequence"></div>
+            <div class="code-display" id="fibCode" style="display: none;"></div>
+        </div>
+
+        <h2 class="section-title">🖩 事件处理 - 古代计算器</h2>
+        <div class="calculator">
+            <h4>⚡ 交互式计算器</h4>
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-buttons">
+                <button class="calc-btn" onclick="clearCalc()">C</button>
+                <button class="calc-btn" onclick="deleteLast()">⌫</button>
+                <button class="calc-btn operator" onclick="appendToCalc('/')">/</button>
+                <button class="calc-btn operator" onclick="appendToCalc('*')">×</button>
+
+                <button class="calc-btn" onclick="appendToCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendToCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendToCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToCalc('-')">-</button>
+
+                <button class="calc-btn" onclick="appendToCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendToCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendToCalc('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToCalc('+')">+</button>
+
+                <button class="calc-btn" onclick="appendToCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendToCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendToCalc('3')">3</button>
+                <button class="calc-btn equals" onclick="calculateResult()" rowspan="2">=</button>
+
+                <button class="calc-btn" onclick="appendToCalc('0')" style="grid-column: span 2;">0</button>
+                <button class="calc-btn" onclick="appendToCalc('.')">.</button>
+            </div>
+        </div>
+
+        <div class="cultural-info">
+            <h3>🎓 中国古代数学成就</h3>
+            <p><strong>《九章算术》：</strong>中国古代重要的数学著作，包含了分数、比例、几何等内容。</p>
+            <p><strong>算盘：</strong>中国古代发明的计算工具，体现了二进制和十进制的巧妙结合。</p>
+            <p><strong>祖冲之：</strong>南北朝时期数学家，将圆周率精确到小数点后7位。</p>
+            <p><strong>韩信点兵：</strong>古代数学问题，展示了同余定理的应用。</p>
+        </div>
+
+        <div class="knowledge-point">
+            <strong>技术总结：</strong>本页面通过古代数学场景展示了JavaScript的核心概念：
+            <br>• <strong>变量声明：</strong>使用let、const、var声明不同类型的变量
+            <br>• <strong>数据类型：</strong>数字、字符串、布尔值、数组、对象等基本类型
+            <br>• <strong>函数定义：</strong>function关键字定义函数，参数传递和返回值
+            <br>• <strong>事件处理：</strong>onclick等事件监听器处理用户交互
+            <br>• <strong>DOM操作：</strong>getElementById等方法操作页面元素
+            <br>• <strong>控制结构：</strong>if/else条件判断、for/while循环、递归算法
+        </div>
+    </div>
+
+    <script>
+        // 变量声明和数据类型演示
+        let currentNumber = 108; // 108是佛教中的吉祥数字
+        const pi = 3.14159; // 祖冲之计算的圆周率
+        var ancientNumbers = [1, 3, 5, 8, 13, 21]; // 斐波那契数列的一部分
+
+        // 显示不同进制的数字系统
+        function showNumberSystems() {
+            const display = document.getElementById('numberDisplay');
+            const decimal = currentNumber;
+            const binary = decimal.toString(2);
+            const octal = decimal.toString(8);
+            const hex = decimal.toString(16).toUpperCase();
+
+            display.innerHTML = `
+                <strong>数字 ${decimal} 的不同进制表示：</strong><br>
+                十进制 (现代): ${decimal}<br>
+                二进制 (计算机): ${binary}<br>
+                八进制 (古代): ${octal}<br>
+                十六进制 (编程): ${hex}
+            `;
+        }
+
+        function clearDisplay() {
+            document.getElementById('numberDisplay').innerHTML = '点击按钮查看不同进制表示';
+        }
+
+        // 算盘计算功能
+        let abacusValue = 0;
+
+        function toggleBead(bead, value) {
+            if (bead.classList.contains('active')) {
+                bead.classList.remove('active');
+                abacusValue -= value;
+            } else {
+                bead.classList.add('active');
+                abacusValue += value;
+            }
+            document.getElementById('abacusResult').textContent = `当前计算结果: ${abacusValue}`;
+        }
+
+        // 斐波那契数列生成
+        function generateFibonacci() {
+            const sequence = [];
+            let a = 0, b = 1;
+
+            for (let i = 0; i < 12; i++) {
+                sequence.push(a);
+                [a, b] = [b, a + b]; // ES6解构赋值
+            }
+
+            const container = document.getElementById('fibSequence');
+            container.innerHTML = '';
+
+            sequence.forEach((num, index) => {
+                const span = document.createElement('span');
+                span.className = 'fib-number';
+                span.textContent = num;
+                span.onclick = () => alert(`第${index + 1}个斐波那契数: ${num}`);
+                container.appendChild(span);
+            });
+        }
+
+        function showFibonacciCode() {
+            const codeDisplay = document.getElementById('fibCode');
+            codeDisplay.style.display = codeDisplay.style.display === 'none' ? 'block' : 'none';
+            codeDisplay.innerHTML = `
+// 斐波那契数列递归算法
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// 斐波那契数列循环算法（更高效）
+function fibonacciLoop(count) {
+    const sequence = [];
+    let a = 0, b = 1;
+    for (let i = 0; i < count; i++) {
+        sequence.push(a);
+        [a, b] = [b, a + b];
+    }
+    return sequence;
+}
+            `;
+        }
+
+        function clearFibonacci() {
+            document.getElementById('fibSequence').innerHTML = '';
+            document.getElementById('fibCode').style.display = 'none';
+        }
+
+        // 计算器功能
+        let calcExpression = '';
+        let calcResult = 0;
+
+        function appendToCalc(value) {
+            const display = document.getElementById('calcDisplay');
+            if (calcExpression === '0' || calcExpression === '') {
+                calcExpression = value;
+            } else {
+                calcExpression += value;
+            }
+            display.textContent = calcExpression;
+        }
+
+        function clearCalc() {
+            calcExpression = '';
+            document.getElementById('calcDisplay').textContent = '0';
+        }
+
+        function deleteLast() {
+            calcExpression = calcExpression.slice(0, -1);
+            const display = document.getElementById('calcDisplay');
+            display.textContent = calcExpression || '0';
+        }
+
+        function calculateResult() {
+            try {
+                // 替换显示符号为计算符号
+                const expression = calcExpression.replace(/×/g, '*');
+                const result = eval(expression);
+                document.getElementById('calcDisplay').textContent = result;
+                calcExpression = result.toString();
+            } catch (error) {
+                document.getElementById('calcDisplay').textContent = '错误';
+                calcExpression = '';
+            }
+        }
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('JavaScript基础知识页面已加载');
+            console.log('变量类型演示:', typeof currentNumber, typeof pi, typeof ancientNumbers);
+        });
+    </script>
+</body>
+
+</html>

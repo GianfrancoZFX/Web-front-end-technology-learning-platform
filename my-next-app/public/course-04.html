@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第四周 - CSS进阶知识练习</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+      }
+      h2 {
+        color: #e74c3c;
+        margin-top: 40px;
+        padding-left: 15px;
+        border-left: 5px solid #e74c3c;
+        background: linear-gradient(90deg, #fff5f5 0%, transparent 100%);
+        padding: 10px 15px;
+      }
+      .highlight {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 25px 0;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+      .demo-box {
+        border: 2px solid #3498db;
+        padding: 25px;
+        margin: 20px 0;
+        border-radius: 10px;
+        background: #f8f9fa;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      .background-demo {
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        background-size: 400% 400%;
+        animation: gradientShift 4s ease infinite;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        border-radius: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        font-size: 1.2em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      .box-model-demo {
+        background-color: #f39c12;
+        padding: 25px;
+        margin: 25px auto;
+        border: 8px solid #e74c3c;
+        width: 250px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        box-shadow: 0 0 0 10px #3498db;
+        position: relative;
+      }
+      .box-model-demo::before {
+        content: "Margin";
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3498db;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+      }
+      .flow-demo {
+        background: linear-gradient(45deg, #9b59b6, #8e44ad);
+        color: white;
+        padding: 15px 20px;
+        margin: 8px;
+        display: inline-block;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+      .flow-demo:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+      }
+      .display-demo {
+        margin: 15px 0;
+      }
+      .block-demo {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        padding: 15px;
+        margin: 8px 0;
+        display: block;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+      }
+      .inline-demo {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 10px 15px;
+        margin: 5px;
+        display: inline;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+      .inline-block-demo {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 15px;
+        margin: 8px;
+        display: inline-block;
+        width: 180px;
+        text-align: center;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+      .inline-block-demo:hover {
+        transform: scale(1.05);
+      }
+      .position-container {
+        position: relative;
+        background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+        height: 250px;
+        border: 3px solid #34495e;
+        margin: 25px 0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .static-demo {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        padding: 15px;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        margin: 10px;
+      }
+      .relative-demo {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        padding: 15px;
+        color: white;
+        position: relative;
+        top: 25px;
+        left: 40px;
+        font-weight: bold;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+      }
+      .absolute-demo {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        padding: 15px;
+        color: white;
+        position: absolute;
+        top: 60px;
+        right: 25px;
+        font-weight: bold;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+      }
+      .flex-container {
+        display: flex;
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+        padding: 15px;
+        gap: 15px;
+        margin: 25px 0;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(52, 73, 94, 0.3);
+      }
+      .flex-item {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 25px;
+        text-align: center;
+        flex: 1;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+      .flex-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+      }
+      .flex-item:nth-child(2) {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        flex: 2;
+      }
+      .flex-item:nth-child(2):hover {
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+      }
+      .flex-item:nth-child(3) {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+      }
+      .flex-item:nth-child(3):hover {
+        box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
+      }
+      .assignment-box {
+        background: linear-gradient(135deg, #ff7675, #fd79a8);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 30px 0;
+        box-shadow: 0 8px 25px rgba(255, 118, 117, 0.3);
+      }
+      .assignment-box h3 {
+        margin-top: 0;
+        font-size: 1.5em;
+      }
+      .assignment-list {
+        list-style: none;
+        padding: 0;
+      }
+      .assignment-list li {
+        background: rgba(255, 255, 255, 0.2);
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第四周 - CSS进阶知识练习</h1>
+
+      <div class="highlight">
+        <strong>🎯 学习目标：</strong>掌握CSS的背景、盒模型、信息流、display属性、position属性和flex布局，为现代网页布局打下坚实基础
+      </div>
+
+      <h2>🎨 1. CSS背景属性进阶</h2>
+      <div class="demo-box">
+        <div class="background-demo">
+          动态渐变背景示例 - 多色彩动画渐变效果
+        </div>
+        <p><strong>背景属性包括：</strong>background-color, background-image, background-position, background-size, background-repeat等</p>
+      </div>
+
+      <h2>📦 2. 盒模型 (Box Model) 详解</h2>
+      <div class="demo-box">
+        <div class="box-model-demo">
+          内容区域 (Content)<br />
+          内边距: 25px<br />
+          边框: 8px<br />
+          外边距: 25px
+        </div>
+        <p><strong>盒模型组成：</strong></p>
+        <ul>
+          <li><strong>Content:</strong> 元素的实际内容</li>
+          <li><strong>Padding:</strong> 内容与边框之间的空间</li>
+          <li><strong>Border:</strong> 围绕内容和内边距的边框</li>
+          <li><strong>Margin:</strong> 边框外的空间，用于分隔元素</li>
+        </ul>
+      </div>
+
+      <h2>🌊 3. 文档流 (Document Flow)</h2>
+      <div class="demo-box">
+        <div class="flow-demo">块级元素</div>
+        <div class="flow-demo">内联元素</div>
+        <div class="flow-demo">正常流</div>
+        <p><strong>文档流特点：</strong>元素按照在HTML中出现的顺序从上到下、从左到右排列</p>
+      </div>
+
+      <h2>🔧 4. Display属性详解</h2>
+      <div class="demo-box">
+        <div class="display-demo">
+          <div class="block-demo">Block元素 - 独占一行，可设置宽高</div>
+          <span class="inline-demo">Inline元素</span>
+          <span class="inline-demo">不换行，不可设置宽高</span>
+          <div class="inline-block-demo">Inline-block</div>
+          <div class="inline-block-demo">既不换行又可设置宽高</div>
+        </div>
+        <p><strong>Display属性值：</strong>block, inline, inline-block, flex, grid, none等</p>
+      </div>
+
+      <h2>📍 5. Position定位系统</h2>
+      <div class="demo-box">
+        <div class="position-container">
+          <div class="static-demo">Static - 默认定位，遵循正常文档流</div>
+          <div class="relative-demo">Relative - 相对定位 (top: 25px, left: 40px)</div>
+          <div class="absolute-demo">Absolute - 绝对定位 (top: 60px, right: 25px)</div>
+        </div>
+        <p><strong>定位类型：</strong>static(默认), relative(相对), absolute(绝对), fixed(固定), sticky(粘性)</p>
+      </div>
+
+      <h2>🔄 6. Flex弹性布局</h2>
+      <div class="demo-box">
+        <div class="flex-container">
+          <div class="flex-item">Flex项目1<br />flex: 1<br />(占1份)</div>
+          <div class="flex-item">Flex项目2<br />flex: 2<br />(占2份)</div>
+          <div class="flex-item">Flex项目3<br />flex: 1<br />(占1份)</div>
+        </div>
+        <p><strong>Flex布局优势：</strong></p>
+        <ul>
+          <li>一维布局系统，处理行或列</li>
+          <li>灵活的空间分配和对齐</li>
+          <li>响应式设计的理想选择</li>
+          <li>解决传统布局的诸多问题</li>
+        </ul>
+      </div>
+
+      <div class="assignment-box">
+        <h3>📝 第四周作业要求</h3>
+        <ul class="assignment-list">
+          <li><strong>1. WakaTime配置：</strong>安装并配置WakaTime插件，开始记录代码编辑时间</li>
+          <li><strong>2. GitHub Pages部署：</strong>启用GitHub Pages服务，部署静态网页项目</li>
+          <li><strong>3. 课程作业首页：</strong>使用HTML、CSS知识，在AI辅助下完成作业展示首页</li>
+          <li><strong>4. 提交作业信息：</strong>填写学生仓库收集表单，提交作业链接</li>
+          <li><strong>5. 作品截图：</strong>将完成的作品首页截图提交</li>
+        </ul>
+      </div>
+
+      <div class="highlight">
+        <strong>🎉 练习总结：</strong>本周深入学习了CSS的进阶知识，包括现代背景技术、盒模型原理、文档流概念、display属性应用、定位系统和flex布局。这些知识是现代响应式网页设计的核心基础，为后续学习JavaScript和框架做好准备。
+      </div>
+    </div>
+  </body>
+</html>
