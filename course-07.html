@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第七周 - JavaScript异步编程深入</title>
+    <style>
+      body {
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        border-bottom: 3px solid #9b59b6;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      h2 {
+        color: #8e44ad;
+        margin-top: 40px;
+        padding-left: 15px;
+        border-left: 5px solid #9b59b6;
+        background: linear-gradient(90deg, #f3e5f5 0%, transparent 100%);
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-icon {
+        font-size: 1.5em;
+      }
+      .highlight {
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 25px 0;
+        box-shadow: 0 8px 25px rgba(155, 89, 182, 0.3);
+      }
+      .concept-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #9b59b6;
+        transition: all 0.3s ease;
+      }
+      .concept-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 25px;
+        border-radius: 15px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        position: relative;
+        box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+      }
+      .code-block::before {
+        content: "JavaScript";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: #9b59b6;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+      .demo-area {
+        border: 3px solid #9b59b6;
+        padding: 25px;
+        margin: 20px 0;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.2);
+      }
+      .promise-demo {
+        background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #4caf50;
+      }
+      .async-demo {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #2196f3;
+      }
+      .api-demo {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #ff9800;
+      }
+      button {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        margin: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+      }
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+        background: linear-gradient(135deg, #8e44ad, #7d3c98);
+      }
+      button:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .output {
+        background: #2c3e50;
+        color: #ecf0f1;
+        border: none;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+        min-height: 60px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .syntax-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .syntax-item {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #9b59b6;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .syntax-item h4 {
+        color: #2c3e50;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .feature-highlight {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: bold;
+      }
+      .progress-bar {
+        background: #ecf0f1;
+        border-radius: 10px;
+        height: 8px;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      .progress-fill {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+      }
+      .knowledge-point {
+        background: #f8f9fa;
+        border-left: 4px solid #9b59b6;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 10px 10px 0;
+      }
+      .knowledge-point strong {
+        color: #8e44ad;
+      }
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+      .status-pending {
+        background: #f39c12;
+        animation: pulse 1.5s infinite;
+      }
+      .status-resolved {
+        background: #27ae60;
+      }
+      .status-rejected {
+        background: #e74c3c;
+      }
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .comparison-table th {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+      .comparison-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+      .api-result {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>第七周 - JavaScript异步编程深入</h1>
+
+      <div class="highlight">
+        <strong>🎯 学习目标：</strong>深入理解JavaScript异步编程概念，掌握Promise、async/await语法，学会处理API调用和错误处理，为现代JavaScript开发打下坚实基础
+      </div>
+
+      <div class="concept-card">
+        <h3>🌟 异步编程概述</h3>
+        <p>异步编程是JavaScript的核心特性之一，它允许程序在等待耗时操作（如网络请求、文件读取）完成时继续执行其他代码，避免阻塞主线程。</p>
+        
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>方式</th>
+              <th>语法特点</th>
+              <th>优点</th>
+              <th>缺点</th>
+              <th>适用场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>回调函数</strong></td>
+              <td>函数作为参数传递</td>
+              <td>简单直观，兼容性好</td>
+              <td>回调地狱，难以维护</td>
+              <td>简单的异步操作</td>
+            </tr>
+            <tr>
+              <td><strong>Promise</strong></td>
+              <td>.then().catch()链式调用</td>
+              <td>避免回调地狱，错误处理清晰</td>
+              <td>语法相对复杂</td>
+              <td>复杂的异步流程</td>
+            </tr>
+            <tr>
+              <td><strong>async/await</strong></td>
+              <td>同步风格的异步代码</td>
+              <td>代码清晰，易于理解和调试</td>
+              <td>需要ES2017+支持</td>
+              <td>现代JavaScript开发</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2><span class="section-icon">🎁</span>Promise - 异步操作的承诺</h2>
+      <p>Promise是ES6引入的异步编程解决方案，它代表一个异步操作的最终完成或失败。</p>
+
+      <div class="knowledge-point">
+        <strong>Promise三种状态：</strong>
+        <ul>
+          <li><span class="status-indicator status-pending"></span><strong>Pending（进行中）：</strong>初始状态，既不是成功，也不是失败</li>
+          <li><span class="status-indicator status-resolved"></span><strong>Fulfilled（已成功）：</strong>操作成功完成</li>
+          <li><span class="status-indicator status-rejected"></span><strong>Rejected（已失败）：</strong>操作失败</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+// 创建Promise的基本语法
+const myPromise = new Promise((resolve, reject) => {
+  // 异步操作
+  const success = Math.random() > 0.5;
+  
+  setTimeout(() => {
+    if (success) {
+      resolve('操作成功！'); // 成功时调用resolve
+    } else {
+      reject('操作失败！');  // 失败时调用reject
+    }
+  }, 2000);
+});
+
+// 使用Promise
+myPromise
+  .then(result => {
+    console.log('成功:', result);
+  })
+  .catch(error => {
+    console.log('失败:', error);
+  })
+  .finally(() => {
+    console.log('无论成功失败都会执行');
+  });
+
+// Promise链式调用
+fetch('/api/user')
+  .then(response => response.json())
+  .then(data => {
+    console.log('用户数据:', data);
+    return fetch(`/api/posts/${data.id}`);
+  })
+  .then(response => response.json())
+  .then(posts => {
+    console.log('用户文章:', posts);
+  })
+  .catch(error => {
+    console.error('请求失败:', error);
+  });
+      </div>
+
+      <div class="demo-area">
+        <h3>🎁 Promise实战演示</h3>
+        <div class="promise-demo">
+          <div class="feature-highlight">Promise操作控制台</div>
+          <button onclick="createSimplePromise()">🎲 创建随机Promise</button>
+          <button onclick="demonstratePromiseChain()">🔗 Promise链式调用</button>
+          <button onclick="demonstratePromiseAll()">📦 Promise.all演示</button>
+          <button onclick="demonstratePromiseRace()">🏃 Promise.race演示</button>
+          <div class="output" id="promiseOutput">点击按钮查看Promise操作效果...</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">⚡</span>async/await - 现代异步编程</h2>
+      <p>async/await是ES2017引入的语法糖，让异步代码看起来像同步代码，大大提高了代码的可读性。</p>
+
+      <div class="knowledge-point">
+        <strong>async/await核心概念：</strong>
+        <ul>
+          <li><strong>async函数：</strong>声明一个异步函数，总是返回Promise</li>
+          <li><strong>await表达式：</strong>暂停async函数执行，等待Promise解决</li>
+          <li><strong>错误处理：</strong>使用try/catch捕获异步操作中的错误</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+// async/await基本语法
+async function fetchUserData(userId) {
+  try {
+    // await会等待Promise完成
+    const userResponse = await fetch(`/api/users/${userId}`);
+    const userData = await userResponse.json();
+    
+    console.log('用户信息:', userData);
+    
+    // 继续获取用户的文章
+    const postsResponse = await fetch(`/api/users/${userId}/posts`);
+    const postsData = await postsResponse.json();
+    
+    console.log('用户文章:', postsData);
+    
+    return {
+      user: userData,
+      posts: postsData
+    };
+  } catch (error) {
+    console.error('获取数据失败:', error);
+    throw error; // 重新抛出错误
+  }
+}
+
+// 调用async函数
+fetchUserData(123)
+  .then(result => {
+    console.log('完整数据:', result);
+  })
+  .catch(error => {
+    console.log('处理错误:', error);
+  });
+
+// 在另一个async函数中使用
+async function main() {
+  try {
+    const result = await fetchUserData(123);
+    console.log('在async函数中获取结果:', result);
+  } catch (error) {
+    console.log('在async函数中处理错误:', error);
+  }
+}
+
+// 并行执行多个异步操作
+async function fetchMultipleData() {
+  try {
+    // 并行执行
+    const [users, posts, comments] = await Promise.all([
+      fetch('/api/users').then(r => r.json()),
+      fetch('/api/posts').then(r => r.json()),
+      fetch('/api/comments').then(r => r.json())
+    ]);
+    
+    return { users, posts, comments };
+  } catch (error) {
+    console.error('批量获取数据失败:', error);
+  }
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>⚡ async/await实战演示</h3>
+        <div class="async-demo">
+          <div class="feature-highlight">async/await操作控制台</div>
+          <button onclick="demonstrateAsyncAwait()">🚀 基础async/await</button>
+          <button onclick="demonstrateAsyncError()">❌ 错误处理演示</button>
+          <button onclick="demonstrateAsyncParallel()">⚡ 并行执行演示</button>
+          <button onclick="demonstrateAsyncSequential()">📝 顺序执行演示</button>
+          <div class="output" id="asyncOutput">点击按钮查看async/await操作效果...</div>
+        </div>
+      </div>
+
+      <h2><span class="section-icon">🌐</span>实际API调用 - GitHub API示例</h2>
+      <p>通过实际的API调用来演示异步编程在真实项目中的应用。</p>
+
+      <div class="code-block">
+// GitHub API调用示例
+class GitHubAPI {
+  constructor() {
+    this.baseURL = 'https://api.github.com';
+  }
+  
+  // 获取用户信息
+  async getUserInfo(username) {
+    try {
+      const response = await fetch(`${this.baseURL}/users/${username}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP错误! 状态: ${response.status}`);
+      }
+      
+      const userData = await response.json();
+      return userData;
+    } catch (error) {
+      console.error('获取用户信息失败:', error);
+      throw error;
+    }
+  }
+  
+  // 获取用户仓库
+  async getUserRepos(username) {
+    try {
+      const response = await fetch(`${this.baseURL}/users/${username}/repos?sort=updated&per_page=10`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP错误! 状态: ${response.status}`);
+      }
+      
+      const repos = await response.json();
+      return repos;
+    } catch (error) {
+      console.error('获取仓库信息失败:', error);
+      throw error;
+    }
+  }
+  
+  // 获取仓库的最后推送时间
+  async getRepoLastPush(username, repoName) {
+    try {
+      const response = await fetch(`${this.baseURL}/repos/${username}/${repoName}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP错误! 状态: ${response.status}`);
+      }
+      
+      const repoData = await response.json();
+      return {
+        name: repoData.name,
+        lastPush: repoData.pushed_at,
+        description: repoData.description,
+        stars: repoData.stargazers_count,
+        language: repoData.language
+      };
+    } catch (error) {
+      console.error('获取仓库推送信息失败:', error);
+      throw error;
+    }
+  }
+}
+
+// 使用示例
+const github = new GitHubAPI();
+
+async function displayUserProfile(username) {
+  try {
+    // 显示加载状态
+    console.log('🔄 正在加载用户信息...');
+    
+    // 并行获取用户信息和仓库列表
+    const [userInfo, repos] = await Promise.all([
+      github.getUserInfo(username),
+      github.getUserRepos(username)
+    ]);
+    
+    console.log('✅ 用户信息加载完成');
+    console.log('用户:', userInfo.name || userInfo.login);
+    console.log('公开仓库数:', userInfo.public_repos);
+    console.log('关注者:', userInfo.followers);
+    
+    console.log('\n📚 最近更新的仓库:');
+    repos.slice(0, 5).forEach((repo, index) => {
+      console.log(`${index + 1}. ${repo.name} - ${repo.description || '无描述'}`);
+    });
+    
+  } catch (error) {
+    console.error('❌ 加载失败:', error.message);
+  }
+}
+      </div>
+
+      <div class="demo-area">
+        <h3>🌐 GitHub API实战演示</h3>
+        <div class="api-demo">
+          <div class="feature-highlight">GitHub API调用控制台</div>
+          <div style="margin: 15px 0;">
+            <input type="text" id="githubUsername" placeholder="输入GitHub用户名" 
+                   style="padding: 10px; border: 2px solid #ddd; border-radius: 5px; margin-right: 10px; width: 200px;">
+            <button onclick="fetchGitHubUser()">👤 获取用户信息</button>
+            <button onclick="fetchGitHubRepos()">📚 获取仓库列表</button>
+            <button onclick="fetchRepoDetails()">🔍 获取仓库详情</button>
+          </div>
+          <div class="output" id="apiOutput">输入GitHub用户名并点击按钮查看API调用效果...</div>
+          <div class="api-result" id="apiResult" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3>🛡️ 错误处理最佳实践</h3>
+        <div class="syntax-grid">
+          <div class="syntax-item">
+            <h4>🎯 Promise错误处理</h4>
+            <div class="code-block">
+// 使用.catch()处理错误
+fetch('/api/data')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('网络响应不正常');
+    }
+    return response.json();
+  })
+  .catch(error => {
+    console.error('请求失败:', error);
+  });
+            </div>
+          </div>
+          <div class="syntax-item">
+            <h4>⚡ async/await错误处理</h4>
+            <div class="code-block">
+// 使用try/catch处理错误
+async function fetchData() {
+  try {
+    const response = await fetch('/api/data');
+    if (!response.ok) {
+      throw new Error('网络响应不正常');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('请求失败:', error);
+    throw error; // 重新抛出以便上层处理
+  }
+}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <h3>🎓 异步编程学习路径</h3>
+        <div class="syntax-grid">
+          <div class="syntax-item">
+            <h4>📚 基础概念</h4>
+            <ul>
+              <li>事件循环机制</li>
+              <li>回调函数原理</li>
+              <li>Promise状态管理</li>
+              <li>微任务与宏任务</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🛠️ 实用技巧</h4>
+            <ul>
+              <li>Promise.all并行执行</li>
+              <li>Promise.race竞速执行</li>
+              <li>错误处理策略</li>
+              <li>超时处理机制</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🌟 高级应用</h4>
+            <ul>
+              <li>自定义Promise封装</li>
+              <li>异步迭代器</li>
+              <li>Generator函数</li>
+              <li>Web Workers</li>
+            </ul>
+          </div>
+          <div class="syntax-item">
+            <h4>🔧 实际项目</h4>
+            <ul>
+              <li>API数据获取</li>
+              <li>文件上传下载</li>
+              <li>实时数据更新</li>
+              <li>性能优化策略</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🎉 学习总结：</strong>本周深入学习了JavaScript异步编程，掌握了Promise和async/await的使用方法，学会了处理API调用和错误处理。这些技能是现代JavaScript开发的核心，为后续学习Node.js、React等技术奠定了基础。下周我们将学习Node.js服务端开发。
+      </div>
+    </div>
+
+    <script>
+      // GitHub API类
+      class GitHubAPI {
+        constructor() {
+          this.baseURL = 'https://api.github.com';
+        }
+        
+        async getUserInfo(username) {
+          try {
+            const response = await fetch(`${this.baseURL}/users/${username}`);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP错误! 状态: ${response.status}`);
+            }
+            
+            const userData = await response.json();
+            return userData;
+          } catch (error) {
+            console.error('获取用户信息失败:', error);
+            throw error;
+          }
+        }
+        
+        async getUserRepos(username) {
+          try {
+            const response = await fetch(`${this.baseURL}/users/${username}/repos?sort=updated&per_page=10`);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP错误! 状态: ${response.status}`);
+            }
+            
+            const repos = await response.json();
+            return repos;
+          } catch (error) {
+            console.error('获取仓库信息失败:', error);
+            throw error;
+          }
+        }
+        
+        async getRepoDetails(username, repoName) {
+          try {
+            const response = await fetch(`${this.baseURL}/repos/${username}/${repoName}`);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP错误! 状态: ${response.status}`);
+            }
+            
+            const repoData = await response.json();
+            return {
+              name: repoData.name,
+              description: repoData.description,
+              lastPush: repoData.pushed_at,
+              stars: repoData.stargazers_count,
+              forks: repoData.forks_count,
+              language: repoData.language,
+              size: repoData.size,
+              openIssues: repoData.open_issues_count
+            };
+          } catch (error) {
+            console.error('获取仓库详情失败:', error);
+            throw error;
+          }
+        }
+      }
+
+      const github = new GitHubAPI();
+
+      // Promise演示函数
+      function createSimplePromise() {
+        const output = document.getElementById('promiseOutput');
+        output.textContent = '🎲 创建随机Promise...\n';
+        
+        const randomPromise = new Promise((resolve, reject) => {
+          const success = Math.random() > 0.3;
+          const delay = Math.random() * 2000 + 1000;
+          
+          setTimeout(() => {
+            if (success) {
+              resolve(`✅ Promise成功! 延迟: ${delay.toFixed(0)}ms`);
+            } else {
+              reject(`❌ Promise失败! 延迟: ${delay.toFixed(0)}ms`);
+            }
+          }, delay);
+        });
+        
+        randomPromise
+          .then(result => {
+            output.textContent += result + '\n';
+          })
+          .catch(error => {
+            output.textContent += error + '\n';
+          })
+          .finally(() => {
+            output.textContent += '🏁 Promise执行完成\n';
+          });
+      }
+
+      function demonstratePromiseChain() {
+        const output = document.getElementById('promiseOutput');
+        output.textContent = '🔗 Promise链式调用演示...\n';
+        
+        Promise.resolve(1)
+          .then(value => {
+            output.textContent += `第1步: ${value}\n`;
+            return value * 2;
+          })
+          .then(value => {
+            output.textContent += `第2步: ${value}\n`;
+            return value * 3;
+          })
+          .then(value => {
+            output.textContent += `第3步: ${value}\n`;
+            return new Promise(resolve => {
+              setTimeout(() => resolve(value + 10), 1000);
+            });
+          })
+          .then(value => {
+            output.textContent += `最终结果: ${value}\n`;
+          })
+          .catch(error => {
+            output.textContent += `错误: ${error}\n`;
+          });
+      }
+
+      function demonstratePromiseAll() {
+        const output = document.getElementById('promiseOutput');
+        output.textContent = '📦 Promise.all演示...\n';
+        
+        const promise1 = new Promise(resolve => setTimeout(() => resolve('任务1完成'), 1000));
+        const promise2 = new Promise(resolve => setTimeout(() => resolve('任务2完成'), 1500));
+        const promise3 = new Promise(resolve => setTimeout(() => resolve('任务3完成'), 800));
+        
+        Promise.all([promise1, promise2, promise3])
+          .then(results => {
+            output.textContent += '所有任务完成:\n';
+            results.forEach((result, index) => {
+              output.textContent += `  ${index + 1}. ${result}\n`;
+            });
+          })
+          .catch(error => {
+            output.textContent += `有任务失败: ${error}\n`;
+          });
+      }
+
+      function demonstratePromiseRace() {
+        const output = document.getElementById('promiseOutput');
+        output.textContent = '🏃 Promise.race演示...\n';
+        
+        const promise1 = new Promise(resolve => setTimeout(() => resolve('慢任务完成'), 2000));
+        const promise2 = new Promise(resolve => setTimeout(() => resolve('快任务完成'), 800));
+        const promise3 = new Promise(resolve => setTimeout(() => resolve('中等任务完成'), 1200));
+        
+        Promise.race([promise1, promise2, promise3])
+          .then(result => {
+            output.textContent += `最快完成的任务: ${result}\n`;
+          })
+          .catch(error => {
+            output.textContent += `最快失败的任务: ${error}\n`;
+          });
+      }
+
+      // async/await演示函数
+      async function demonstrateAsyncAwait() {
+        const output = document.getElementById('asyncOutput');
+        output.textContent = '🚀 async/await基础演示...\n';
+        
+        try {
+          output.textContent += '开始异步操作...\n';
+          
+          const result1 = await new Promise(resolve => {
+            setTimeout(() => resolve('第一个异步操作完成'), 1000);
+          });
+          output.textContent += `${result1}\n`;
+          
+          const result2 = await new Promise(resolve => {
+            setTimeout(() => resolve('第二个异步操作完成'), 800);
+          });
+          output.textContent += `${result2}\n`;
+          
+          output.textContent += '✅ 所有异步操作完成\n';
+        } catch (error) {
+          output.textContent += `❌ 操作失败: ${error}\n`;
+        }
+      }
+
+      async function demonstrateAsyncError() {
+        const output = document.getElementById('asyncOutput');
+        output.textContent = '❌ async/await错误处理演示...\n';
+        
+        try {
+          output.textContent += '尝试执行可能失败的操作...\n';
+          
+          await new Promise((resolve, reject) => {
+            setTimeout(() => {
+              const success = Math.random() > 0.5;
+              if (success) {
+                resolve('操作成功');
+              } else {
+                reject(new Error('模拟的错误'));
+              }
+            }, 1000);
+          });
+          
+          output.textContent += '✅ 操作成功完成\n';
+        } catch (error) {
+          output.textContent += `❌ 捕获到错误: ${error.message}\n`;
+          output.textContent += '🛠️ 错误已被妥善处理\n';
+        }
+      }
+
+      async function demonstrateAsyncParallel() {
+        const output = document.getElementById('asyncOutput');
+        output.textContent = '⚡ 并行执行演示...\n';
+        
+        const startTime = Date.now();
+        
+        try {
+          // 并行执行多个异步操作
+          const [result1, result2, result3] = await Promise.all([
+            new Promise(resolve => setTimeout(() => resolve('任务A完成'), 1000)),
+            new Promise(resolve => setTimeout(() => resolve('任务B完成'), 1200)),
+            new Promise(resolve => setTimeout(() => resolve('任务C完成'), 800))
+          ]);
+          
+          const endTime = Date.now();
+          const duration = endTime - startTime;
+          
+          output.textContent += `${result1}\n${result2}\n${result3}\n`;
+          output.textContent += `⏱️ 并行执行总耗时: ${duration}ms\n`;
+        } catch (error) {
+          output.textContent += `❌ 并行执行失败: ${error}\n`;
+        }
+      }
+
+      async function demonstrateAsyncSequential() {
+        const output = document.getElementById('asyncOutput');
+        output.textContent = '📝 顺序执行演示...\n';
+        
+        const startTime = Date.now();
+        
+        try {
+          // 顺序执行多个异步操作
+          const result1 = await new Promise(resolve => 
+            setTimeout(() => resolve('任务A完成'), 1000)
+          );
+          output.textContent += `${result1}\n`;
+          
+          const result2 = await new Promise(resolve => 
+            setTimeout(() => resolve('任务B完成'), 1200)
+          );
+          output.textContent += `${result2}\n`;
+          
+          const result3 = await new Promise(resolve => 
+            setTimeout(() => resolve('任务C完成'), 800)
+          );
+          output.textContent += `${result3}\n`;
+          
+          const endTime = Date.now();
+          const duration = endTime - startTime;
+          
+          output.textContent += `⏱️ 顺序执行总耗时: ${duration}ms\n`;
+        } catch (error) {
+          output.textContent += `❌ 顺序执行失败: ${error}\n`;
+        }
+      }
+
+      // GitHub API演示函数
+      async function fetchGitHubUser() {
+        const username = document.getElementById('githubUsername').value.trim();
+        const output = document.getElementById('apiOutput');
+        const result = document.getElementById('apiResult');
+        
+        if (!username) {
+          output.textContent = '❌ 请输入GitHub用户名';
+          return;
+        }
+        
+        output.textContent = `🔄 正在获取用户 ${username} 的信息...\n`;
+        result.style.display = 'none';
+        
+        try {
+          const userInfo = await github.getUserInfo(username);
+          
+          output.textContent += '✅ 用户信息获取成功\n';
+          output.textContent += `用户名: ${userInfo.login}\n`;
+          output.textContent += `姓名: ${userInfo.name || '未设置'}\n`;
+          output.textContent += `公开仓库: ${userInfo.public_repos}\n`;
+          output.textContent += `关注者: ${userInfo.followers}\n`;
+          output.textContent += `关注: ${userInfo.following}\n`;
+          output.textContent += `注册时间: ${new Date(userInfo.created_at).toLocaleDateString()}\n`;
+          
+          result.textContent = JSON.stringify(userInfo, null, 2);
+          result.style.display = 'block';
+        } catch (error) {
+          output.textContent += `❌ 获取用户信息失败: ${error.message}\n`;
+        }
+      }
+
+      async function fetchGitHubRepos() {
+        const username = document.getElementById('githubUsername').value.trim();
+        const output = document.getElementById('apiOutput');
+        const result = document.getElementById('apiResult');
+        
+        if (!username) {
+          output.textContent = '❌ 请输入GitHub用户名';
+          return;
+        }
+        
+        output.textContent = `🔄 正在获取用户 ${username} 的仓库列表...\n`;
+        result.style.display = 'none';
+        
+        try {
+          const repos = await github.getUserRepos(username);
+          
+          output.textContent += `✅ 获取到 ${repos.length} 个仓库\n\n`;
+          output.textContent += '📚 最近更新的仓库:\n';
+          
+          repos.slice(0, 5).forEach((repo, index) => {
+            const lastUpdate = new Date(repo.updated_at).toLocaleDateString();
+            output.textContent += `${index + 1}. ${repo.name}\n`;
+            output.textContent += `   描述: ${repo.description || '无描述'}\n`;
+            output.textContent += `   语言: ${repo.language || '未知'}\n`;
+            output.textContent += `   ⭐ ${repo.stargazers_count} 🍴 ${repo.forks_count}\n`;
+            output.textContent += `   更新: ${lastUpdate}\n\n`;
+          });
+          
+          result.textContent = JSON.stringify(repos.slice(0, 3), null, 2);
+          result.style.display = 'block';
+        } catch (error) {
+          output.textContent += `❌ 获取仓库列表失败: ${error.message}\n`;
+        }
+      }
+
+      async function fetchRepoDetails() {
+        const username = document.getElementById('githubUsername').value.trim();
+        const output = document.getElementById('apiOutput');
+        const result = document.getElementById('apiResult');
+        
+        if (!username) {
+          output.textContent = '❌ 请输入GitHub用户名';
+          return;
+        }
+        
+        output.textContent = `🔄 正在获取用户 ${username} 的第一个仓库详情...\n`;
+        result.style.display = 'none';
+        
+        try {
+          // 先获取仓库列表
+          const repos = await github.getUserRepos(username);
+          
+          if (repos.length === 0) {
+            output.textContent += '❌ 该用户没有公开仓库\n';
+            return;
+          }
+          
+          const firstRepo = repos[0];
+          output.textContent += `🔍 正在获取仓库 "${firstRepo.name}" 的详细信息...\n`;
+          
+          // 获取仓库详情
+          const repoDetails = await github.getRepoDetails(username, firstRepo.name);
+          
+          output.textContent += '✅ 仓库详情获取成功\n\n';
+          output.textContent += `📦 仓库名称: ${repoDetails.name}\n`;
+          output.textContent += `📝 描述: ${repoDetails.description || '无描述'}\n`;
+          output.textContent += `💻 主要语言: ${repoDetails.language || '未知'}\n`;
+          output.textContent += `⭐ Stars: ${repoDetails.stars}\n`;
+          output.textContent += `🍴 Forks: ${repoDetails.forks}\n`;
+          output.textContent += `📊 大小: ${(repoDetails.size / 1024).toFixed(2)} MB\n`;
+          output.textContent += `🐛 开放问题: ${repoDetails.openIssues}\n`;
+          output.textContent += `📅 最后推送: ${new Date(repoDetails.lastPush).toLocaleString()}\n`;
+          
+          result.textContent = JSON.stringify(repoDetails, null, 2);
+          result.style.display = 'block';
+        } catch (error) {
+          output.textContent += `❌ 获取仓库详情失败: ${error.message}\n`;
+        }
+      }
+    </script>
+  </body>
+</html>
