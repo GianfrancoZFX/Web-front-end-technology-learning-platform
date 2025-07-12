@@ -1,14 +1,20 @@
 # Web前端技术课程 - 学习平台
 
 一个集成课程练习展示、WakaTime编码统计、QAnything智能问答的现代化Web应用，基于Next.js 15构建。
+<img width="1911" height="1225" alt="image" src="https://github.com/user-attachments/assets/cc423859-83fb-486d-86d8-8b305a208595" />
 
 ## 🚀 项目简介
 
 本项目是一个综合性的Web前端学习平台，整合了以下核心功能：
 
 - **📚 课程练习展示**：将本学期所有HTML/CSS/JavaScript课程练习整合到Next.js应用中
+- 
 - **⏱️ WakaTime编码统计**：实时展示个人编码时长和编程语言分布
+- <img width="1956" height="1370" alt="image" src="https://github.com/user-attachments/assets/b1470c62-36a4-4a45-b555-1e479b9edfb5" />
+
 - **🤖 QAnything智能问答**：集成大语言模型，提供智能问答服务
+- ![Uploading image.png…]()
+
 - **🎨 现代化UI设计**：使用Tailwind CSS构建响应式界面
 
 ## 🛠️ 技术栈
